@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "76E1CD90-F848-429C-A32C-F1007DF90AFB"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F2C783A6-0B2A-404F-A36C-C89D8C7EB35B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "wie/Core/Home/Views/WordGame.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "wordMoved(location:word:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F2C783A6-0B2A-404F-A36C-C89D8C7EB35B - 690bea0e7fdb2fba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "wie.WordGame.wordMoved(location: __C.CGPoint, word: Swift.String) -&gt; wie.DragState"
+                  moduleName = "wie"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/raziyeyolasigmazoglu/development/SwiftUI/wie/wie/Core/Home/Views/WordGame.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "57"
+                  endingLineNumber = "57"
+                  offsetFromSymbolStart = "120">
+               </Location>
+               <Location
+                  uuid = "F2C783A6-0B2A-404F-A36C-C89D8C7EB35B - 690bea0e7fdb2fba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "wie.WordGame.wordMoved(location: __C.CGPoint, word: Swift.String) -&gt; wie.DragState"
+                  moduleName = "wie"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/raziyeyolasigmazoglu/development/SwiftUI/wie/wie/Core/Home/Views/WordGame.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "57"
+                  endingLineNumber = "57"
+                  offsetFromSymbolStart = "124">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5B656158-F181-40D4-8F54-B6D0F3B0EECC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "wie/Core/Home/Views/WordGame.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "97"
+            endingLineNumber = "97"
+            landmarkName = "wordDropped(location:trayIndex:word:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A07C4644-E2CA-4A91-BE31-689DEE3880AF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "wie/Core/Home/Views/MakeSentenceView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "109"
+            endingLineNumber = "109"
+            landmarkName = "wordMoved(location:word:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
