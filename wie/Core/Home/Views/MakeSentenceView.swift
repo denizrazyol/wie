@@ -71,9 +71,19 @@ struct MakeSentenceView: View {
          
                 Button {
                     elements.removeAll()
+                    activeWords.removeAll()
                     initializeElements()
                 } label: {
                         Text("Start Again")
+                            .font(.headline)
+                            .frame(width: 150, height: 35)
+                }
+                .buttonStyle(.borderedProminent )
+                
+                Button {
+                 
+                } label: {
+                        Text("Next")
                             .font(.headline)
                             .frame(width: 150, height: 35)
                 }

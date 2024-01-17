@@ -132,20 +132,48 @@ struct MakeAWordWithLetters: View {
                     }
                 }
                 
-                if currentWord !=  "" {
-                    Button {
-                        currentWord =  ""
-                        letters.removeAll()
-                        initializeLetters()
-                    } label: {
+                if currentWord == word.word && letters.last?.isVisible == false {
+                    HStack {
+                        Button {
+                            currentWord =  ""
+                            letters.removeAll()
+                            initializeLetters()
+                        } label: {
+                            Text("Start Again")
+                                .font(.headline)
+                                .frame(width: 150, height: 35)
+                        }
+                        .buttonStyle(.borderedProminent )
+                        
+                        
+                        Button {
+                            
+                        } label: {
+                            Text("Next")
+                                .font(.headline)
+                                .frame(width: 150, height: 35)
+                        }
+                        .buttonStyle(.borderedProminent )
+                    }
+                }
+                else {
+                    if currentWord !=  "" {
+                        Button {
+                            currentWord =  ""
+                            letters.removeAll()
+                            initializeLetters()
+                        } label: {
                         Text("Start Again")
                             .font(.headline)
                             .frame(width: 150, height: 35)
-                    }
-                    .buttonStyle(.borderedProminent )
+                        }
+                        .buttonStyle(.borderedProminent )
                 }
+                }
+                
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.bottom,20)
             .onAppear {
                 initializeLetters()
             }
