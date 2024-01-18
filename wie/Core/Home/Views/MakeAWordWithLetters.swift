@@ -23,20 +23,17 @@ struct LetterModel: Identifiable, Codable {
 
 struct MakeAWordWithLetters: View {
     
-    @State private var word: WordModel
+    @Binding var word: String
     
     @State private var currentWord = ""
-    @State private var stringLetters: [String]
+    @State private var stringLetters: [String] = []
     @State private var shuffledLetters: [String] = []
     @State private var isWordCorrect: Bool?
     @State private var animateCheckmark = false
     @State private var letters: [LetterModel] = []
     
-    init(word: WordModel) {
-            self.word = word
-            self.stringLetters = word.word.map { String($0) }
-            self._shuffledLetters = State(initialValue: stringLetters.shuffled())
-    }
+    var onNext: (() -> Void)?
+    
     
     let spacing: CGFloat = 8
     let lineSpacing: CGFloat = 20
@@ -60,7 +57,7 @@ struct MakeAWordWithLetters: View {
                         .foregroundColor(Color.theme.accent)
                         .position(x: wordAreaFrame.midX, y: wordAreaFrame.midY)
                     
-                    if currentWord == word.word && letters.last?.isVisible == false {
+                    if currentWord == word && letters.last?.isVisible == false {
                         Image(systemName: "star.fill")
                                .resizable()
                                .foregroundColor(Color.yellow)
@@ -81,7 +78,7 @@ struct MakeAWordWithLetters: View {
                                .padding()
                    
                     }
-                    if currentWord != word.word && letters.last?.isVisible == false  {
+                    if currentWord != word && letters.last?.isVisible == false  {
                         let exist = letters.contains { $0.isVisible == true }
                         if !exist {
                             Image(systemName: "autostartstop.trianglebadge.exclamationmark" )
@@ -132,7 +129,7 @@ struct MakeAWordWithLetters: View {
                     }
                 }
                 
-                if currentWord == word.word && letters.last?.isVisible == false {
+                if currentWord == word && letters.last?.isVisible == false {
                     HStack {
                         Button {
                             currentWord =  ""
@@ -147,7 +144,7 @@ struct MakeAWordWithLetters: View {
                         
                         
                         Button {
-                            
+                            self.onNext?()
                         } label: {
                             Text("Next")
                                 .font(.headline)
@@ -177,6 +174,11 @@ struct MakeAWordWithLetters: View {
             .onAppear {
                 initializeLetters()
             }
+            .onChange(of: word) { _ in
+                currentWord = ""
+                letters.removeAll()
+                initializeLetters()
+            }
         }
         }
     
@@ -192,7 +194,12 @@ struct MakeAWordWithLetters: View {
         }
     }
     
+    
     func initializeLetters() {
+        print(word)
+        stringLetters = word.map { String($0) }
+        shuffledLetters = stringLetters.shuffled()
+        
         var x = 90
         let y = 420
         for item in shuffledLetters {
@@ -226,7 +233,7 @@ struct MakeAWordWithLetters: View {
 
 struct MakeAWordWithLetters_Previews: PreviewProvider {
     static var previews: some View {
-        MakeAWordWithLetters(word: WordModel(fromString: "to"))
+        MakeAWordWithLetters(word: .constant("to"))
     }
 }
 

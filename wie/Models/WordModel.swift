@@ -7,7 +7,7 @@
 
 import Foundation
 
-class WordModel: Identifiable {
+class WordModel:  Identifiable, Codable {
     var id: Int
     var word: String
     
@@ -43,13 +43,33 @@ class WordModel: Identifiable {
         
         return wordDataStrings
     }
+    
+    
+    static var year3And4WordsList: [WordModel] {
+        
+        var  wordDataStrings = StringsFileLoader.loadWords(fileName: "year3And4CommonExceptionWords")
+        
+        wordDataStrings = wordDataStrings.sorted{ $0.id < $1.id }
+        
+        return wordDataStrings
+    }
+    
+    
+    static var year5And6WordsList: [WordModel] {
+        
+        var  wordDataStrings = StringsFileLoader.loadWords(fileName: "year5And6CommonExceptionWords")
+        
+        wordDataStrings = wordDataStrings.sorted{ $0.id < $1.id }
+        
+        return wordDataStrings
+    }
    
     static var wordLevels: [WordLevel] {
         return [
             WordLevel(name: "Year 1", wordlist: year1WordsList),
             WordLevel(name: "Year 2", wordlist: year2WordsList),
-            WordLevel(name: "Year 3", wordlist: year1WordsList),
-            WordLevel(name: "Year 4", wordlist: year2WordsList),
+            WordLevel(name: "Year 3", wordlist: year3And4WordsList),
+            WordLevel(name: "Year 4", wordlist: year5And6WordsList),
         ]
     }
 }

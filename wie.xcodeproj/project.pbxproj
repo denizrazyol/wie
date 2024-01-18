@@ -39,6 +39,8 @@
 		91B6A9052AFCF533003E60A9 /* WordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B6A9042AFCF533003E60A9 /* WordModel.swift */; };
 		91B6A9072AFD0016003E60A9 /* year1CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91B6A9062AFD0016003E60A9 /* year1CommonExceptionWords.strings */; };
 		91B6A90B2AFD2729003E60A9 /* MenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B6A90A2AFD2729003E60A9 /* MenuItem.swift */; };
+		91EB18482B59425B00D27696 /* year3And4CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */; };
+		91EB184A2B59426700D27696 /* year5And6CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +77,8 @@
 		91B6A9042AFCF533003E60A9 /* WordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordModel.swift; sourceTree = "<group>"; };
 		91B6A9062AFD0016003E60A9 /* year1CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year1CommonExceptionWords.strings; sourceTree = "<group>"; };
 		91B6A90A2AFD2729003E60A9 /* MenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuItem.swift; sourceTree = "<group>"; };
+		91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year3And4CommonExceptionWords.strings; sourceTree = "<group>"; };
+		91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year5And6CommonExceptionWords.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +195,8 @@
 			children = (
 				91B6A9062AFD0016003E60A9 /* year1CommonExceptionWords.strings */,
 				91A8E5A82B04E92B003BBC5C /* year2CommonExceptionWords.strings */,
+				91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */,
+				91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */,
 				91B6A90A2AFD2729003E60A9 /* MenuItem.swift */,
 			);
 			path = Utilities;
@@ -276,7 +282,9 @@
 				917612CF2AEA864B006D3718 /* Preview Assets.xcassets in Resources */,
 				91A8E5A92B04E92B003BBC5C /* year2CommonExceptionWords.strings in Resources */,
 				91B6A9072AFD0016003E60A9 /* year1CommonExceptionWords.strings in Resources */,
+				91EB18482B59425B00D27696 /* year3And4CommonExceptionWords.strings in Resources */,
 				917612CC2AEA864B006D3718 /* Assets.xcassets in Resources */,
+				91EB184A2B59426700D27696 /* year5And6CommonExceptionWords.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

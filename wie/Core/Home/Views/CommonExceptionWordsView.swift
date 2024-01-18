@@ -11,7 +11,7 @@ struct CommonExceptionWordsView: View {
     
     @StateObject private var vm = HomeViewModel()
     @State private var selection: String?
-    @State private var selectedWord: WordModel = WordModel(fromString: "")
+    @State private var selectedWord: String = ""
     let maxWidthForIpad: CGFloat = 700
 
     var body: some View {
@@ -23,7 +23,7 @@ struct CommonExceptionWordsView: View {
                 ForEach(vm.currentWordLevel.wordlist) { word in
                     Button(action: {
                         self.selection = "destination"
-                        self.selectedWord =  word
+                        self.selectedWord =  word.word
                     }) {
                         WordFlashCardView(word: word)
                     }
@@ -33,7 +33,13 @@ struct CommonExceptionWordsView: View {
                 .listRowBackground(Color.theme.background)
             }
             .listStyle(PlainListStyle())
-            .background(NavigationLink(destination: MakeAWordWithLetters(word: selectedWord), tag: "destination", selection: $selection) { EmptyView() })
+            .background(NavigationLink(
+                destination: MakeAWordWithLetters(word: $selectedWord, onNext: {
+                    selectedWord = vm.nextButtonPressed(word: selectedWord)!
+                }),
+                tag: "destination",
+                selection: $selection)
+                        { EmptyView() })
         }
           
     }

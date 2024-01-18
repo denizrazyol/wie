@@ -15,6 +15,7 @@ class HomeViewModel: ObservableObject {
     @Published var searchText: String = ""
     
     @Published var currentWordLevel: WordLevel
+    @Published var currentWordModel: WordModel
     @Published var showWordsList : Bool = false
     
     init() {
@@ -24,6 +25,7 @@ class HomeViewModel: ObservableObject {
         self.wordLevels = WordModel.wordLevels
         
         self.currentWordLevel = WordModel.wordLevels.first!
+        self.currentWordModel = (WordModel.wordLevels.first?.wordlist.first)!
     }
     
     func toogleWordsList() {
@@ -35,10 +37,28 @@ class HomeViewModel: ObservableObject {
     func showNextSet(wordLevel: WordLevel) {
         withAnimation(.easeInOut) {
             currentWordLevel = wordLevel
+            currentWordModel =  wordLevel.wordlist.first!
             showWordsList = false
         }
     }
     
-
+    func updateWord(wordModel: WordModel) {
+            currentWordModel = wordModel
+        }
+    
+    func nextButtonPressed(word: String) -> String? {
+        
+        guard let currentIndex = currentWordLevel.wordlist.firstIndex(where: {$0.word == word}) else {
+            return nil
+        }
+        
+        let nextIndex = currentIndex + 1
+        guard currentWordLevel.wordlist.indices.contains(nextIndex) else {
+            return nil
+        }
+        
+        return currentWordLevel.wordlist[nextIndex].word
+        
+    }
 }
 
