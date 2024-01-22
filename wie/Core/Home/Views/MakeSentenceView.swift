@@ -114,8 +114,6 @@ struct MakeSentenceView: View {
     }
     
     func wordMoved(location: CGPoint, word: String) -> DragState {
-        print(buttonFrames.count)
-        print(location)
         if wordAreaFrame.contains(location) {
             //if activeWords.firstIndex(where: { $0.text.contains(word)}) == nil {
               //  return .bad

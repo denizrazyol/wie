@@ -1,6 +1,3 @@
-
-
-
 //
 //  MakeAWordWithLetters.swift
 //  wie
@@ -23,6 +20,8 @@ struct LetterModel: Identifiable, Codable {
 
 struct MakeAWordWithLetters: View {
     
+    @StateObject private var vm = HomeViewModel()
+    
     @Binding var word: String
     
     @State private var currentWord = ""
@@ -31,9 +30,9 @@ struct MakeAWordWithLetters: View {
     @State private var isWordCorrect: Bool?
     @State private var animateCheckmark = false
     @State private var letters: [LetterModel] = []
+    @State private var dragAmount = CGSize.zero
     
     var onNext: (() -> Void)?
-    
     
     let spacing: CGFloat = 8
     let lineSpacing: CGFloat = 20
@@ -57,14 +56,25 @@ struct MakeAWordWithLetters: View {
                         .foregroundColor(Color.theme.accent)
                         .position(x: wordAreaFrame.midX, y: wordAreaFrame.midY)
                     
+                    Image(systemName: "play.circle.fill")
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                        .position(x: wordAreaFrame.maxX - 330, y: wordAreaFrame.minY + 20)
+                        .foregroundColor(Color.theme.accent)
+                        .padding()
+                        .onTapGesture {
+                            vm.playSound(soundName: word)
+                        }
+                        
+                    
                     if currentWord == word && letters.last?.isVisible == false {
                         Image(systemName: "star.fill")
                                .resizable()
-                               .foregroundColor(Color.yellow)
+                               .foregroundColor(Color.yellow).opacity(0.2)
                                .scaledToFill()
-                               .frame(width: 60, height: 60)
+                               .frame(width: 250, height: 250)
                                .scaleEffect(animateCheckmark ? 1.5 : 1) // Animated scale effect
-                               .position(x: wordAreaFrame.maxX - 60, y: wordAreaFrame.minY + 30) // Position at top-right corner
+                               .position(x: wordAreaFrame.maxX - 190, y: wordAreaFrame.minY + 130) // Position at top-right corner
                                .onAppear {
                                    withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
                                        animateCheckmark = true
@@ -105,28 +115,8 @@ struct MakeAWordWithLetters: View {
                         }
                     }
                     
-                    ForEach(letters.indices, id: \.self) { index in
-                        if letters[index].isVisible {
-                            Text(letters[index].text)
-                                .font(.largeTitle)
-                                .padding()
-                                .background(RoundedRectangle(cornerRadius: 20).fill(Color.theme.accent).frame(width: letterSize.width * 1))
-                                .foregroundColor(.white)
-                                .frame(width: letterSize.width, height: letterSize.height)
-                                .position(self.positionForLetter(at: index, in: geometry.size))
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged { value in
-                                            updatePosition(of: letters[index].id, with: value.location)
-                                        }
-                                        .onEnded { value in
-                                            if wordAreaFrame.contains(value.location) {
-                                                updateVisibility(of: letters[index].id, with: false)
-                                                currentWord += letters[index].text
-                                            }
-                                        })
-                        }
-                    }
+                    WrapLetterView(letters: $letters, onEnded: self.letterDropped )
+                    
                 }
                 
                 if currentWord == word && letters.last?.isVisible == false {
@@ -194,9 +184,15 @@ struct MakeAWordWithLetters: View {
         }
     }
     
+    func letterDropped(location: CGPoint, index: Int, word: String) {
+        if wordAreaFrame.contains(location) {
+            updateVisibility(of: letters[index].id, with: false)
+            currentWord += letters[index].text
+        }
+    }
+    
     
     func initializeLetters() {
-        print(word)
         stringLetters = word.map { String($0) }
         shuffledLetters = stringLetters.shuffled()
         

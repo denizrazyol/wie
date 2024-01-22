@@ -35,7 +35,7 @@ struct WordGame: View {
                 
                 HStack{
                     ForEach(0..<4){ number in
-                        Word(word: self.activeWords[number], index: number)
+                        WordView(word: self.activeWords[number], index: number)
                             .allowsHitTesting(false)
                             .overlay(
                                 GeometryReader { geo in
@@ -53,7 +53,7 @@ struct WordGame: View {
             
             HStack(){
                 ForEach(0..<5){ number in
-                    Word(word: self.tray[number], index: number, onChanged: self.wordMoved, onEnded: self.wordDropped)
+                    WordView(word: self.tray[number], index: number, onChanged: self.wordMoved, onEnded: self.wordDropped)
                 }
             }
             
@@ -70,8 +70,6 @@ struct WordGame: View {
     
     
     func wordMoved(location: CGPoint, word: String) -> DragState {
-        print(buttonFrames.count)
-        print(location)
         if wordAreaFrame.contains(location) {
         //if let match = buttonFrames.firstIndex(where: {
            //$0.contains(location) }) {

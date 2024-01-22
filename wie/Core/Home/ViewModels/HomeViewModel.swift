@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import AVFoundation
 
 class HomeViewModel: ObservableObject {
     
@@ -17,6 +18,8 @@ class HomeViewModel: ObservableObject {
     @Published var currentWordLevel: WordLevel
     @Published var currentWordModel: WordModel
     @Published var showWordsList : Bool = false
+    
+    @Published var player: AVAudioPlayer?
     
     init() {
 
@@ -59,6 +62,20 @@ class HomeViewModel: ObservableObject {
         
         return currentWordLevel.wordlist[nextIndex].word
         
+    }
+    
+    func playSound(soundName: String) {
+        
+      guard let soundFile = NSDataAsset(name: soundName) else {
+        return
+      }
+
+      do {
+          player = try AVAudioPlayer(data: soundFile.data)
+          player?.play()
+      } catch {
+        print("Failed to load the sound: \(error)")
+      }
     }
 }
 

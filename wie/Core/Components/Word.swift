@@ -14,7 +14,7 @@ enum DragState {
     
 }
 
-struct Word: View {
+struct WordView: View {
     
     @State private var dragAmount = CGSize.zero
     @State private var dragState  = DragState.unknown
@@ -67,6 +67,6 @@ struct Word: View {
 
 struct Word_Previews: PreviewProvider {
     static var previews: some View {
-        Word(word: "Item 1", index: 0)
+        WordView(word: "Item 1", index: 0)
     }
 }

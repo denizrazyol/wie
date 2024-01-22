@@ -27,7 +27,7 @@ struct WrapView2: View {
             return ZStack(alignment: .topLeading) {
                 ForEach(Array(elements.enumerated()), id: \.element.id) { index, platform in
                     if platform.isVisible {
-                        Word(word: platform.text, index: index)
+                        WordView(word: platform.text, index: index)
                             .padding([.horizontal, .vertical], 4)
                             .alignmentGuide(.leading, computeValue: { d in
                                 if (abs(width - d.width) > g.size.width)

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		911777552B5D47B900066C71 /* WrapLetterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 911777542B5D47B900066C71 /* WrapLetterView.swift */; };
+		911777572B5D4AB400066C71 /* LetterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 911777562B5D4AB400066C71 /* LetterView.swift */; };
 		9128FA532B55519A00F2C303 /* WordGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9128FA522B55519A00F2C303 /* WordGame.swift */; };
 		9128FA552B5552D800F2C303 /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9128FA542B5552D800F2C303 /* Word.swift */; };
 		913F7E8F2AFA70C700E064E7 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913F7E8E2AFA70C700E064E7 /* HomeViewModel.swift */; };
@@ -39,11 +41,14 @@
 		91B6A9052AFCF533003E60A9 /* WordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B6A9042AFCF533003E60A9 /* WordModel.swift */; };
 		91B6A9072AFD0016003E60A9 /* year1CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91B6A9062AFD0016003E60A9 /* year1CommonExceptionWords.strings */; };
 		91B6A90B2AFD2729003E60A9 /* MenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B6A90A2AFD2729003E60A9 /* MenuItem.swift */; };
+		91B8E3CD2B5A854100C989A2 /* SoundModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B8E3CC2B5A854100C989A2 /* SoundModel.swift */; };
 		91EB18482B59425B00D27696 /* year3And4CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */; };
 		91EB184A2B59426700D27696 /* year5And6CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		911777542B5D47B900066C71 /* WrapLetterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapLetterView.swift; sourceTree = "<group>"; };
+		911777562B5D4AB400066C71 /* LetterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterView.swift; sourceTree = "<group>"; };
 		9128FA522B55519A00F2C303 /* WordGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordGame.swift; sourceTree = "<group>"; };
 		9128FA542B5552D800F2C303 /* Word.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
 		913F7E8E2AFA70C700E064E7 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -77,6 +82,7 @@
 		91B6A9042AFCF533003E60A9 /* WordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordModel.swift; sourceTree = "<group>"; };
 		91B6A9062AFD0016003E60A9 /* year1CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year1CommonExceptionWords.strings; sourceTree = "<group>"; };
 		91B6A90A2AFD2729003E60A9 /* MenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuItem.swift; sourceTree = "<group>"; };
+		91B8E3CC2B5A854100C989A2 /* SoundModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundModel.swift; sourceTree = "<group>"; };
 		91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year3And4CommonExceptionWords.strings; sourceTree = "<group>"; };
 		91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year5And6CommonExceptionWords.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -127,6 +133,8 @@
 				916969932B0B7E6A00BCFF99 /* SearchBarView.swift */,
 				91488CCB2B2C92FB00696F54 /* WrapView.swift */,
 				91966F102B58049C0097C02F /* WrapView2.swift */,
+				911777542B5D47B900066C71 /* WrapLetterView.swift */,
+				911777562B5D4AB400066C71 /* LetterView.swift */,
 				91488CCD2B2C9CD300696F54 /* LabelledDividerView.swift */,
 				9128FA542B5552D800F2C303 /* Word.swift */,
 			);
@@ -186,6 +194,7 @@
 				917612D22AEA864B006D3718 /* wie.xcdatamodeld */,
 				91B6A9042AFCF533003E60A9 /* WordModel.swift */,
 				914AB01A2B0CF1D000D25DD7 /* WordLevel.swift */,
+				91B8E3CC2B5A854100C989A2 /* SoundModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -311,9 +320,11 @@
 				91A8E5A52B04E2BE003BBC5C /* ScrabbleView.swift in Sources */,
 				917612EC2AEAA6EC006D3718 /* StoryWritingView.swift in Sources */,
 				9128FA532B55519A00F2C303 /* WordGame.swift in Sources */,
+				911777572B5D4AB400066C71 /* LetterView.swift in Sources */,
 				916969942B0B7E6A00BCFF99 /* SearchBarView.swift in Sources */,
 				918A1D922B2CC8B2008C9D4C /* OrientationInfo.swift in Sources */,
 				91B6A9052AFCF533003E60A9 /* WordModel.swift in Sources */,
+				91B8E3CD2B5A854100C989A2 /* SoundModel.swift in Sources */,
 				917612DB2AEA87E2006D3718 /* OnboardView.swift in Sources */,
 				917612D42AEA864B006D3718 /* wie.xcdatamodeld in Sources */,
 				9168B3BC2AFE4A73004B956E /* MakeAWordWithLetters.swift in Sources */,
@@ -322,6 +333,7 @@
 				917612C82AEA864A006D3718 /* wieApp.swift in Sources */,
 				917612E22AEAA646006D3718 /* MakeSentenceView.swift in Sources */,
 				917612E02AEAA630006D3718 /* CommonExceptionWordsView.swift in Sources */,
+				911777552B5D47B900066C71 /* WrapLetterView.swift in Sources */,
 				913F7E8F2AFA70C700E064E7 /* HomeViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
