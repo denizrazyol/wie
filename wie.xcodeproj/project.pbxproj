@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		911777552B5D47B900066C71 /* WrapLetterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 911777542B5D47B900066C71 /* WrapLetterView.swift */; };
 		911777572B5D4AB400066C71 /* LetterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 911777562B5D4AB400066C71 /* LetterView.swift */; };
 		9128FA532B55519A00F2C303 /* WordGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9128FA522B55519A00F2C303 /* WordGame.swift */; };
 		9128FA552B5552D800F2C303 /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9128FA542B5552D800F2C303 /* Word.swift */; };
@@ -47,7 +46,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		911777542B5D47B900066C71 /* WrapLetterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapLetterView.swift; sourceTree = "<group>"; };
 		911777562B5D4AB400066C71 /* LetterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterView.swift; sourceTree = "<group>"; };
 		9128FA522B55519A00F2C303 /* WordGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordGame.swift; sourceTree = "<group>"; };
 		9128FA542B5552D800F2C303 /* Word.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
@@ -133,7 +131,6 @@
 				916969932B0B7E6A00BCFF99 /* SearchBarView.swift */,
 				91488CCB2B2C92FB00696F54 /* WrapView.swift */,
 				91966F102B58049C0097C02F /* WrapView2.swift */,
-				911777542B5D47B900066C71 /* WrapLetterView.swift */,
 				911777562B5D4AB400066C71 /* LetterView.swift */,
 				91488CCD2B2C9CD300696F54 /* LabelledDividerView.swift */,
 				9128FA542B5552D800F2C303 /* Word.swift */,
@@ -333,7 +330,6 @@
 				917612C82AEA864A006D3718 /* wieApp.swift in Sources */,
 				917612E22AEAA646006D3718 /* MakeSentenceView.swift in Sources */,
 				917612E02AEAA630006D3718 /* CommonExceptionWordsView.swift in Sources */,
-				911777552B5D47B900066C71 /* WrapLetterView.swift in Sources */,
 				913F7E8F2AFA70C700E064E7 /* HomeViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

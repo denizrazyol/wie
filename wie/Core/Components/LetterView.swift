@@ -12,17 +12,17 @@ struct LetterView: View {
     @State private var dragAmount = CGSize.zero
     
     var letter: String
-    var index : Int
+    var index : UUID
     
-    var onEnded: ((CGPoint, Int, String) -> Void)?
+    var onChanged: ((UUID, CGPoint) -> Void)?
+    var onEnded: ((UUID, CGPoint) -> Void)?
     
     var body: some View {
         Text(letter)
             .font(.largeTitle)
             .padding()
-            .background(RoundedRectangle(cornerRadius: 20).fill(Color.theme.accent).frame(width: 60))
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.theme.accent).frame(width: 55, height: 55))
             .foregroundColor(.white)
-            .frame(width: 60, height: 60)
             .offset(dragAmount)
             .zIndex(dragAmount == .zero ? 0 : 1)
             .gesture(
@@ -31,10 +31,12 @@ struct LetterView: View {
                         self.dragAmount = CGSize(width:
                                                     value.translation.width,height:
                                                     value.translation.height)
+                        
+                        self.onChanged?(self.index, value.location)
                     }
                     .onEnded { value in
                       
-                        self.onEnded?(value.location, self.index, self.letter)
+                        self.onEnded?(self.index, value.location)
                         self.dragAmount = .zero
                     })
     }
@@ -42,6 +44,6 @@ struct LetterView: View {
 
 struct LetterView_Previews: PreviewProvider {
     static var previews: some View {
-        LetterView(letter: "t", index: 1)
+        LetterView(letter: "t", index: UUID())
     }
 }

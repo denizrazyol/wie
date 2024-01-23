@@ -1,3 +1,6 @@
+
+
+
 //
 //  MakeAWordWithLetters.swift
 //  wie
@@ -21,7 +24,6 @@ struct LetterModel: Identifiable, Codable {
 struct MakeAWordWithLetters: View {
     
     @StateObject private var vm = HomeViewModel()
-    
     @Binding var word: String
     
     @State private var currentWord = ""
@@ -30,51 +32,51 @@ struct MakeAWordWithLetters: View {
     @State private var isWordCorrect: Bool?
     @State private var animateCheckmark = false
     @State private var letters: [LetterModel] = []
-    @State private var dragAmount = CGSize.zero
     
     var onNext: (() -> Void)?
     
-    let spacing: CGFloat = 8
-    let lineSpacing: CGFloat = 20
-    let letterSize: CGSize = CGSize(width: 60, height: 60)
-    let maxLettersPerLine: Int = 4
-    let wordAreaFrame = CGRect(x: 20, y: 10, width: 350, height: 300)
+    
+    let spacing: CGFloat = 10
+    let lineSpacing: CGFloat = 10
+    let letterSize: CGSize = CGSize(width: 55, height: 55)
+    let maxLettersPerLine: Int = 6
+    let wordAreaFrame = CGRect(x: 0, y: UIScreen.main.bounds.height * 0.3, width: UIScreen.main.bounds.width, height: 300)
       
     var body: some View {
         GeometryReader { geometry in
             VStack() {
+            
                 ZStack() {
+                    
+                    ForEach(letters.indices, id: \.self) { index in
+                        if letters[index].isVisible {
+                            
+                            LetterView(letter: letters[index].text, index: letters[index].id, onChanged: self.updatePosition, onEnded: self.updateVisibility )
+                                .position(self.positionForLetter(at: index, in: geometry.size))
+                  
+                        }
+                    }
                     
                     Rectangle()
                         .fill(Color.yellow.opacity(0.3))
                         .frame(width: wordAreaFrame.width, height: wordAreaFrame.height)
                         .cornerRadius(20)
-                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.midY)
+                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 80)
                     
                     Text(currentWord)
                         .font(.system(size: 80))
                         .foregroundColor(Color.theme.accent)
-                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.midY)
+                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 60)
                     
-                    Image(systemName: "play.circle.fill")
-                        .resizable()
-                        .frame(width: 50, height: 50)
-                        .position(x: wordAreaFrame.maxX - 330, y: wordAreaFrame.minY + 20)
-                        .foregroundColor(Color.theme.accent)
-                        .padding()
-                        .onTapGesture {
-                            vm.playSound(soundName: word)
-                        }
-                        
                     
                     if currentWord == word && letters.last?.isVisible == false {
                         Image(systemName: "star.fill")
                                .resizable()
-                               .foregroundColor(Color.yellow).opacity(0.2)
+                               .foregroundColor(Color.yellow).opacity(0.4)
                                .scaledToFill()
-                               .frame(width: 250, height: 250)
-                               .scaleEffect(animateCheckmark ? 1.5 : 1) // Animated scale effect
-                               .position(x: wordAreaFrame.maxX - 190, y: wordAreaFrame.minY + 130) // Position at top-right corner
+                               .frame(width: 200, height: 200)
+                               .scaleEffect(animateCheckmark ? 1.5 : 1) 
+                               .position(x: wordAreaFrame.midX - 10, y: wordAreaFrame.minY - 110)
                                .onAppear {
                                    withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
                                        animateCheckmark = true
@@ -92,10 +94,13 @@ struct MakeAWordWithLetters: View {
                         let exist = letters.contains { $0.isVisible == true }
                         if !exist {
                             Image(systemName: "autostartstop.trianglebadge.exclamationmark" )
-                                .foregroundColor(Color.secondary)
+                                .resizable()
+                                .foregroundColor(Color.secondary).opacity(0.8)
                                 .font(.largeTitle)
+                                .scaledToFill()
                                 .scaleEffect(animateCheckmark ? 1.1 : 1)
-                                .position(x: wordAreaFrame.maxX - 50, y: wordAreaFrame.minY + 20)
+                                .frame(width: 100, height: 100)
+                                .position(x: wordAreaFrame.midX - 10, y: wordAreaFrame.minY - 110)
                                 .onAppear {
                                     withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
                                         animateCheckmark = true
@@ -115,52 +120,39 @@ struct MakeAWordWithLetters: View {
                         }
                     }
                     
-                    WrapLetterView(letters: $letters, onEnded: self.letterDropped )
-                    
+                   
                 }
-                
+                        
                 if currentWord == word && letters.last?.isVisible == false {
-                    HStack {
-                        Button {
-                            currentWord =  ""
-                            letters.removeAll()
-                            initializeLetters()
-                        } label: {
-                            Text("Start Again")
-                                .font(.headline)
-                                .frame(width: 150, height: 35)
-                        }
-                        .buttonStyle(.borderedProminent )
-                        
-                        
                         Button {
                             self.onNext?()
                         } label: {
                             Text("Next")
                                 .font(.headline)
-                                .frame(width: 150, height: 35)
+                                .frame(width: 200, height: 40)
                         }
                         .buttonStyle(.borderedProminent )
-                    }
+                    
                 }
                 else {
-                    if currentWord !=  "" {
-                        Button {
-                            currentWord =  ""
-                            letters.removeAll()
-                            initializeLetters()
-                        } label: {
+                    if !currentWord.isEmpty {
+                    Button {
+                        currentWord =  ""
+                        letters.removeAll()
+                        initializeLetters()
+                    } label: {
                         Text("Start Again")
                             .font(.headline)
-                            .frame(width: 150, height: 35)
-                        }
-                        .buttonStyle(.borderedProminent )
+                            .frame(width: 200, height: 40)
+                    }
+                    .buttonStyle(.borderedProminent )
                 }
                 }
                 
+                Spacer()
+                
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.bottom,20)
             .onAppear {
                 initializeLetters()
             }
@@ -178,16 +170,13 @@ struct MakeAWordWithLetters: View {
         }
     }
     
-    func updateVisibility(of id: UUID, with newState: Bool) {
-        if let index = letters.firstIndex(where: { $0.id == id }) {
-            letters[index].isVisible = newState
-        }
-    }
-    
-    func letterDropped(location: CGPoint, index: Int, word: String) {
-        if wordAreaFrame.contains(location) {
-            updateVisibility(of: letters[index].id, with: false)
-            currentWord += letters[index].text
+    func updateVisibility(of id: UUID, with newPosition: CGPoint) {
+        if wordAreaFrame.contains(newPosition) {
+            if let index = letters.firstIndex(where: { $0.id == id }) {
+                letters[index].isVisible = false
+                currentWord += letters[index].text
+            }
+        
         }
     }
     
@@ -220,7 +209,7 @@ struct MakeAWordWithLetters: View {
             let startX = (size.width - totalWidthCurrentLine) / 2 + letterSize.width / 2
 
             let x = startX + CGFloat(columnIndex) * (letterSize.width + spacing)
-            let y = size.height / 2 + CGFloat(lineIndex) * (letterSize.height + lineSpacing)
+            let y = 80 + CGFloat(lineIndex) * (letterSize.height + lineSpacing)
 
              return CGPoint(x: x, y: y)
         }
@@ -232,6 +221,3 @@ struct MakeAWordWithLetters_Previews: PreviewProvider {
         MakeAWordWithLetters(word: .constant("to"))
     }
 }
-
-
-
