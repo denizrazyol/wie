@@ -79,5 +79,61 @@ class HomeViewModel: ObservableObject {
         print("Failed to load the sound: \(error)")
       }
     }
+    
+    func generateWordSearchGrid(rows: Int, columns: Int, words: [String]) -> [[Character]] {
+            let letters = "abcdefghijklmnopqrstuvwxyz"
+            var grid = Array(repeating: Array(repeating: Character(" "), count: columns), count: rows)
+
+            for word in words {
+                var placed = false
+                while !placed {
+                    let horizontal = Bool.random()
+                    let startRow = Int.random(in: 0..<rows)
+                    let startCol = Int.random(in: 0..<columns)
+
+                    if horizontal {
+                        if startCol + word.count <= columns {
+                            var canPlace = true
+                            for j in 0..<word.count where grid[startRow][startCol + j] != " " {
+                                canPlace = false
+                                break
+                            }
+
+                            if canPlace {
+                                for (index, char) in word.enumerated() {
+                                    grid[startRow][startCol + index] = char
+                                }
+                                placed = true
+                            }
+                        }
+                    } else {
+                        if startRow + word.count <= rows {
+                            var canPlace = true
+                            for i in 0..<word.count where grid[startRow + i][startCol] != " " {
+                                canPlace = false
+                                break
+                            }
+
+                            if canPlace {
+                                for (index, char) in word.enumerated() {
+                                    grid[startRow + index][startCol] = char
+                                }
+                                placed = true
+                            }
+                        }
+                    }
+                }
+            }
+
+            for i in 0..<rows {
+                for j in 0..<columns {
+                    if grid[i][j] == " " {
+                        grid[i][j] = letters.randomElement()!
+                    }
+                }
+            }
+
+            return grid
+        }
 }
 

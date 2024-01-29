@@ -19,7 +19,6 @@ struct Menu {
         MenuItem(id: 2, title: "Make A Sentece"),
         MenuItem(id: 3, title: "Describe"),
         MenuItem(id: 4, title: "Word Search Pack"),
-        MenuItem(id: 5, title: "Scrabble"),
         //MenuItem(id: 5, title: "Think And Write"),
         //MenuItem(id: 5, title: "Story Writing"),
     ]

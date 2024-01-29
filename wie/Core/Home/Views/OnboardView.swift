@@ -91,6 +91,14 @@ struct OnboardView: View {
                 .environmentObject(OrientationInfo())
                 .ignoresSafeArea()
             )
+        case "3":
+            return AnyView(DescribeView()
+                .ignoresSafeArea()
+            )
+        case "4":
+            return AnyView(WordSearchView()
+                .ignoresSafeArea()
+            )
         default:
             return AnyView(Text("Default View"))
         }

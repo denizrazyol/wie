@@ -55,8 +55,6 @@ struct WrapView2: View {
                 }
             }
     }
-    
-    
 }
 
 struct WrapView2_Previews: PreviewProvider {

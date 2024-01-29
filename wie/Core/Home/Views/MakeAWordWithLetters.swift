@@ -40,11 +40,11 @@ struct MakeAWordWithLetters: View {
     let lineSpacing: CGFloat = 10
     let letterSize: CGSize = CGSize(width: 55, height: 55)
     let maxLettersPerLine: Int = 6
-    let wordAreaFrame = CGRect(x: 0, y: UIScreen.main.bounds.height * 0.3, width: UIScreen.main.bounds.width, height: 300)
+    let wordAreaFrame = CGRect(x: 0, y: UIScreen.main.bounds.height * 0.28, width: UIScreen.main.bounds.width, height: 300)
       
     var body: some View {
         GeometryReader { geometry in
-            VStack() {
+            VStack(spacing: 20) {
             
                 ZStack() {
                     
@@ -61,12 +61,12 @@ struct MakeAWordWithLetters: View {
                         .fill(Color.yellow.opacity(0.3))
                         .frame(width: wordAreaFrame.width, height: wordAreaFrame.height)
                         .cornerRadius(20)
-                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 80)
+                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 50)
                     
                     Text(currentWord)
-                        .font(.system(size: 80))
+                        .font(.system(size: letters.count > 10 ? 60 : 80))
                         .foregroundColor(Color.theme.accent)
-                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 60)
+                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 40)
                     
                     
                     if currentWord == word && letters.last?.isVisible == false {
@@ -75,19 +75,22 @@ struct MakeAWordWithLetters: View {
                                .foregroundColor(Color.yellow).opacity(0.4)
                                .scaledToFill()
                                .frame(width: 200, height: 200)
-                               .scaleEffect(animateCheckmark ? 1.5 : 1) 
-                               .position(x: wordAreaFrame.midX - 10, y: wordAreaFrame.minY - 110)
+                               //.rotationEffect(Angle(degrees: 120))
+                               .scaleEffect(animateCheckmark ? 2 : 0.8)
+                               .position(x: wordAreaFrame.midX, y: wordAreaFrame.midY + 30)
                                .onAppear {
                                    withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
                                        animateCheckmark = true
+                                       vm.playSound(soundName: "Correct")
                                    }
-                                   DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // Adjust time as needed
+                                   DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                                        withAnimation {
                                            animateCheckmark = false
+                                          
                                        }
                                    }
                                }
-                               .padding()
+                         
                    
                     }
                     if currentWord != word && letters.last?.isVisible == false  {
@@ -98,16 +101,18 @@ struct MakeAWordWithLetters: View {
                                 .foregroundColor(Color.secondary).opacity(0.8)
                                 .font(.largeTitle)
                                 .scaledToFill()
-                                .scaleEffect(animateCheckmark ? 1.1 : 1)
-                                .frame(width: 100, height: 100)
-                                .position(x: wordAreaFrame.midX - 10, y: wordAreaFrame.minY - 110)
+                                .scaleEffect(animateCheckmark ? 1.1 : 0.8)
+                                .frame(width: 80, height: 80)
+                                .position(x: wordAreaFrame.maxX - 35, y: wordAreaFrame.minY - 62)
                                 .onAppear {
                                     withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
                                         animateCheckmark = true
+                                        vm.playSound(soundName: "TryAgain")
                                     }
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) { // Adjust time as needed
                                         withAnimation {
                                             animateCheckmark = false
+                                            
                                         }
                                     }
                                 }
@@ -116,12 +121,25 @@ struct MakeAWordWithLetters: View {
                                     letters.removeAll()
                                     initializeLetters()
                                 }
-                                .padding()
+                          
                         }
                     }
                     
-                   
+                    Button {
+                        vm.playSound(soundName: word)
+                    } label: {
+                        Image(systemName: "play.fill")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(Color.theme.accent)
+                    }
+                    .position(x: wordAreaFrame.minX + 40, y: wordAreaFrame.minY - 70)
+                    
                 }
+                
+               
+                
+             
                         
                 if currentWord == word && letters.last?.isVisible == false {
                         Button {
@@ -141,7 +159,7 @@ struct MakeAWordWithLetters: View {
                         letters.removeAll()
                         initializeLetters()
                     } label: {
-                        Text("Start Again")
+                        Text("Try Again")
                             .font(.headline)
                             .frame(width: 200, height: 40)
                     }
@@ -149,12 +167,13 @@ struct MakeAWordWithLetters: View {
                 }
                 }
                 
-                Spacer()
+        
                 
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear {
                 initializeLetters()
+                vm.playSound(soundName: "PlaceLetters")
             }
             .onChange(of: word) { _ in
                 currentWord = ""
@@ -209,7 +228,7 @@ struct MakeAWordWithLetters: View {
             let startX = (size.width - totalWidthCurrentLine) / 2 + letterSize.width / 2
 
             let x = startX + CGFloat(columnIndex) * (letterSize.width + spacing)
-            let y = 80 + CGFloat(lineIndex) * (letterSize.height + lineSpacing)
+            let y = 50 + CGFloat(lineIndex) * (letterSize.height + lineSpacing)
 
              return CGPoint(x: x, y: y)
         }

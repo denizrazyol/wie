@@ -68,8 +68,8 @@ class WordModel:  Identifiable, Codable {
         return [
             WordLevel(name: "Year 1", wordlist: year1WordsList),
             WordLevel(name: "Year 2", wordlist: year2WordsList),
-            WordLevel(name: "Year 3", wordlist: year3And4WordsList),
-            WordLevel(name: "Year 4", wordlist: year5And6WordsList),
+            WordLevel(name: "Year 3 & Year 4", wordlist: year3And4WordsList),
+            WordLevel(name: "Year 5 & Year 6", wordlist: year5And6WordsList),
         ]
     }
 }
