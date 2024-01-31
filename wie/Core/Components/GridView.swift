@@ -12,9 +12,13 @@ struct WordSearchGame {
     
     var grid: [[Character]] = [[]]
     var selectedIndices: Set<IndexPath> = []
+    var verifiedIndices: Set<IndexPath> = []
+    var aimWords: [String] = ["accidentally", "love", "some", "today", "were", "said", "your", "pronunciation"]
+    var selectedLetters: [Character] = []
+    var matchedWords: [String] = []
     
     init() {
-        generateWordSearchGrid(rows: 14, columns: 8, words: ["accidentally", "love", "some", "today", "were", "said", "your", "pronunciation"])
+        generateWordSearchGrid(rows: 13, columns: 9, words: aimWords)
     }
 
 
@@ -28,6 +32,7 @@ struct WordSearchGame {
         if rowIndex >= 0 && rowIndex < grid.count && columnIndex >= 0 && columnIndex < grid[0].count {
             let indexPath = IndexPath(row: rowIndex, section: columnIndex)
             selectedIndices.insert(indexPath)
+            selectedLetters.append(grid[rowIndex][columnIndex])
         }
     }
     
@@ -104,6 +109,21 @@ struct WordSearchGame {
         }
         return true
     }
+    
+    mutating func getTheWordfromCharacters(_ inputArray: [Character]) -> String {
+        var resultArray: String = ""
+        var previousCharacter: Character? = nil
+
+        for character in inputArray {
+            if character != previousCharacter {
+                resultArray += String(character)
+                print(resultArray)
+                previousCharacter = character
+            }
+        }
+
+        return resultArray
+    }
 
 }
 
@@ -113,11 +133,10 @@ struct LetterCell: View {
 
     var body: some View {
         Text(String(letter))
-            .frame(width: 40, height: 40)
+            .frame(maxWidth: 45, maxHeight: 45)
             .foregroundColor(.black)
             .background(isSelected ? Color.yellow : Color.clear)
             .font(.title)
-            //.border(Color.white)
     }
 }
 
@@ -125,44 +144,49 @@ struct GridView: View {
     @State private var game = WordSearchGame()
     @State private var isDragging = false
     
-    let columns: [GridItem] = [
-        GridItem(.flexible(), spacing: nil, alignment: nil),
-        GridItem(.flexible(), spacing: nil, alignment: nil),
-        GridItem(.flexible(), spacing: nil, alignment: nil),
-        GridItem(.flexible(), spacing: nil, alignment: nil),
-        GridItem(.flexible(), spacing: nil, alignment: nil),
-        GridItem(.flexible(), spacing: nil, alignment: nil),
-        GridItem(.flexible(), spacing: nil, alignment: nil),
-        GridItem(.flexible(), spacing: nil, alignment: nil),
-    ]
-    
+    let columns: Int = 9
     
     var body: some View {
-            GeometryReader { geometry in
-                LazyVGrid(columns: columns, spacing: 0) {
-                    ForEach(0..<game.grid.count, id: \.self) { rowIndex in
-                        ForEach(0..<game.grid[rowIndex].count, id: \.self) { columnIndex in
-                            let cellID = "\(rowIndex)-\(columnIndex)" // Unique ID for each cell
-                                     LetterCell(letter: game.grid[rowIndex][columnIndex],
-                                                isSelected: game.selectedIndices.contains(IndexPath(row: rowIndex, section: columnIndex)))
-                                         .id(cellID)
-                        }
-                    }
-                }
-                .gesture(
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                       ForEach(0..<game.grid.count, id: \.self) { rowIndex in
+                           HStack(spacing: 0) {
+                               ForEach(0..<game.grid[rowIndex].count, id: \.self) { columnIndex in
+                                   let cellID = "\(rowIndex)-\(columnIndex)"
+                                   LetterCell(letter: game.grid[rowIndex][columnIndex],
+                                              isSelected: game.selectedIndices.contains(IndexPath(row: rowIndex, section: columnIndex)))
+                                       .id(cellID)
+                               }
+                           }
+                       }
+                   }
+                   .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { value in
                             withAnimation {
                                 game.updateSelection(from: value.location, in: geometry)
                             }
                         }
-                        .onEnded { _ in
+                        .onEnded { value in
                             isDragging = false
-                            game.selectedIndices.removeAll()
+                            let word = game.getTheWordfromCharacters(game.selectedLetters)
+                            if let match = game.aimWords.firstIndex(where: {$0.contains(word)}){
+                                game.matchedWords.append(word)
+                                game.verifiedIndices = game.selectedIndices
+                                game.selectedLetters.removeAll()
+                                
+                            }
+                            else{
+                                game.selectedIndices.removeAll()
+                                game.selectedLetters.removeAll()
+                                game.selectedIndices = game.verifiedIndices
+                                
+                            }
+                            
                         }
                 )
-                .padding()
             }
+        .padding(8)
     }
 }
 
@@ -171,3 +195,4 @@ struct GridView_Previews: PreviewProvider {
         GridView()
     }
 }
+
