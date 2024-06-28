@@ -14,7 +14,7 @@ struct ElementModel: Identifiable, Codable {
     var isVisible: Bool
 }
 
-struct MakeSentenceView: View {
+struct WhatsOnTheTrayView: View {
     @EnvironmentObject private var vm: HomeViewModel
     @State private var showTray = false
     @State private var wordList: [WordModel] = []
@@ -230,7 +230,7 @@ struct BottomTrayView: View {
 
 struct MakeSentenceView_Previews: PreviewProvider {
     static var previews: some View {
-        MakeSentenceView()
+        WhatsOnTheTrayView()
             .environmentObject(HomeViewModel())
             .ignoresSafeArea()
     }
