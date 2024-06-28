@@ -9,45 +9,45 @@ import SwiftUI
 
 struct WordSearchView: View {
     
-    @StateObject private var vm = HomeViewModel()
-    
-    @State private var tray: [ElementModel] = [ElementModel(id: 1, text: "today", position: CGPoint(x: 10, y: 20), isVisible: true), ElementModel(id: 2, text: "were", position: CGPoint(x: 30, y: 40), isVisible: true), ElementModel(id: 1, text: "said", position: CGPoint(x: 10, y: 20), isVisible: true), ElementModel(id: 2, text: "your", position: CGPoint(x: 30, y: 40), isVisible: true), ElementModel(id: 1, text: "come", position: CGPoint(x: 10, y: 20), isVisible: true), ElementModel(id: 2, text: "some", position: CGPoint(x: 30, y: 40), isVisible: true), ElementModel(id: 1, text: "love", position: CGPoint(x: 10, y: 20), isVisible: true), ElementModel(id: 2, text: "there", position: CGPoint(x: 30, y: 40), isVisible: true),]
+    @EnvironmentObject private var vm: HomeViewModel
     
     var body: some View {
-        ZStack(){
-            Image("makeasentence")
-                .resizable()
-                .scaledToFill()
-                .frame(minWidth: 400)
+        
+        let tray = Array(vm.currentWordLevel.wordlist.shuffled().prefix(6))
+        
             VStack(){
-                GridView()
-                    .background(RoundedRectangle(cornerRadius: 25).fill(Color.white))
-                    .padding(.top, 20)
-                VStack(alignment: .leading){
-                    HStack(alignment: .firstTextBaseline) {
-                        ForEach(0..<4){ number in
-                            WordBasicView(word: self.tray[number].text, index: self.tray[number].id)
+                GridView(wordModelList: tray)
+                    .background(RoundedRectangle(cornerRadius: 20).fill(Color.white))
+                    .shadow(color: Color.gray.opacity(0.5), radius: 20)
+                    .padding(.bottom,10)
+                
+                VStack(alignment: .center){
+                    HStack(alignment: .top) {
+                      
+                        ForEach(0..<3){ number in
+                            WordBasicView(word: tray[number].word, index: tray[number].id)
                         }
+                      
                     }
-                    HStack(alignment: .firstTextBaseline) {
-                        ForEach(4..<8){ number in
-                            WordBasicView(word: self.tray[number].text, index: self.tray[number].id)
+                    HStack(alignment: .top) {
+                 
+                        ForEach(3..<6){ number in
+                            WordBasicView(word: tray[number].word, index: tray[number].id)
                         }
+                       
                     }
                 }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 25).fill(Color.theme.accent))
+                .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+                .padding(.vertical)
+                .background(RoundedRectangle(cornerRadius: 20).fill(Color.theme.accent))
             }
             .padding()
-            .padding(.vertical,70)
         }
-        
-    }
 }
 
 struct WordSearchView_Previews: PreviewProvider {
     static var previews: some View {
-        WordSearchView()
-            .ignoresSafeArea()
+        WordSearchView().environmentObject(HomeViewModel())
+            
     }
 }

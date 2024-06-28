@@ -15,8 +15,10 @@ struct WordBasicView: View {
     
     var body: some View {
         Text(word)
-            .padding(.all, 10)
+            .padding(.vertical, 8)
+            .padding(.trailing, 6)
             .font(.title2)
+            .fontWeight(.semibold)
             .foregroundColor(Color.white)
             
     }

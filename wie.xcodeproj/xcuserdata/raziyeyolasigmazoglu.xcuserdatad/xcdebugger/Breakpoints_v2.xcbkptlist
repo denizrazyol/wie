@@ -23,22 +23,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A07C4644-E2CA-4A91-BE31-689DEE3880AF"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "wie/Core/Home/Views/MakeSentenceView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
-            landmarkName = "wordMoved(location:word:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "B1792FA0-42DD-40EB-B91E-595599994A77"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -50,38 +34,6 @@
             endingLineNumber = "56"
             landmarkName = "nextButtonPressed(word:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "B1792FA0-42DD-40EB-B91E-595599994A77 - 7f04f5ec3ff0b317"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "wie.HomeViewModel.nextButtonPressed(wordModel: wie.WordModel) -&gt; Swift.Optional&lt;wie.WordModel&gt;"
-                  moduleName = "wie"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/raziyeyolasigmazoglu/development/SwiftUI/wie/wie/Core/Home/ViewModels/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "52">
-               </Location>
-               <Location
-                  uuid = "B1792FA0-42DD-40EB-B91E-595599994A77 - 45ff7d81f925c339"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (wie.WordModel) -&gt; Swift.Bool in wie.HomeViewModel.nextButtonPressed(wordModel: wie.WordModel) -&gt; Swift.Optional&lt;wie.WordModel&gt;"
-                  moduleName = "wie"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/raziyeyolasigmazoglu/development/SwiftUI/wie/wie/Core/Home/ViewModels/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "48">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

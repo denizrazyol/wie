@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ElementModel:  Identifiable, Codable {
+struct ElementModel: Identifiable, Codable {
     let id: Int
     var text: String
     var position: CGPoint
@@ -15,131 +15,175 @@ struct ElementModel:  Identifiable, Codable {
 }
 
 struct MakeSentenceView: View {
-    
-    @EnvironmentObject var orientationInfo: OrientationInfo
-    @State private var elements: [ElementModel] = []
-    @State private var tray: [String] = ["Item 0", "Item 1", "Item 2", "Item 3", "Item 4"]
-    
-    @State private var activeWords: [ElementModel] = []
-    @State private var buttonFrames = [CGRect](repeating: .zero, count: 4)
-    
-    let allowedWords: [String] = ["Item 0", "Item 1", "Item 2", "Item 3", "Item 4"]
-    
-    let wordAreaFrame = CGRect(x: 0, y: 400, width: 400, height: 200)
-    
-    var body: some View {
-        ZStack(){
-            Image("makeasentence")
-                .resizable()
-                .scaledToFill()
-                .frame(minWidth: 400)
-            
-            
-            VStack(){
-                
-                WrapView(elements: $elements, onChanged: self.wordMoved, onEnded: self.wordDropped)
-                    .padding()
-                    .frame(height: 160)
-                    //.background(Color.green)
-                
-                Spacer()
-              
-             
-                ZStack(alignment: .leading) {
-                    
-                    
-                    VStack(spacing: 50){
-                        LabelledDividerView(label: "Put here")
-                        DividerView()
-                        DividerView()
-                        DividerView()
-                    }
-                    //.frame(width: wordAreaFrame.width, height: wordAreaFrame.height)
-                    //.position(x: wordAreaFrame.midX, y: wordAreaFrame.midY)
-                                
-                   
-                    WrapView2(elements: $activeWords)
-                        .padding()
-                        .frame(height: 160)
-                        //.background(Color.green)
+    @EnvironmentObject private var vm: HomeViewModel
+    @State private var showTray = false
+    @State private var wordList: [WordModel] = []
+    @State private var tray: [WordModel] = []
 
-                }
-                //.frame(height: 250)
-                //.background(Color.blue)
-                
-                Spacer()
-         
-                Button {
-                    elements.removeAll()
-                    activeWords.removeAll()
-                    initializeElements()
-                } label: {
-                        Text("Start Again")
+    var body: some View {
+        GeometryReader { geometry in
+            VStack()  {
+                if showTray {
+                    BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray)
+                } else {
+                    instructionView(geometry: geometry)
+
+                    Text("How many you can remember")
+                        .font(.headline)
+                        .padding(.vertical)
+
+                    Button(action: {
+                        withAnimation {
+                            showTray.toggle()
+                        }
+                    }) {
+                        Text("Let's See")
                             .font(.headline)
-                            .frame(width: 150, height: 35)
+                            .frame(width: 200, height: 40)
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
-                .buttonStyle(.borderedProminent )
-                
-                Button {
-                 
-                } label: {
-                        Text("Next")
-                            .font(.headline)
-                            .frame(width: 150, height: 35)
+            }
+            .onAppear {
+                loadTrayWords()
+            }
+            .padding(.horizontal)
+        }
+    }
+
+    private func loadTrayWords() {
+        wordList = Array(vm.currentWordLevel.wordlist.prefix(8))
+        tray = Array(wordList.shuffled().prefix(6))
+    }
+
+    @ViewBuilder
+    private func instructionView(geometry: GeometryProxy) -> some View {
+        VStack() {
+            Text("Look carefully at the words on the tray!")
+                .font(.headline)
+                .padding(.vertical, 20)
+            
+            TrayContentStack(tray: $tray, geometry: geometry)
+        }
+    }
+}
+
+struct TrayContentStack: View {
+    @Binding var tray: [WordModel]
+    let geometry: GeometryProxy
+
+    var body: some View {
+        let count = tray.count
+
+        ZStack() {
+            TrayView()
+            VStack(alignment: .center, spacing: 10) {
+                ForEach(0..<count, id: \.self) { index in
+                    if index % 2 == 0 && index + 1 < count {
+                        HStack(alignment: .top, spacing: 10) {
+                            CardView(word: tray[index].word, maxWidth: geometry.size.width * 0.5, status: .empty)
+                                .frame(maxWidth: .infinity)
+                                .padding(2)
+                            CardView(word: tray[index + 1].word, maxWidth: geometry.size.width * 0.5, status: .empty)
+                                .frame(maxWidth: .infinity)
+                                .padding(2)
+                        }
+                    } else if index % 2 == 0 {
+                        HStack(alignment: .top, spacing: 10) {
+                            CardView(word: tray[index].word, maxWidth: geometry.size.width * 0.5, status: .empty)
+                                .frame(maxWidth: .infinity)
+                                .padding(2)
+                        }
+                    }
                 }
-                .buttonStyle(.borderedProminent )
-                    
+            }
+            .padding()
+        }
+    }
+}
+
+struct BottomTrayView: View {
+    @Binding var showTray: Bool
+    @Binding var wordList: [WordModel]
+    @Binding var tray: [WordModel]
+    @State private var selectedWords: Set<String> = []
+    @State private var score: Int = 0
+    private let maxSelection = 6
+
+    var body: some View {
+        GeometryReader { geometry in
+            VStack {
+                Text(score > 0 ? "Score: \(score) out of 6" : "")
+                    .font(.headline)
+                    .padding(.bottom, 10)
                 
+                wordPairsStack(geometry: geometry, newShuffle: wordList)
+                  
+                    .cornerRadius(20)
+                    .shadow(radius: 5)
+                
+                if(score < 6) {
+                    Button(score == 0 ? "Check Your Answer" : "Let's Try Again") {
+                        withAnimation {
+                            let common = selectedWords.intersection(tray.map { $0.word })
+                            score = common.count
+                        }
+                    }
+                    .padding(.vertical)
+                } else {
+                    Button("Close") {
+                        withAnimation {
+                            showTray = false
+                        }
+                    }
+                    .padding(.vertical)
+                }
             }
-            .frame(height: 680)
-         
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            initializeElements()
+            .onTapGesture {
+                withAnimation {
+                    showTray = false
+                }
+            }
+            .padding()
         }
     }
-    
-    func initializeElements() {
-        let data = ["Item 8", "Item 5", "Item 2", "Item 1", "Item 4", "Item 0", "Item 6", "Item 7", "Item 3"]
-        var index = 0
-        var x = 90
-        let y = 420
-        for item in data {
-            elements.append(ElementModel(id: index, text: item, position: CGPoint(x: x, y: y), isVisible: true))
-      
-            x += 76
-            index += 1
+
+    @ViewBuilder
+    private func wordPairsStack(geometry: GeometryProxy, newShuffle: [WordModel]) -> some View {
+        VStack(alignment: .leading) {
+            ForEach(Array(wordList.enumerated()), id: \.element.id) { index, element in
+                if index % 2 == 0 {
+                    HStack(alignment: .top, spacing: 10) {
+                        cardView(word: newShuffle[index], maxWidth: geometry.size.width * 0.5 )
+                            .padding(2)
+                        if index + 1 < newShuffle.count {
+                            cardView(word: newShuffle[index + 1], maxWidth: geometry.size.width * 0.5)
+                                .padding(2)
+                        }
+                    }
+                }
+            }
         }
     }
-    
-    func wordMoved(location: CGPoint, word: String) -> DragState {
-        if wordAreaFrame.contains(location) {
-            //if activeWords.firstIndex(where: { $0.text.contains(word)}) == nil {
-              //  return .bad
-            //}
-            
-            if allowedWords.contains(word) {
-                return .good
-            } else {
-                return .bad
-            }
-        } else {
-            return .unknown
+
+    private func cardView(word: WordModel, maxWidth: CGFloat) -> some View {
+        CardView(
+            word: word.word,
+            maxWidth: maxWidth,
+            backgorundColor: selectedWords.contains(word.word) ? nil : Color.theme.accent,
+            status: .empty
+        )
+        .frame(maxWidth: .infinity)
+        .onTapGesture {
+            toggleSelection(of: word.word)
         }
     }
-    
-    @State private var wordId: Int = 0
-    func wordDropped(location: CGPoint, trayIndex: Int, word: String) {
-        if wordAreaFrame.contains(location) {
-            if let match = activeWords.firstIndex(where: {$0.text.contains(word)}){
-                activeWords[match].isVisible = true
-            }
-            
-            elements.remove(at: trayIndex)
-            self.wordId = self.wordId + 1
-            activeWords.append(ElementModel(id: wordId, text: word, position: CGPoint(x: 90, y: 420), isVisible: true))
-            //elements.append("")
+
+    private func toggleSelection(of word: String) {
+        if selectedWords.contains(word) {
+            selectedWords.remove(word)
+        } else if selectedWords.count < maxSelection {
+            selectedWords.insert(word)
         }
     }
 }
@@ -147,7 +191,7 @@ struct MakeSentenceView: View {
 struct MakeSentenceView_Previews: PreviewProvider {
     static var previews: some View {
         MakeSentenceView()
+            .environmentObject(HomeViewModel())
             .ignoresSafeArea()
-            .environmentObject(OrientationInfo())
     }
 }

@@ -19,8 +19,9 @@ struct wieApp: App {
             NavigationView {
                 OnboardView()
                     .environmentObject(vm)
-              
+                
             }
+            
         }
     }
 }
