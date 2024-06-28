@@ -108,43 +108,83 @@ struct BottomTrayView: View {
     @Binding var tray: [WordModel]
     @State private var selectedWords: Set<String> = []
     @State private var score: Int = 0
+    @State private var showCongratulations = false
     private let maxSelection = 6
 
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                Text(score > 0 ? "Score: \(score) out of 6" : "")
-                    .font(.headline)
-                    .padding(.bottom, 10)
-                
-                wordPairsStack(geometry: geometry, newShuffle: wordList)
-                  
-                    .cornerRadius(20)
-                    .shadow(radius: 5)
-                
-                if(score < 6) {
-                    Button(score == 0 ? "Check Your Answer" : "Let's Try Again") {
-                        withAnimation {
-                            let common = selectedWords.intersection(tray.map { $0.word })
-                            score = common.count
+            ZStack {
+                VStack {
+                    Text(score > 0 ? "Score: \(score) out of 6" : "")
+                        .font(.headline)
+                        .padding(.bottom, 10)
+                    
+                    wordPairsStack(geometry: geometry, newShuffle: wordList)
+                      
+                        .cornerRadius(20)
+                        .shadow(radius: 5)
+                    
+                    if(score < 6) {
+                        Button(score == 0 ? "Check Your Answer" : "Let's Try Again") {
+                            withAnimation {
+                                let common = selectedWords.intersection(tray.map { $0.word })
+                                score = common.count
+                                if score == 6 {
+                                    showCongratulations = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                        showCongratulations = false
+                                    }
+                                }
+                            }
                         }
-                    }
-                    .padding(.vertical)
-                } else {
-                    Button("Close") {
-                        withAnimation {
-                            showTray = false
+                        .padding(.vertical)
+                    } else {
+                        Button("Close") {
+                            withAnimation {
+                                showTray = false
+                            }
                         }
+                        .padding(.vertical)
                     }
-                    .padding(.vertical)
+                }
+                .onTapGesture {
+                    withAnimation {
+                        showTray = false
+                    }
+                }
+                .padding()
+                
+                if showCongratulations {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            
+                            Image(systemName: "star.fill")
+                                   .resizable()
+                                   .foregroundColor(Color.yellow).opacity(0.4)
+                                   .scaledToFill()
+                                   .frame(width: 200, height: 200)
+                        
+                                   .scaleEffect(showCongratulations ? 2 : 0.8)
+                                   .onAppear {
+                                       withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                                           showCongratulations = true
+                                       }
+                                       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                           withAnimation {
+                                               showCongratulations = false
+                                              
+                                           }
+                                       }
+                                   }
+                            
+                            Spacer()
+                        }
+                        Spacer()
+                    }
                 }
             }
-            .onTapGesture {
-                withAnimation {
-                    showTray = false
-                }
-            }
-            .padding()
         }
     }
 
