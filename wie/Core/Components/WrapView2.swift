@@ -9,10 +9,11 @@ import SwiftUI
 
 struct WrapView2: View {
     
-    @Binding var elements: [ElementModel]
+    var aimWords: [String] = []
     
-    var onChanged: ((CGPoint, String) -> DragState)?
-    var onEnded: ((CGPoint, Int, String) -> Void)?
+    init(wordModelList: [WordModel]) {
+        self.aimWords = wordModelList.map { $0.word }
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -25,10 +26,9 @@ struct WrapView2: View {
             var height = CGFloat.zero
 
             return ZStack(alignment: .topLeading) {
-                ForEach(Array(elements.enumerated()), id: \.element.id) { index, platform in
-                    if platform.isVisible {
-                        WordView(word: platform.text, index: index)
-                            .padding([.horizontal, .vertical], 4)
+                ForEach(Array(aimWords.enumerated()), id: \.offset) { index, platform in
+                    CardView(word: platform, maxWidth: g.size.width * 0.44, status: Status.empty)
+                            .padding([.horizontal, .vertical], 10)
                             .alignmentGuide(.leading, computeValue: { d in
                                 if (abs(width - d.width) > g.size.width)
                                 {
@@ -36,7 +36,7 @@ struct WrapView2: View {
                                     height -= d.height
                                 }
                                 let result = width
-                                if platform.text == self.elements.last?.text {
+                                if platform == self.aimWords.last {
                                     width = 0 //last item
                                 } else {
                                     width -= d.width
@@ -45,12 +45,11 @@ struct WrapView2: View {
                             })
                             .alignmentGuide(.top, computeValue: {d in
                                 let result = height
-                                if platform.text == self.elements.last?.text {
+                                if platform == self.aimWords.last  {
                                     height = 0 // last item
                                 }
                                 return result
                             })
-                    }
                     
                 }
             }
@@ -59,6 +58,6 @@ struct WrapView2: View {
 
 struct WrapView2_Previews: PreviewProvider {
     static var previews: some View {
-        WrapView2(elements: .constant( [ElementModel(id: 1, text: "item 1", position: CGPoint(x: 10, y: 20), isVisible: true), ElementModel(id: 2, text: "item 2", position: CGPoint(x: 30, y: 40), isVisible: true)]))
+        WrapView2(wordModelList: [WordModel(fromString: "Word")]).background(Color.red)
     }
 }

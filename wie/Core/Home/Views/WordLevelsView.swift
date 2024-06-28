@@ -20,12 +20,15 @@ struct WordLevelsView: View {
                         vm.showNextSet(wordLevel: level)
                     } label: {
                         listRowView(name: level.name)
+                          
                     }
                     .listRowBackground(Color.clear)
+               
                 }
             }
             .listStyle(PlainListStyle())
             .frame(maxHeight: 200)
+            .padding(.trailing,25)
     }
 }
 
@@ -43,6 +46,7 @@ extension WordLevelsView {
         VStack(alignment: .leading, spacing: 0) {
             Text(name)
                 .font(.headline)
+                .foregroundColor(Color.theme.accent)
         }
     }
     

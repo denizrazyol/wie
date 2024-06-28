@@ -24,7 +24,7 @@ struct LetterModel: Identifiable, Codable {
 struct MakeAWordWithLetters: View {
     
     @StateObject private var vm = HomeViewModel()
-    @Binding var word: String
+    var word: String
     
     @State private var currentWord = ""
     @State private var stringLetters: [String] = []
@@ -131,7 +131,7 @@ struct MakeAWordWithLetters: View {
                         Image(systemName: "play.fill")
                             .resizable()
                             .frame(width: 40, height: 40)
-                            .foregroundColor(Color.theme.accent)
+                            .foregroundColor(Color.theme.iconColor)
                     }
                     .position(x: wordAreaFrame.minX + 40, y: wordAreaFrame.minY - 70)
                     
@@ -237,6 +237,6 @@ struct MakeAWordWithLetters: View {
 
 struct MakeAWordWithLetters_Previews: PreviewProvider {
     static var previews: some View {
-        MakeAWordWithLetters(word: .constant("to"))
+        MakeAWordWithLetters(word: "to")
     }
 }

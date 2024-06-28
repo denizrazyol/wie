@@ -21,7 +21,7 @@ struct LetterView: View {
         Text(letter)
             .font(.largeTitle)
             .padding()
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.theme.accent).frame(width: 55, height: 55))
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.theme.iconColor).frame(width: 55, height: 55))
             .foregroundColor(.white)
             .offset(dragAmount)
             .zIndex(dragAmount == .zero ? 0 : 1)

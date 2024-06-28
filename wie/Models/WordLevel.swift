@@ -11,7 +11,7 @@ class WordLevel: Identifiable, Equatable {
     
     let id = UUID().uuidString
     let name: String
-    let wordlist: [WordModel]
+    var wordlist: [WordModel]
     
     init(name: String, wordlist: [WordModel]) {
         self.name = name

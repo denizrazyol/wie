@@ -28,13 +28,13 @@ struct WordView: View {
     var body: some View {
         Text(word)
             .padding(.all, 10)
-            .font(.headline)
-            .background(RoundedRectangle(cornerRadius: 20).fill(Color.theme.accent))
+            .font(.title2)
+            .background(RoundedRectangle(cornerRadius: 10).fill(Color.theme.iconColor))
             .foregroundColor(.white)
             .offset(dragAmount)
             .zIndex(dragAmount == .zero ? 0 : 1)
-            .shadow(color: dragColor, radius: dragAmount == .zero ? 0 : 10)
-            .shadow(color: dragColor, radius: dragAmount == .zero ? 0 : 10)
+            //.shadow(color: dragColor, radius: dragAmount == .zero ? 0 : 10)
+            //.shadow(color: dragColor, radius: dragAmount == .zero ? 0 : 10)
             .gesture(
                 DragGesture(coordinateSpace: .global)
                     .onChanged {

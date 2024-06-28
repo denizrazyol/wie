@@ -9,76 +9,38 @@ import SwiftUI
 
 struct CommonExceptionWordsView: View {
     
-    @StateObject private var vm = HomeViewModel()
+    @EnvironmentObject private var vm: HomeViewModel
     @State private var selection: String?
     @State private var selectedWord: String = ""
     let maxWidthForIpad: CGFloat = 700
-
+    
     var body: some View {
-        VStack(spacing: 0) {
-            header
-                .padding()
-                //.frame(maxWidth: maxWidthForIpad)
-            List {
-                ForEach(vm.currentWordLevel.wordlist) { word in
-                    Button(action: {
-                        self.selection = "destination"
-                        self.selectedWord =  word.word
-                    }) {
-                        WordFlashCardView(word: word)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.theme.background)
+        
+        List(vm.currentWordLevel.wordlist.indices, id: \.self) { index in
+            let word = vm.currentWordLevel.wordlist[index]
+            ZStack {
+                CustomNavLinkView(destination: MakeAWordWithLetters(word: word.word, onNext: {
+                    selectedWord = vm.nextButtonPressed(word: word.word)!
+                })
+                    .customNavigationTitle("Place The Letters")
+                ) { EmptyView() }
+                    .opacity(0.0)
+                WordFlashCardView(word: word)
             }
-            .listStyle(PlainListStyle())
-            .background(NavigationLink(
-                destination: MakeAWordWithLetters(word: $selectedWord, onNext: {
-                    selectedWord = vm.nextButtonPressed(word: selectedWord)!
-                }),
-                tag: "destination",
-                selection: $selection)
-                        { EmptyView() })
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+            .padding(.top, index == 0 ? 10 : 0) 
         }
-          
+        .listStyle(PlainListStyle())
+        
     }
 }
 
 struct CommonExceptionWordsView_Previews: PreviewProvider {
     static var previews: some View {
-        CommonExceptionWordsView()
+        CommonExceptionWordsView().environmentObject(HomeViewModel())
     }
 }
 
 
-extension CommonExceptionWordsView {
-    private var header: some View {
-        VStack {
-            Button(action: vm.toogleWordsList) {
-                Text(vm.currentWordLevel.name)
-                    .font(.title2)
-                    .fontWeight(.black)
-                    .foregroundColor(.primary)
-                    .frame(height: 55)
-                    .frame(maxWidth: .infinity)
-                    .overlay(alignment: .leading) {
-                        Image(systemName: "arrow.down")
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .padding()
-                            .rotationEffect(Angle(degrees: vm.showWordsList ? 180 : 0))
-                    }
-            }
-                
-            if vm.showWordsList {
-                WordLevelsView().environmentObject(vm)
-            }
-         
-        }
-        .background(.thickMaterial)
-        .cornerRadius(20)
-        //.shadow(color: Color.black.opacity(0.3), radius: 20, x: 0, y: 15)
-        
-    }
-}
+

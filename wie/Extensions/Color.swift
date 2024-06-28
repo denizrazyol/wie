@@ -22,6 +22,8 @@ struct ColorTheme {
     let yellow = Color("YellowColor")
     let secondaryText = Color("SecondaryTextColor")
     let iconColor = Color("IconColor")
+    let fillingColor = Color("FillingColor")
+    let darkAccent = Color("DarkAccentColor")
     
 }
 

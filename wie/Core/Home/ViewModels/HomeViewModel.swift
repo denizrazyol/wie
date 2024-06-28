@@ -20,6 +20,7 @@ class HomeViewModel: ObservableObject {
     @Published var currentWordLevel: WordLevel
     @Published var currentWordModel: WordModel
     @Published var showWordsList : Bool = false
+    @Published var foundWords: Set<Int> = []
     
     @Published var player: AVAudioPlayer?
     
@@ -27,22 +28,35 @@ class HomeViewModel: ObservableObject {
 
         self.searchText =  "Search by name"
         
-        self.wordLevels = WordModel.wordLevels
-        
-        self.currentWordLevel = WordModel.wordLevels.first!
-        self.currentWordModel = (WordModel.wordLevels.first?.wordlist.first)!
+        if let firstWordLevel = WordModel.wordLevels.first {
+            
+            self.wordLevels = WordModel.wordLevels
+            self.currentWordLevel = firstWordLevel
+            
+            if let firstWordModel = firstWordLevel.wordlist.first {
+                self.currentWordModel = firstWordModel
+            }
+            else {
+                self.currentWordModel = WordModel(fromString: "Default")
+            }
+        } else {
+            
+            self.wordLevels = []
+            self.currentWordLevel = WordLevel(name: "Year 1", wordlist: [])
+            self.currentWordModel =  WordModel(fromString: "Deafult")
+        }
     }
     
     func toogleWordsList() {
         withAnimation(.easeInOut) {
-            showWordsList = !showWordsList
+            showWordsList.toggle()
         }
     }
     
     func showNextSet(wordLevel: WordLevel) {
         withAnimation(.easeInOut) {
             currentWordLevel = wordLevel
-            currentWordModel =  wordLevel.wordlist.first!
+            currentWordModel = wordLevel.wordlist.first ?? WordModel(fromString: "Default")
             showWordsList = false
         }
     }
@@ -64,6 +78,18 @@ class HomeViewModel: ObservableObject {
         
         return currentWordLevel.wordlist[nextIndex].word
         
+    }
+    
+    func markWordAsFound(_ id: Int) {
+        foundWords.insert(id)
+        if foundWords.count >= 6 {
+            resetGame()
+        }
+    }
+    
+    func resetGame(){
+        foundWords.removeAll()
+        currentWordLevel.wordlist = currentWordLevel.wordlist.shuffled()
     }
     
     func playSound(soundName: String) {

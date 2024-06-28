@@ -9,37 +9,30 @@ import SwiftUI
 
 struct OnboardView: View {
     
+    
     @EnvironmentObject private var vm: HomeViewModel
     @State private var isFilled = false
     let menuItems = Menu.options
-    @State private var selection: String?
-    @State private var showDetailView: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
-            SearchBarView(searchText: $vm.searchText)
+            header
+                .padding()
+                //.frame(maxWidth: maxWidthForIpad)
             menu
         }
-        .background(
-            NavigationLink(
-                destination: destinationView(),
-                isActive: $showDetailView,
-                label: { EmptyView() }))
    
     }
 
     private var menu: some View {
         List (menuItems) { item in
-     
-                Button(action: {
-                    self.selection = "\(item.id)"
-                    showDetailView.toggle()
-                }) {
-                    menuItemView(item)
-                }
-                .buttonStyle(PlainButtonStyle())
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.theme.background)
+            ZStack{
+                CustomNavLinkView(destination: destinationView(selectedId: item.id)) {EmptyView()}
+                    .opacity(0.0)
+                menuItemView(item)
+            }
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.theme.background)
             }
         .listStyle(PlainListStyle())
     }
@@ -82,22 +75,22 @@ struct OnboardView: View {
             }
     }
 
-    private func destinationView() -> some View {
-        switch selection {
-        case "1": // Assuming IDs are integers
-            return AnyView(CommonExceptionWordsView())
-        case "2":
+    private func destinationView(selectedId: Int) -> some View {
+        switch selectedId {
+        case 1:
+            return AnyView(CommonExceptionWordsView()
+                .customNavigationTitle("Common Exception Words")
+                .environmentObject(vm))
+             
+        case 2:
             return AnyView(MakeSentenceView()
-                .environmentObject(OrientationInfo())
-                .ignoresSafeArea()
-            )
-        case "3":
-            return AnyView(DescribeView()
-                .ignoresSafeArea()
-            )
-        case "4":
+                .customNavigationTitle("What's on the Tray")
+                .environmentObject(vm)
+                )
+        case 3:
             return AnyView(WordSearchView()
-                .ignoresSafeArea()
+                .customNavigationTitle("Word Search")
+                .environmentObject(vm)
             )
         default:
             return AnyView(Text("Default View"))
@@ -108,5 +101,37 @@ struct OnboardView: View {
 struct Previews_OnboardView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardView().environmentObject(HomeViewModel())
+    }
+}
+
+
+extension OnboardView {
+    private var header: some View {
+        VStack {
+            Button(action: vm.toogleWordsList) {
+                Text(vm.currentWordLevel.name)
+                    .font(.title2)
+                    .fontWeight(.black)
+                    .foregroundColor(Color.theme.accent)
+                    .frame(height: 55)
+                    .frame(maxWidth: .infinity)
+                    .overlay(alignment: .leading) {
+                        Image(systemName: "arrow.down")
+                            .font(.headline)
+                            .foregroundColor(Color.theme.accent)
+                            .padding()
+                            .rotationEffect(Angle(degrees: vm.showWordsList ? 180 : 0))
+                    }
+            }
+                
+            if vm.showWordsList {
+                WordLevelsView().environmentObject(vm)
+            }
+         
+        }
+        .background(Color.theme.fillingColor)
+        .cornerRadius(20)
+        .shadow(color: Color.theme.fillingColor.opacity(0.5), radius: 20, x: 0, y: 15)
+        
     }
 }
