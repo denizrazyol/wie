@@ -131,19 +131,18 @@ struct LetterCell: View {
 }
 
 struct GridView: View {
-    
+   
     var aimWords: [String] = []
-    var onCompletion: () -> Void
     
     @State private var isDragging = false
     @State private var game: WordSearchGame
     
-    init(wordModelList: [WordModel], onCompletion: @escaping () -> Void) {
-            self.aimWords = wordModelList.map { $0.word }
-            _game = State(initialValue: WordSearchGame(aimWords: aimWords))
-            self.onCompletion = onCompletion
+    init(wordModelList: [WordModel]) {
+           
+           self.aimWords = wordModelList.map { $0.word }
+           _game = State(initialValue: WordSearchGame(aimWords: aimWords))
     }
-
+    
     let columns: Int = 9
     
     var body: some View {
@@ -175,7 +174,7 @@ struct GridView: View {
                                 game.matchedWords.append(word)
                                 game.verifiedIndices = game.selectedIndices
                                 game.selectedLetters.removeAll()
-                                checkCompletion()
+                                
                             }
                             else{
                                 game.selectedIndices.removeAll()
@@ -197,18 +196,11 @@ struct GridView: View {
         }
         .padding(8)
     }
-    
-    func checkCompletion() {
-            if game.matchedWords.count == game.aimWords.count {
-                onCompletion() 
-            }
-        }
 }
 
 struct GridView_Previews: PreviewProvider {
     static var previews: some View {
-        GridView(wordModelList: [WordModel(fromString: "Word")]) {
-            
-        }
+        GridView(wordModelList: [WordModel(fromString: "Word")])
     }
 }
+
