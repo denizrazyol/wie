@@ -29,7 +29,7 @@
 		917612D42AEA864B006D3718 /* wie.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 917612D22AEA864B006D3718 /* wie.xcdatamodeld */; };
 		917612DB2AEA87E2006D3718 /* OnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612DA2AEA87E2006D3718 /* OnboardView.swift */; };
 		917612E02AEAA630006D3718 /* CommonExceptionWordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612DF2AEAA630006D3718 /* CommonExceptionWordsView.swift */; };
-		917612E22AEAA646006D3718 /* MakeSentenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612E12AEAA646006D3718 /* MakeSentenceView.swift */; };
+		917612E22AEAA646006D3718 /* WhatsOnTheTrayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612E12AEAA646006D3718 /* WhatsOnTheTrayView.swift */; };
 		917612E62AEAA67A006D3718 /* WordSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612E52AEAA67A006D3718 /* WordSearchView.swift */; };
 		917612E82AEAA693006D3718 /* HighFrequencyWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612E72AEAA693006D3718 /* HighFrequencyWords.swift */; };
 		917612EA2AEAA6DF006D3718 /* ThinkWriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612E92AEAA6DF006D3718 /* ThinkWriteView.swift */; };
@@ -79,7 +79,7 @@
 		917612D32AEA864B006D3718 /* wie.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = wie.xcdatamodel; sourceTree = "<group>"; };
 		917612DA2AEA87E2006D3718 /* OnboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardView.swift; sourceTree = "<group>"; };
 		917612DF2AEAA630006D3718 /* CommonExceptionWordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonExceptionWordsView.swift; sourceTree = "<group>"; };
-		917612E12AEAA646006D3718 /* MakeSentenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeSentenceView.swift; sourceTree = "<group>"; };
+		917612E12AEAA646006D3718 /* WhatsOnTheTrayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsOnTheTrayView.swift; sourceTree = "<group>"; };
 		917612E52AEAA67A006D3718 /* WordSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordSearchView.swift; sourceTree = "<group>"; };
 		917612E72AEAA693006D3718 /* HighFrequencyWords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighFrequencyWords.swift; sourceTree = "<group>"; };
 		917612E92AEAA6DF006D3718 /* ThinkWriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinkWriteView.swift; sourceTree = "<group>"; };
@@ -121,7 +121,7 @@
 			children = (
 				917612DA2AEA87E2006D3718 /* OnboardView.swift */,
 				917612DF2AEAA630006D3718 /* CommonExceptionWordsView.swift */,
-				917612E12AEAA646006D3718 /* MakeSentenceView.swift */,
+				917612E12AEAA646006D3718 /* WhatsOnTheTrayView.swift */,
 				917612E52AEAA67A006D3718 /* WordSearchView.swift */,
 				917612E72AEAA693006D3718 /* HighFrequencyWords.swift */,
 				917612E92AEAA6DF006D3718 /* ThinkWriteView.swift */,
@@ -368,7 +368,7 @@
 				9183943B2AEC1D6700ABD18D /* Color.swift in Sources */,
 				917612F22AEBD809006D3718 /* ProgressCircleView.swift in Sources */,
 				917612C82AEA864A006D3718 /* wieApp.swift in Sources */,
-				917612E22AEAA646006D3718 /* MakeSentenceView.swift in Sources */,
+				917612E22AEAA646006D3718 /* WhatsOnTheTrayView.swift in Sources */,
 				917612E02AEAA630006D3718 /* CommonExceptionWordsView.swift in Sources */,
 				913F7E8F2AFA70C700E064E7 /* HomeViewModel.swift in Sources */,
 			);

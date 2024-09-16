@@ -83,7 +83,7 @@ struct OnboardView: View {
                 .environmentObject(vm))
              
         case 2:
-            return AnyView(MakeSentenceView()
+            return AnyView(WhatsOnTheTrayView()
                 .customNavigationTitle("What's on the Tray")
                 .environmentObject(vm)
                 )

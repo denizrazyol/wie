@@ -207,6 +207,8 @@ struct GridView: View {
 
 struct GridView_Previews: PreviewProvider {
     static var previews: some View {
-        GridView(wordModelList: [WordModel(fromString: "Word")])
+        GridView(wordModelList: [WordModel(fromString: "Word")]) {
+            
+        }
     }
 }

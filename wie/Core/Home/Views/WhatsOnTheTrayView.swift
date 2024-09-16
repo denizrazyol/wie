@@ -24,7 +24,7 @@ struct WhatsOnTheTrayView: View {
         GeometryReader { geometry in
             VStack()  {
                 if showTray {
-                    BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray)
+                    BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray, resetGameAction: resetGame)
                 } else {
                     instructionView(geometry: geometry)
 
@@ -54,6 +54,10 @@ struct WhatsOnTheTrayView: View {
     private func loadTrayWords() {
         wordList = Array(vm.currentWordLevel.wordlist.prefix(8))
         tray = Array(wordList.shuffled().prefix(6))
+    }
+    
+    private func resetGame() {
+        loadTrayWords()
     }
 
     @ViewBuilder
@@ -106,83 +110,89 @@ struct BottomTrayView: View {
     @Binding var showTray: Bool
     @Binding var wordList: [WordModel]
     @Binding var tray: [WordModel]
+    
+    var resetGameAction: () -> Void
+    
     @State private var selectedWords: Set<String> = []
     @State private var score: Int = 0
     @State private var showCongratulations = false
+    @State private var hasCheckedAnswer = false
     private let maxSelection = 6
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                VStack {
-                    Text(score > 0 ? "Score: \(score) out of 6" : "")
-                        .font(.headline)
-                        .padding(.bottom, 10)
-                    
-                    wordPairsStack(geometry: geometry, newShuffle: wordList)
-                      
-                        .cornerRadius(20)
-                        .shadow(radius: 5)
-                    
-                    if(score < 6) {
-                        Button(score == 0 ? "Check Your Answer" : "Let's Try Again") {
-                            withAnimation {
-                                let common = selectedWords.intersection(tray.map { $0.word })
-                                score = common.count
-                                if score == 6 {
-                                    showCongratulations = true
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                        showCongratulations = false
+                if showCongratulations {
+                    VStack {
+                        Text("Great Job! 🎉 You've found all the words!")
+                            .font(.largeTitle)
+                            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                            .padding()
+                            .scaleEffect(showCongratulations ? 1.2 : 1.0)
+                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCongratulations)
+                        
+                 
+                    }
+                    .transition(.scale)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            showCongratulations = false
+                        }
+                    }
+                } else {
+                    VStack {
+                        Text(score > 0 ? "Score: \(score) out of 6" : "")
+                            .font(.headline)
+                            .padding(.bottom, 10)
+                        
+                        wordPairsStack(geometry: geometry, newShuffle: wordList)
+                            .cornerRadius(20)
+                            .shadow(radius: 5)
+                            .disabled(showCongratulations)
+                        
+                        if !showCongratulations {
+                            if(score < 6) {
+                                Button(!hasCheckedAnswer ? "Check Your Answer" : "Let's Try Again") {
+                                    if !hasCheckedAnswer {
+                                        withAnimation {
+                                            let common = selectedWords.intersection(tray.map { $0.word })
+                                            score = common.count
+                                            hasCheckedAnswer = true
+                                            if score == 6 {
+                                                showCongratulations = true
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                                    withAnimation {
+                                                        showCongratulations = false
+                                                        selectedWords = []
+                                                        score = 0
+                                                        hasCheckedAnswer = false
+                                                        resetGameAction()
+                                                        showTray = false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        withAnimation {
+                                            selectedWords = []
+                                            score = 0
+                                            hasCheckedAnswer = false
+                                            resetGameAction()
+                                        }
                                     }
                                 }
+                                .padding(.vertical)
                             }
                         }
-                        .padding(.vertical)
-                    } else {
-                        Button("Close") {
+                    }
+                    .onTapGesture {
+                        if !showCongratulations {
                             withAnimation {
                                 showTray = false
                             }
                         }
-                        .padding(.vertical)
                     }
-                }
-                .onTapGesture {
-                    withAnimation {
-                        showTray = false
-                    }
-                }
-                .padding()
-                
-                if showCongratulations {
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            
-                            Image(systemName: "star.fill")
-                                   .resizable()
-                                   .foregroundColor(Color.yellow).opacity(0.4)
-                                   .scaledToFill()
-                                   .frame(width: 200, height: 200)
-                        
-                                   .scaleEffect(showCongratulations ? 2 : 0.8)
-                                   .onAppear {
-                                       withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                                           showCongratulations = true
-                                       }
-                                       DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                           withAnimation {
-                                               showCongratulations = false
-                                              
-                                           }
-                                       }
-                                   }
-                            
-                            Spacer()
-                        }
-                        Spacer()
-                    }
+                    .padding()
                 }
             }
         }
@@ -215,7 +225,9 @@ struct BottomTrayView: View {
         )
         .frame(maxWidth: .infinity)
         .onTapGesture {
-            toggleSelection(of: word.word)
+            if !showCongratulations {
+                toggleSelection(of: word.word)
+            }
         }
     }
 
