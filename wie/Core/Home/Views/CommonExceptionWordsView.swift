@@ -10,28 +10,34 @@ import SwiftUI
 struct CommonExceptionWordsView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
-    @State private var selection: String?
-    @State private var selectedWord: String = ""
-    let maxWidthForIpad: CGFloat = 700
-    
+    let columns = [GridItem(.adaptive(minimum: 150), spacing: 20)]
+       
     var body: some View {
         
-        List(vm.currentWordLevel.wordlist.indices, id: \.self) { index in
-            let word = vm.currentWordLevel.wordlist[index]
-            ZStack {
-                CustomNavLinkView(destination: MakeAWordWithLetters(word: word.word, onNext: {
-                    selectedWord = vm.nextButtonPressed(word: word.word)!
-                })
-                    .customNavigationTitle("Place The Letters")
-                ) { EmptyView() }
-                    .opacity(0.0)
-                WordFlashCardView(word: word)
+        VStack(spacing: 0) {
+            Text("Tap on a word to start!")
+                            .font(.custom("ChalkboardSE-Regular", size: 24))
+                            .padding()
+           
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 20) {
+                    ForEach(vm.currentWordLevel.wordlist.indices, id: \.self) { index in
+                        let word = vm.currentWordLevel.wordlist[index]
+                        
+                        CustomNavLinkView(
+                            destination: MakeAWordWithLetters(wordList: vm.currentWordLevel.wordlist, currentIndex: index)
+                                
+                                .customNavigationTitle("Place The Letters")
+                        ) {
+                            WordFlashCardView(word: word)
+                               
+                        }
+                    }
+                }
+                .padding()
             }
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-            .padding(.top, index == 0 ? 10 : 0) 
+           
         }
-        .listStyle(PlainListStyle())
         
     }
 }

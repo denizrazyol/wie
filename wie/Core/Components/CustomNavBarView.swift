@@ -34,7 +34,12 @@ struct CustomNavBarView: View {
         .foregroundColor(.white)
         .font(.headline)
         .background(
-            Color.theme.yellow.ignoresSafeArea(edges: .top)
+            LinearGradient(
+                gradient: Gradient(colors: [Color.theme.yellow, Color.theme.accent]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .ignoresSafeArea(edges: .top)
         )
     }
 }
@@ -52,20 +57,31 @@ extension CustomNavBarView {
     
     private var backButton: some View {
         Button(action: {
-            presentationMode.wrappedValue.dismiss()
-        },label: {
-            Image(systemName: "chevron.left")
-        })
+                presentationMode.wrappedValue.dismiss()
+            }, label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 24))
+                    .padding()
+                    .background(Color.theme.iconColor)
+                    .foregroundColor(.white)
+                    .clipShape(Circle())
+            })
     }
     
     private var titleSection: some View {
-        VStack(spacing: 4) {
-            Text(title)
-                .font(.title2)
-                .fontWeight(.semibold)
-            if let subTitle = subTitle {
-                Text(subTitle)
+        HStack {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.white)
+                VStack(spacing: 4) {
+                    Text(title)
+                        .font(.custom("ChalkboardSE-Regular", size: 28))
+                        //.font(.system(size: 28, weight: .bold))
+                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    if let subTitle = subTitle {
+                        Text(subTitle)
+                            .font(.system(size: 18))
+                    }
+                }
             }
-        }
     }
 }

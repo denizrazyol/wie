@@ -12,16 +12,14 @@ struct WordFlashCardView: View {
     let word: WordModel
     
     var body: some View {
-       Rectangle()
-            .fill(Color.white)
-            .frame(height: 170)
-            .cornerRadius(20)
-            .shadow(color: Color.gray.opacity(0.4), radius: 20)
-            .overlay(
-                    Text(word.word)
-                        .font(.title)
-                        .foregroundColor(Color.black)
-            )
+        
+        Text(word.word)
+                    .font(.custom("ChalkboardSE-Bold", size: 36))
+                    .foregroundColor(Color.black)
+                    .frame(maxWidth: .infinity, minHeight: 150)
+                    .background(Color.white)
+                    .cornerRadius(20)
+                    .shadow(color: Color.theme.secondaryText.opacity(0.5), radius: 5, x: 0, y: 5)
           
     }
 }
