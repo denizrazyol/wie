@@ -11,6 +11,8 @@ struct CustomNavBarView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    @ObservedObject var userProgress = UserProgress.shared
+    
     let showBackButton: Bool
     let title: String
     let subTitle: String?
@@ -19,15 +21,13 @@ struct CustomNavBarView: View {
         HStack{
             if showBackButton {
                 backButton
+            } else {
+                backButton.hidden()
             }
-            
             Spacer()
             titleSection
             Spacer()
-            if showBackButton {
-                backButton
-                    .opacity(0)
-            }
+            scoreSection
         }
         .padding()
         .accentColor(.white)
@@ -55,33 +55,48 @@ struct CustomNavBarView_Previews: PreviewProvider {
 
 extension CustomNavBarView {
     
+    
+    
     private var backButton: some View {
         Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }, label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 24))
-                    .padding()
-                    .background(Color.theme.iconColor)
-                    .foregroundColor(.white)
-                    .clipShape(Circle())
-            })
+            presentationMode.wrappedValue.dismiss()
+        }, label: {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 24))
+                .padding()
+                .background(Color.theme.iconColor)
+                .foregroundColor(.white)
+                .clipShape(Circle())
+        })
     }
     
     private var titleSection: some View {
-        HStack {
-                Image(systemName: "star.fill")
-                    .foregroundColor(.white)
-                VStack(spacing: 4) {
-                    Text(title)
-                        .font(.custom("ChalkboardSE-Regular", size: 28))
-                        //.font(.system(size: 28, weight: .bold))
-                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                    if let subTitle = subTitle {
-                        Text(subTitle)
-                            .font(.system(size: 18))
-                    }
+    
+            VStack(spacing: 4) {
+                Text(title)
+                    .font(.custom("ChalkboardSE-Regular", size: 28))
+                //.font(.system(size: 28, weight: .bold))
+                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                if let subTitle = subTitle {
+                    Text(subTitle)
+                        .font(.system(size: 18))
                 }
             }
+        
+    }
+    
+    private var scoreSection: some View {
+        HStack(spacing: 10) {
+            //Image(systemName: "star.fill")
+                //.foregroundColor(.white)
+            //Text("\(userProgress.totalStars)")
+                //.foregroundColor(.white)
+                //.font(.headline)
+            Image(systemName: "crown.fill")
+                .foregroundColor(.white)
+            Text("\(userProgress.totalStars)")
+                .foregroundColor(.white)
+                .font(.headline)
+        }
     }
 }

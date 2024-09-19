@@ -12,6 +12,14 @@ extension Color {
     
     static let theme = ColorTheme()
     static let launch = LaunchTheme()
+    
+    static var random: Color {
+            return Color(
+                red: .random(in: 0...1),
+                green: .random(in: 0...1),
+                blue: .random(in: 0...1)
+            )
+        }
 }
 
 
