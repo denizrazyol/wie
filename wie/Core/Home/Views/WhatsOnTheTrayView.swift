@@ -19,7 +19,9 @@ struct WhatsOnTheTrayView: View {
     @State private var showTray = false
     @State private var wordList: [WordModel] = []
     @State private var tray: [WordModel] = []
-
+    
+    @ObservedObject var userProgress = UserProgress.shared
+    
     var body: some View {
         GeometryReader { geometry in
             VStack()  {
@@ -27,11 +29,11 @@ struct WhatsOnTheTrayView: View {
                     BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray, resetGameAction: resetGame)
                 } else {
                     instructionView(geometry: geometry)
-
+                    
                     Text("How many you can remember")
                         .font(.headline)
                         .padding(.vertical)
-
+                    
                     Button(action: {
                         withAnimation {
                             showTray.toggle()
@@ -50,16 +52,17 @@ struct WhatsOnTheTrayView: View {
             .padding(.horizontal)
         }
     }
-
+    
     private func loadTrayWords() {
-        wordList = Array(vm.currentWordLevel.wordlist.prefix(8))
+        let shuffledWordList = vm.currentWordLevel.wordlist.shuffled()
+        wordList = Array(shuffledWordList.prefix(8))
         tray = Array(wordList.shuffled().prefix(6))
     }
     
     private func resetGame() {
         loadTrayWords()
     }
-
+    
     @ViewBuilder
     private func instructionView(geometry: GeometryProxy) -> some View {
         VStack() {
@@ -75,10 +78,10 @@ struct WhatsOnTheTrayView: View {
 struct TrayContentStack: View {
     @Binding var tray: [WordModel]
     let geometry: GeometryProxy
-
+    
     var body: some View {
         let count = tray.count
-
+        
         ZStack() {
             TrayView()
             VStack(alignment: .center, spacing: 10) {
@@ -117,8 +120,11 @@ struct BottomTrayView: View {
     @State private var score: Int = 0
     @State private var showCongratulations = false
     @State private var hasCheckedAnswer = false
+    @State private var hasAwardedReward = false
     private let maxSelection = 6
-
+    
+    @ObservedObject var userProgress = UserProgress.shared
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -131,12 +137,25 @@ struct BottomTrayView: View {
                             .scaleEffect(showCongratulations ? 1.2 : 1.0)
                             .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCongratulations)
                         
-                 
+                        RewardAnimationView()
+                            .padding()
                     }
                     .transition(.scale)
                     .onAppear {
+                        if !hasAwardedReward {
+                            hasAwardedReward = true
+                            userProgress.earnStar()
+                            userProgress.addPoints(10)
+                        }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            showCongratulations = false
+                            withAnimation {
+                                showCongratulations = false
+                                selectedWords = []
+                                score = 0
+                                hasCheckedAnswer = false
+                                resetGameAction()
+                                showTray = false
+                            }
                         }
                     }
                 } else {
@@ -153,33 +172,17 @@ struct BottomTrayView: View {
                         if !showCongratulations {
                             if(score < 6) {
                                 Button(!hasCheckedAnswer ? "Check Your Answer" : "Let's Try Again") {
-                                    if !hasCheckedAnswer {
+                                 
                                         withAnimation {
                                             let common = selectedWords.intersection(tray.map { $0.word })
                                             score = common.count
                                             hasCheckedAnswer = true
                                             if score == 6 {
                                                 showCongratulations = true
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                                    withAnimation {
-                                                        showCongratulations = false
-                                                        selectedWords = []
-                                                        score = 0
-                                                        hasCheckedAnswer = false
-                                                        resetGameAction()
-                                                        showTray = false
-                                                    }
-                                                }
+                                                hasAwardedReward = false // Reset to allow reward
                                             }
                                         }
-                                    } else {
-                                        withAnimation {
-                                            selectedWords = []
-                                            score = 0
-                                            hasCheckedAnswer = false
-                                            resetGameAction()
-                                        }
-                                    }
+                                    
                                 }
                                 .padding(.vertical)
                             }
@@ -197,7 +200,7 @@ struct BottomTrayView: View {
             }
         }
     }
-
+    
     @ViewBuilder
     private func wordPairsStack(geometry: GeometryProxy, newShuffle: [WordModel]) -> some View {
         VStack(alignment: .leading) {
@@ -215,7 +218,7 @@ struct BottomTrayView: View {
             }
         }
     }
-
+    
     private func cardView(word: WordModel, maxWidth: CGFloat) -> some View {
         CardView(
             word: word.word,
@@ -230,7 +233,7 @@ struct BottomTrayView: View {
             }
         }
     }
-
+    
     private func toggleSelection(of word: String) {
         if selectedWords.contains(word) {
             selectedWords.remove(word)
