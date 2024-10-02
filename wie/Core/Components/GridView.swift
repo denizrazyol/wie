@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+struct WordSelection: Identifiable {
+    let id = UUID()
+    let start: IndexPath
+    let end: IndexPath
+}
 
 class WordSearchGame: ObservableObject {
     
@@ -14,12 +19,11 @@ class WordSearchGame: ObservableObject {
     @Published var selectedIndices: Set<IndexPath> = []
     @Published var verifiedIndices: Set<IndexPath> = []
     @Published var matchedWords: [String] = []
+    @Published var foundWordSelections: [WordSelection] = []
     var aimWords: [String] = []
-    
     var selectedLetters: [(character: Character, position: IndexPath)] = []
     
-    init() {
-    }
+    init() {}
     
     func setAimWords(_ words: [String]) {
         self.aimWords = words
@@ -29,6 +33,7 @@ class WordSearchGame: ObservableObject {
         verifiedIndices.removeAll()
         matchedWords.removeAll()
         selectedLetters.removeAll()
+        foundWordSelections.removeAll()
     }
     
     
@@ -61,16 +66,16 @@ class WordSearchGame: ObservableObject {
         let letters = "abcdefghijklmnopqrstuvwxyz"
         var grid = Array(repeating: Array(repeating: Character(" "), count: columns), count: rows)
         
-        for word in words.shuffled() {  // Shuffle words to randomize placement
+        for word in words.shuffled() {
             var attempts = 0
             var placed = false
-            while !placed && attempts < 100 {  // Limit attempts to prevent infinite loops
+            while !placed && attempts < 100 {
                 let horizontal = Bool.random()
                 let startRow = Int.random(in: 0..<rows)
                 let startCol = Int.random(in: 0..<columns)
                 
                 if horizontal && startCol + word.count <= columns {
-                    // Try to place horizontally
+                    
                     if canPlaceWord(word, in: grid, at: (startRow, startCol), horizontal: true) {
                         for (index, char) in word.enumerated() {
                             grid[startRow][startCol + index] = char
@@ -78,7 +83,7 @@ class WordSearchGame: ObservableObject {
                         placed = true
                     }
                 } else if !horizontal && startRow + word.count <= rows {
-                    // Try to place vertically
+                    
                     if canPlaceWord(word, in: grid, at: (startRow, startCol), horizontal: false) {
                         for (index, char) in word.enumerated() {
                             grid[startRow + index][startCol] = char
@@ -93,7 +98,6 @@ class WordSearchGame: ObservableObject {
             }
         }
         
-        // Fill remaining spaces with random letters
         for i in 0..<rows {
             for j in 0..<columns {
                 if grid[i][j] == " " {
@@ -133,10 +137,12 @@ struct LetterCell: View {
     
     var body: some View {
         Text(String(letter))
-            .frame(maxWidth: 45, maxHeight: 45)
+            .font(.custom("ChalkboardSE-Regular", size: 31))
+            .fixedSize()
+            .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/ , maxHeight: .infinity)
             .foregroundColor(.black)
             .background(isSelected ? Color.theme.iconColor.opacity(0.6) : Color.clear)
-            .font(.title)
+           
     }
 }
 
@@ -146,53 +152,77 @@ struct GridView: View {
     var onCompletion: () -> Void
     var onUpdateWord: ([String]) -> Void
     
+    
+    
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
-                ForEach(0..<game.grid.count, id: \.self) { rowIndex in
-                    HStack(spacing: 0) {
-                        ForEach(0..<game.grid[rowIndex].count, id: \.self) { columnIndex in
-                            let cellID = "\(rowIndex)-\(columnIndex)"
-                            LetterCell(letter: game.grid[rowIndex][columnIndex],
-                                       isSelected: game.selectedIndices.contains(IndexPath(row: rowIndex, section: columnIndex)))
-                            .id(cellID)
+            ZStack {
+                VStack(alignment: .center, spacing: 0) {
+                    ForEach(game.grid.indices, id: \.self) { rowIndex in
+                        HStack(alignment: .center, spacing: 0) {
+                            ForEach(game.grid[rowIndex].indices, id: \.self) { columnIndex in
+                                LetterCell(
+                                    letter: game.grid[rowIndex][columnIndex],
+                                    isSelected: game.selectedIndices.contains(IndexPath(row: rowIndex, section: columnIndex)))
+                                .id(rowIndex * game.grid[rowIndex].count + columnIndex)
+                            }
                         }
                     }
+                }
+                ForEach(game.foundWordSelections) { selection in
+                    wordBorder(start: selection.start, end: selection.end, in: geometry)
+                }
+                if let first = game.selectedLetters.first, let last = game.selectedLetters.last {
+                    wordBorder(start: first.position, end: last.position, in: geometry)
                 }
             }
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        withAnimation {
-                            game.updateSelection(from: value.location, in: geometry)
-                        }
+                        game.updateSelection(from: value.location, in: geometry)
                     }
                     .onEnded { value in
-                   
-                        let word = game.getWordFromSelectedLetters()
-                        if game.aimWords.firstIndex(where: {$0.contains(word)}) != nil{
-                            if(word.count > 1){
-                                game.matchedWords.append(word)
-                                game.verifiedIndices = game.selectedIndices
-                                game.selectedLetters.removeAll()
-                                game.clearSelection()
-                                checkCompletion()
-                            }
-                            else{
-                                game.clearSelection()
-                                
-                            }
-                            
-                        }
-                        else{
-                            game.clearSelection()
-                            
-                        }
+                        let word = game.getWordFromSelectedLetters().lowercased()
                         
+                        if game.aimWords.contains(word) && !game.matchedWords.contains(word) {
+                            game.matchedWords.append(word)
+                            game.verifiedIndices.formUnion(game.selectedIndices)
+                            
+                            if let first = game.selectedLetters.first, let last = game.selectedLetters.last {
+                                let selection = WordSelection(start: first.position, end: last.position)
+                                game.foundWordSelections.append(selection)
+                            }
+                            
+                            game.clearSelection()
+                            checkCompletion()
+                        } else {
+                            game.clearSelection()
+                        }
                     }
             )
         }
-        .padding(8)
+        //.padding(8)
+    }
+    
+    func wordBorder(start: IndexPath, end: IndexPath, in geometry: GeometryProxy) -> some View {
+        let startRow = start.row
+        let startCol = start.section
+        let endRow = end.row
+        let endCol = end.section
+        
+        let cellWidth = geometry.size.width / CGFloat(game.grid[0].count)
+        let cellHeight = geometry.size.height / CGFloat(game.grid.count)
+        
+        let xPosition = min(CGFloat(startCol), CGFloat(endCol)) * cellWidth
+        let yPosition = min(CGFloat(startRow), CGFloat(endRow)) * cellHeight
+        
+        let width = (abs(CGFloat(endCol - startCol)) + 1) * cellWidth
+        let height = (abs(CGFloat(endRow - startRow)) + 1) * cellHeight
+        
+        return RoundedRectangle(cornerRadius: 5)
+            .stroke(Color.theme.iconColor, lineWidth: 3)
+            .frame(width: width, height: height)
+            .position(x: xPosition + width / 2, y: yPosition + height / 2)
     }
     
     func checkCompletion() {
@@ -210,9 +240,9 @@ struct GridView_Previews: PreviewProvider {
         game.setAimWords(["sample", "words", "for", "preview"])
         
         return GridView(game: game, onCompletion: {
-   
+            
         }, onUpdateWord: { matchedWords in
-        
+            
         })
         
     }

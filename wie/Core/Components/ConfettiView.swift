@@ -10,28 +10,23 @@ import SwiftUI
 struct ConfettiView: View {
     
     @State private var isAnimating = false
-        
-        var body: some View {
-            GeometryReader { geometry in
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
                 ForEach(0..<100) { _ in
                     Circle()
-                        .fill(Color.random)
+                        .foregroundColor(Color.random)
                         .frame(width: 10, height: 10)
                         .position(
                             x: CGFloat.random(in: 0...geometry.size.width),
-                            y: isAnimating ? geometry.size.height : 0
+                            y: CGFloat.random(in: 0...geometry.size.height)
                         )
-                        .animation(
-                            Animation.linear(duration: 2.0)
-                                .repeatForever(autoreverses: false),
-                            value: isAnimating
-                        )
+                        .transition(.scale)
                 }
             }
-            .onAppear {
-                isAnimating = true
-            }
         }
+    }
 }
 
 #Preview {
