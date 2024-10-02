@@ -11,7 +11,7 @@ struct WordBasicView: View {
     
     var word: String
     var index : Int
-    
+    var isFounded: Bool = false
     
     var body: some View {
         Text(word)
@@ -20,7 +20,7 @@ struct WordBasicView: View {
             .font(.title2)
             .fontWeight(.semibold)
             .foregroundColor(Color.white)
-            
+            .strikethrough(isFounded, color: .gray)
     }
 }
 

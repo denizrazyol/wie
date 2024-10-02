@@ -8,26 +8,32 @@
 import SwiftUI
 
 
-struct WordSearchGame {
+class WordSearchGame: ObservableObject {
     
-    var grid: [[Character]] = [[]]
-    var selectedIndices: Set<IndexPath> = []
-    var verifiedIndices: Set<IndexPath> = []
-    var aimWords: [String]
+    @Published var grid: [[Character]] = [[]]
+    @Published var selectedIndices: Set<IndexPath> = []
+    @Published var verifiedIndices: Set<IndexPath> = []
+    @Published var matchedWords: [String] = []
+    var aimWords: [String] = []
     
     var selectedLetters: [(character: Character, position: IndexPath)] = []
-    var matchedWords: [String] = []
     
-    var selectedCharactersAndPositions: [(Character, Int)] = []
+    init() {
+    }
     
-    init(aimWords: [String]) {
-        
-        self.aimWords = aimWords
+    func setAimWords(_ words: [String]) {
+        self.aimWords = words
         generateWordSearchGrid(rows: 13, columns: 9, words: aimWords)
+        // Reset game state
+        selectedIndices.removeAll()
+        verifiedIndices.removeAll()
+        matchedWords.removeAll()
+        selectedLetters.removeAll()
     }
     
     
-    mutating func updateSelection(from position: CGPoint, in geometry: GeometryProxy) {
+    
+    func updateSelection(from position: CGPoint, in geometry: GeometryProxy) {
         let rowHeight = geometry.size.height / CGFloat(grid.count)
         let columnWidth = geometry.size.width / CGFloat(grid[0].count)
         
@@ -44,14 +50,14 @@ struct WordSearchGame {
     }
     
     func getWordFromSelectedLetters() -> String {
-         var word = ""
-         for selected in selectedLetters {
-             word.append(selected.character)
-         }
-         return word
-     }
+        var word = ""
+        for selected in selectedLetters {
+            word.append(selected.character)
+        }
+        return word
+    }
     
-    mutating func generateWordSearchGrid(rows: Int, columns: Int, words: [String]) {
+    func generateWordSearchGrid(rows: Int, columns: Int, words: [String]) {
         let letters = "abcdefghijklmnopqrstuvwxyz"
         var grid = Array(repeating: Array(repeating: Character(" "), count: columns), count: rows)
         
@@ -113,7 +119,11 @@ struct WordSearchGame {
         return true
     }
     
-  
+    func clearSelection() {
+        selectedIndices.removeAll()
+        selectedLetters.removeAll()
+        selectedIndices = verifiedIndices
+    }
     
 }
 
@@ -132,19 +142,9 @@ struct LetterCell: View {
 
 struct GridView: View {
     
-    var aimWords: [String] = []
+    @ObservedObject var game: WordSearchGame
     var onCompletion: () -> Void
-    
-    @State private var isDragging = false
-    @State private var game: WordSearchGame
-    
-    init(wordModelList: [WordModel], onCompletion: @escaping () -> Void) {
-            self.aimWords = wordModelList.map { $0.word }
-            _game = State(initialValue: WordSearchGame(aimWords: aimWords))
-            self.onCompletion = onCompletion
-    }
-
-    let columns: Int = 9
+    var onUpdateWord: ([String]) -> Void
     
     var body: some View {
         GeometryReader { geometry in
@@ -168,27 +168,24 @@ struct GridView: View {
                         }
                     }
                     .onEnded { value in
-                        isDragging = false
+                   
                         let word = game.getWordFromSelectedLetters()
                         if game.aimWords.firstIndex(where: {$0.contains(word)}) != nil{
                             if(word.count > 1){
                                 game.matchedWords.append(word)
                                 game.verifiedIndices = game.selectedIndices
                                 game.selectedLetters.removeAll()
+                                game.clearSelection()
                                 checkCompletion()
                             }
                             else{
-                                game.selectedIndices.removeAll()
-                                game.selectedLetters.removeAll()
-                                game.selectedIndices = game.verifiedIndices
+                                game.clearSelection()
                                 
                             }
                             
                         }
                         else{
-                            game.selectedIndices.removeAll()
-                            game.selectedLetters.removeAll()
-                            game.selectedIndices = game.verifiedIndices
+                            game.clearSelection()
                             
                         }
                         
@@ -199,16 +196,24 @@ struct GridView: View {
     }
     
     func checkCompletion() {
-            if game.matchedWords.count == game.aimWords.count {
-                onCompletion() 
-            }
+        if game.matchedWords.count == game.aimWords.count {
+            onCompletion()
+        }else {
+            onUpdateWord(game.matchedWords)
         }
+    }
 }
 
 struct GridView_Previews: PreviewProvider {
     static var previews: some View {
-        GridView(wordModelList: [WordModel(fromString: "Word")]) {
-            
-        }
+        let game = WordSearchGame()
+        game.setAimWords(["sample", "words", "for", "preview"])
+        
+        return GridView(game: game, onCompletion: {
+   
+        }, onUpdateWord: { matchedWords in
+        
+        })
+        
     }
 }
