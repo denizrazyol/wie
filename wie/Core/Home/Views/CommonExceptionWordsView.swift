@@ -16,8 +16,8 @@ struct CommonExceptionWordsView: View {
         
         VStack(spacing: 0) {
             Text("Tap on a word to start!")
-                            .font(.custom("ChalkboardSE-Regular", size: 24))
-                            .padding()
+                            .font(.custom("ChalkboardSE-Regular", size: 22))
+                            .padding(.top,8)
            
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {

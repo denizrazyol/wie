@@ -45,7 +45,8 @@ extension WordLevelsView {
          
         VStack(alignment: .leading, spacing: 0) {
             Text(name)
-                .font(.headline)
+                .font(.custom("ChalkboardSE-Regular", size: 22))
+                //.fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .foregroundColor(Color.theme.accent)
         }
     }

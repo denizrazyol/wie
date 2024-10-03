@@ -21,38 +21,46 @@ struct CardView: View {
     var status: Status
     
     var body: some View {
-        ZStack() {
+        ZStack {
             Rectangle()
                 .fill(backgorundColor ?? Color.white)
                 .frame(height: 140)
                 .frame(maxWidth: maxWidth)
                 .cornerRadius(20)
                 .overlay(
-                                    Group {
-                                        switch status {
-                                        case .correct:
-                                            Image(systemName: "checkmark")
-                                                .foregroundColor(.white)
-                                                .padding(10)
-                                        case .wrong:
-                                            Image(systemName: "xmark")
-                                                .foregroundColor(.white)
-                                                .padding(10)
-                                        case .empty:
-                                            EmptyView()
-                                        }
-                                    },
-                                    alignment: .topTrailing
-                                )
-                        
+                    Group {
+                        switch status {
+                        case .correct:
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.white)
+                                .padding(10)
+                        case .wrong:
+                            Image(systemName: "xmark")
+                                .foregroundColor(.white)
+                                .padding(10)
+                        case .empty:
+                            EmptyView()
+                        }
+                    },
+                    alignment: .topTrailing
+                )
+            
             Text(word)
-                .padding(.all, 10)
-                .font(.title2)
+                .font(.custom("ChalkboardSE-Regular", size: 30))
+                .minimumScaleFactor(0.3)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .foregroundColor((backgorundColor != nil) ? .white : .black)
+                .multilineTextAlignment(.center)
+                .padding(10)
         }
-    
     }
 }
+
+#Preview {
+    CardView(word: "pronunciation", maxWidth: 200, backgorundColor: nil, status: .empty)
+}
+
 
 #Preview {
     CardView(word: "Hello", maxWidth: 100, status: Status.empty)

@@ -49,7 +49,8 @@ struct OnboardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 25.0))
             
             Text(item.title)
-                .font(.title)
+                .font(.custom("ChalkboardSE-Regular", size: 30))
+                //.fontWeight(.semibold)
                 .foregroundColor(Color.theme.accent)
                 .multilineTextAlignment(.leading)
                 .frame(alignment: .leading)
@@ -110,14 +111,15 @@ extension OnboardView {
         VStack {
             Button(action: vm.toogleWordsList) {
                 Text(vm.currentWordLevel.name)
-                    .font(.title2)
-                    .fontWeight(.black)
+                    .font(.custom("ChalkboardSE-Regular", size: 28))
+                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     .foregroundColor(Color.theme.accent)
                     .frame(height: 55)
                     .frame(maxWidth: .infinity)
                     .overlay(alignment: .leading) {
                         Image(systemName: "arrow.down")
                             .font(.headline)
+                            .fontWeight(.bold)
                             .foregroundColor(Color.theme.accent)
                             .padding()
                             .rotationEffect(Angle(degrees: vm.showWordsList ? 180 : 0))

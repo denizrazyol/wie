@@ -57,6 +57,7 @@
 		91B8E3CD2B5A854100C989A2 /* SoundModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B8E3CC2B5A854100C989A2 /* SoundModel.swift */; };
 		91EB18482B59425B00D27696 /* year3And4CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */; };
 		91EB184A2B59426700D27696 /* year5And6CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */; };
+		91F27C742CAECC470068F31D /* CustomButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F27C732CAECC470068F31D /* CustomButtonStyle.swift */; };
 		91F97B3E2BD90B4D0099E049 /* Tray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F97B3D2BD90B4D0099E049 /* Tray.swift */; };
 /* End PBXBuildFile section */
 
@@ -112,6 +113,7 @@
 		91B8E3CC2B5A854100C989A2 /* SoundModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundModel.swift; sourceTree = "<group>"; };
 		91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year3And4CommonExceptionWords.strings; sourceTree = "<group>"; };
 		91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year5And6CommonExceptionWords.strings; sourceTree = "<group>"; };
+		91F27C732CAECC470068F31D /* CustomButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle.swift; sourceTree = "<group>"; };
 		91F97B3D2BD90B4D0099E049 /* Tray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tray.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -159,6 +161,7 @@
 				916723052AFBC84300F5D823 /* WordFlashCardView.swift */,
 				916969932B0B7E6A00BCFF99 /* SearchBarView.swift */,
 				91488CCB2B2C92FB00696F54 /* WrapView.swift */,
+				91F27C732CAECC470068F31D /* CustomButtonStyle.swift */,
 				91966F102B58049C0097C02F /* WrapView2.swift */,
 				911777562B5D4AB400066C71 /* LetterView.swift */,
 				91488CCD2B2C9CD300696F54 /* LabelledDividerView.swift */,
@@ -374,6 +377,7 @@
 				918A1D922B2CC8B2008C9D4C /* OrientationInfo.swift in Sources */,
 				91B6A9052AFCF533003E60A9 /* WordModel.swift in Sources */,
 				913755742BA9CC8F00EA3DC9 /* CustomNavLinkView.swift in Sources */,
+				91F27C742CAECC470068F31D /* CustomButtonStyle.swift in Sources */,
 				918145B22C9C44E400D93222 /* RewardAnimationView.swift in Sources */,
 				91B8E3CD2B5A854100C989A2 /* SoundModel.swift in Sources */,
 				9122BD102C9C529A00288AE9 /* MainView.swift in Sources */,

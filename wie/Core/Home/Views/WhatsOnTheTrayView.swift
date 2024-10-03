@@ -31,8 +31,8 @@ struct WhatsOnTheTrayView: View {
                     instructionView(geometry: geometry)
                     
                     Text("How many you can remember")
-                        .font(.headline)
-                        .padding(.vertical)
+                        .font(.custom("ChalkboardSE-Regular", size: 22))
+                    //.padding(.vertical)
                     
                     Button(action: {
                         withAnimation {
@@ -40,16 +40,14 @@ struct WhatsOnTheTrayView: View {
                         }
                     }) {
                         Text("Let's See")
-                            .font(.headline)
-                            .frame(width: 200, height: 40)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(CustomButtonStyle())
                 }
             }
             .onAppear {
                 loadTrayWords()
             }
-            .padding(.horizontal)
+            
         }
     }
     
@@ -67,11 +65,14 @@ struct WhatsOnTheTrayView: View {
     private func instructionView(geometry: GeometryProxy) -> some View {
         VStack() {
             Text("Look carefully at the words on the tray!")
-                .font(.headline)
-                .padding(.vertical, 20)
+                .font(.custom("ChalkboardSE-Regular", size: 22))
+                .multilineTextAlignment(.center)
+                .padding(.top,8)
             
             TrayContentStack(tray: $tray, geometry: geometry)
+            
         }
+        .padding(.horizontal)
     }
 }
 
@@ -82,30 +83,31 @@ struct TrayContentStack: View {
     var body: some View {
         let count = tray.count
         
-        ZStack() {
+        ZStack {
             TrayView()
-            VStack(alignment: .center, spacing: 10) {
-                ForEach(0..<count, id: \.self) { index in
-                    if index % 2 == 0 && index + 1 < count {
-                        HStack(alignment: .top, spacing: 10) {
-                            CardView(word: tray[index].word, maxWidth: geometry.size.width * 0.5, status: .empty)
-                                .frame(maxWidth: .infinity)
-                                .padding(2)
-                            CardView(word: tray[index + 1].word, maxWidth: geometry.size.width * 0.5, status: .empty)
-                                .frame(maxWidth: .infinity)
-                                .padding(2)
-                        }
-                    } else if index % 2 == 0 {
-                        HStack(alignment: .top, spacing: 10) {
-                            CardView(word: tray[index].word, maxWidth: geometry.size.width * 0.5, status: .empty)
-                                .frame(maxWidth: .infinity)
-                                .padding(2)
+            VStack(alignment: .center, spacing: 8) {
+                ForEach(Array(stride(from: 0, to: count, by: 2)), id: \.self) { index in
+                    HStack(alignment: .top, spacing: 8) {
+                        cardView(word: tray[index], maxWidth: geometry.size.width * 0.5)
+                        if index + 1 < count {
+                            cardView(word: tray[index + 1], maxWidth: geometry.size.width * 0.5)
                         }
                     }
                 }
             }
-            .padding()
+            .padding(8)
+            .padding(.vertical, 20)
         }
+    }
+    
+    private func cardView(word: WordModel, maxWidth: CGFloat) -> some View {
+        CardView(
+            word: word.word,
+            maxWidth: maxWidth,
+            status: .empty
+        )
+        .frame(maxWidth: .infinity)
+        .padding(2)
     }
 }
 
@@ -121,112 +123,107 @@ struct BottomTrayView: View {
     @State private var showCongratulations = false
     @State private var hasCheckedAnswer = false
     @State private var hasAwardedReward = false
+    @State private var showConfetti = false
     private let maxSelection = 6
     
     @ObservedObject var userProgress = UserProgress.shared
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                if showCongratulations {
-                    VStack {
-                        Text("Great Job! 🎉 You've found all the words!")
-                            .font(.largeTitle)
-                            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                            .padding()
-                            .scaleEffect(showCongratulations ? 1.2 : 1.0)
-                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCongratulations)
-                        
-                        RewardAnimationView()
-                            .padding()
+        VStack {
+            if showCongratulations {
+                congratulatoryView()
+            } else {
+                VStack {
+                    if score > 0 {
+                        feedbackMessage()
+                    } else {
+                        instructionText()
                     }
-                    .transition(.scale)
-                    .onAppear {
-                        if !hasAwardedReward {
-                            hasAwardedReward = true
-                            userProgress.earnStar()
-                            userProgress.addPoints(10)
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            withAnimation {
-                                showCongratulations = false
-                                selectedWords = []
-                                score = 0
-                                hasCheckedAnswer = false
-                                resetGameAction()
-                                showTray = false
-                            }
-                        }
-                    }
-                } else {
-                    VStack {
-                        Text(score > 0 ? "Score: \(score) out of 6" : "")
-                            .font(.headline)
-                            .padding(.bottom, 10)
-                        
-                        wordPairsStack(geometry: geometry, newShuffle: wordList)
-                            .cornerRadius(20)
-                            .shadow(radius: 5)
-                            .disabled(showCongratulations)
-                        
-                        if !showCongratulations {
-                            if(score < 6) {
-                                Button(!hasCheckedAnswer ? "Check Your Answer" : "Let's Try Again") {
-                                 
-                                        withAnimation {
-                                            let common = selectedWords.intersection(tray.map { $0.word })
-                                            score = common.count
-                                            hasCheckedAnswer = true
-                                            if score == 6 {
-                                                showCongratulations = true
-                                                hasAwardedReward = false // Reset to allow reward
-                                            }
-                                        }
-                                    
-                                }
-                                .padding(.vertical)
-                            }
-                        }
-                    }
-                    .onTapGesture {
-                        if !showCongratulations {
-                            withAnimation {
-                                showTray = false
-                            }
-                        }
-                    }
-                    .padding()
+                    
+                    wordPairsStack()
+                        .cornerRadius(20)
+                        .shadow(radius: 5)
+                        .disabled(showCongratulations)
                 }
+                .onTapGesture {
+                    if !showCongratulations {
+                        withAnimation {
+                            showTray = false
+                        }
+                    }
+                }
+                .padding()
             }
+            
+        }
+        .onAppear {
+            resetGameState()
+        }
+    }
+    
+    private func resetGameState() {
+        selectedWords.removeAll()
+        score = 0
+        hasAwardedReward = false
+    }
+    
+    @ViewBuilder
+    private func instructionText() -> some View {
+        Text("Tap on the words you remember seeing!")
+            .font(.custom("ChalkboardSE-Regular", size: 22))
+            .multilineTextAlignment(.center)
+            .padding(.top, 8)
+    }
+    
+    @ViewBuilder
+    private func feedbackMessage() -> some View {
+        if score == 6 {
+            Text("Amazing! You remembered all the words! 🎉")
+                .font(.custom("ChalkboardSE-Regular", size: 24))
+                .foregroundColor(.green)
+                .multilineTextAlignment(.center)
+                .padding()
+        } else if score >= 3 {
+            Text("Great job! You remembered \(score) out of 6 words!")
+                .font(.custom("ChalkboardSE-Regular", size: 24))
+                .foregroundColor(.orange)
+                .multilineTextAlignment(.center)
+                .padding()
+        } else {
+            Text("Good try! Let's practice and try again!")
+                .font(.custom("ChalkboardSE-Regular", size: 24))
+                .foregroundColor(.red)
+                .multilineTextAlignment(.center)
+                .padding()
         }
     }
     
     @ViewBuilder
-    private func wordPairsStack(geometry: GeometryProxy, newShuffle: [WordModel]) -> some View {
+    private func wordPairsStack() -> some View {
+        let shuffledWordList = wordList.shuffled()
+        let count = shuffledWordList.count
+        
         VStack(alignment: .leading) {
-            ForEach(Array(wordList.enumerated()), id: \.element.id) { index, element in
-                if index % 2 == 0 {
-                    HStack(alignment: .top, spacing: 10) {
-                        cardView(word: newShuffle[index], maxWidth: geometry.size.width * 0.5 )
-                            .padding(2)
-                        if index + 1 < newShuffle.count {
-                            cardView(word: newShuffle[index + 1], maxWidth: geometry.size.width * 0.5)
-                                .padding(2)
-                        }
+            ForEach(Array(stride(from: 0, to: count, by: 2)), id: \.self) { index in
+                HStack(alignment: .top, spacing: 8) {
+                    cardView(word: shuffledWordList[index])
+                    if index + 1 < count {
+                        cardView(word: shuffledWordList[index + 1])
                     }
                 }
             }
         }
     }
     
-    private func cardView(word: WordModel, maxWidth: CGFloat) -> some View {
+    private func cardView(word: WordModel) -> some View {
         CardView(
             word: word.word,
-            maxWidth: maxWidth,
+            maxWidth: .infinity,
             backgorundColor: selectedWords.contains(word.word) ? nil : Color.theme.accent,
             status: .empty
         )
         .frame(maxWidth: .infinity)
+        .padding(2)
         .onTapGesture {
             if !showCongratulations {
                 toggleSelection(of: word.word)
@@ -237,8 +234,59 @@ struct BottomTrayView: View {
     private func toggleSelection(of word: String) {
         if selectedWords.contains(word) {
             selectedWords.remove(word)
+            if score > 0 {
+                score = 0
+            }
         } else if selectedWords.count < maxSelection {
             selectedWords.insert(word)
+            if selectedWords.count == maxSelection {
+                checkAnswers()
+            }
+        }
+    }
+    
+    private func checkAnswers() {
+        let common = selectedWords.intersection(tray.map { $0.word })
+        score = common.count
+        if score == maxSelection {
+            showCongratulations = true
+        }
+    }
+    
+    @ViewBuilder
+    private func congratulatoryView() -> some View {
+        VStack {
+            Text("Great Job! 🎉 You've found all the words!")
+                .font(.largeTitle)
+                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                .padding()
+                .scaleEffect(showCongratulations ? 1.2 : 1.0)
+                .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCongratulations)
+            
+            RewardAnimationView()
+                .padding()
+        }
+        .transition(.scale)
+        .onAppear {
+            if !hasAwardedReward {
+                hasAwardedReward = true
+                showConfetti = true
+                userProgress.earnStar()
+                userProgress.addPoints(10)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                withAnimation {
+                    showCongratulations = false
+                    resetGameState()
+                    showConfetti = false
+                    resetGameAction()
+                    showTray = false
+                }
+            }
+        }
+        if showConfetti {
+            ConfettiView()
+                .edgesIgnoringSafeArea(.all)
         }
     }
 }

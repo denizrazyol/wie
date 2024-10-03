@@ -75,8 +75,8 @@ extension CustomNavBarView {
             VStack(spacing: 4) {
                 Text(title)
                     .font(.custom("ChalkboardSE-Regular", size: 28))
-                //.font(.system(size: 28, weight: .bold))
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    .multilineTextAlignment(.center)
                 if let subTitle = subTitle {
                     Text(subTitle)
                         .font(.system(size: 18))
