@@ -111,7 +111,7 @@ extension OnboardView {
         VStack {
             Button(action: vm.toogleWordsList) {
                 Text(vm.currentWordLevel.name)
-                    .font(.custom("ChalkboardSE-Regular", size: 28))
+                    .font(.custom("ChalkboardSE-Regular", size: 24))
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     .foregroundColor(Color.theme.accent)
                     .frame(height: 55)

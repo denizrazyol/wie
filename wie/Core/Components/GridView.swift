@@ -137,12 +137,12 @@ struct LetterCell: View {
     
     var body: some View {
         Text(String(letter))
-            .font(.custom("ChalkboardSE-Regular", size: 31))
+            .font(.custom("ChalkboardSE-Regular", size: 30))
             .fixedSize()
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/ , maxHeight: .infinity)
             .foregroundColor(.black)
             .background(isSelected ? Color.theme.iconColor.opacity(0.6) : Color.clear)
-           
+        
     }
 }
 
@@ -152,14 +152,12 @@ struct GridView: View {
     var onCompletion: () -> Void
     var onUpdateWord: ([String]) -> Void
     
-    
-    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                VStack(alignment: .center, spacing: 0) {
+                VStack(spacing: 0) {
                     ForEach(game.grid.indices, id: \.self) { rowIndex in
-                        HStack(alignment: .center, spacing: 0) {
+                        HStack(spacing: 0) {
                             ForEach(game.grid[rowIndex].indices, id: \.self) { columnIndex in
                                 LetterCell(
                                     letter: game.grid[rowIndex][columnIndex],
@@ -182,26 +180,31 @@ struct GridView: View {
                         game.updateSelection(from: value.location, in: geometry)
                     }
                     .onEnded { value in
-                        let word = game.getWordFromSelectedLetters().lowercased()
-                        
-                        if game.aimWords.contains(word) && !game.matchedWords.contains(word) {
-                            game.matchedWords.append(word)
-                            game.verifiedIndices.formUnion(game.selectedIndices)
-                            
-                            if let first = game.selectedLetters.first, let last = game.selectedLetters.last {
-                                let selection = WordSelection(start: first.position, end: last.position)
-                                game.foundWordSelections.append(selection)
-                            }
-                            
-                            game.clearSelection()
-                            checkCompletion()
-                        } else {
-                            game.clearSelection()
-                        }
+                        handleGestureEnd()
                     }
             )
+            .drawingGroup()
         }
-        //.padding(8)
+        
+    }
+    
+    func handleGestureEnd() {
+        let word = game.getWordFromSelectedLetters().lowercased()
+        
+        if game.aimWords.contains(word) && !game.matchedWords.contains(word) {
+            game.matchedWords.append(word)
+            game.verifiedIndices.formUnion(game.selectedIndices)
+            
+            if let first = game.selectedLetters.first, let last = game.selectedLetters.last {
+                let selection = WordSelection(start: first.position, end: last.position)
+                game.foundWordSelections.append(selection)
+            }
+            
+            game.clearSelection()
+            checkCompletion()
+        } else {
+            game.clearSelection()
+        }
     }
     
     func wordBorder(start: IndexPath, end: IndexPath, in geometry: GeometryProxy) -> some View {

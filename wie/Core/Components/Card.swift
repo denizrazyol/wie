@@ -21,39 +21,36 @@ struct CardView: View {
     var status: Status
     
     var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(backgorundColor ?? Color.white)
-                .frame(height: 140)
-                .frame(maxWidth: maxWidth)
-                .cornerRadius(20)
-                .overlay(
-                    Group {
-                        switch status {
-                        case .correct:
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.white)
-                                .padding(10)
-                        case .wrong:
-                            Image(systemName: "xmark")
-                                .foregroundColor(.white)
-                                .padding(10)
-                        case .empty:
-                            EmptyView()
-                        }
-                    },
-                    alignment: .topTrailing
-                )
-            
-            Text(word)
-                .font(.custom("ChalkboardSE-Regular", size: 30))
-                .minimumScaleFactor(0.3)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .foregroundColor((backgorundColor != nil) ? .white : .black)
-                .multilineTextAlignment(.center)
-                .padding(10)
+        GeometryReader { geometry in
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(backgorundColor ?? Color.white)
+                    .overlay(
+                        Group {
+                            switch status {
+                            case .correct:
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                            case .wrong:
+                                Image(systemName: "xmark")
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                            case .empty:
+                                EmptyView()
+                            }
+                        },
+                        alignment: .topTrailing
+                    )
+                
+                Text(word)
+                    .font(.custom("ChalkboardSE-Regular", size: 28))
+                    .lineLimit(1)
+                    .foregroundColor((backgorundColor != nil) ? .white : .black)
+                    .multilineTextAlignment(.center)
+            }
         }
+        .frame(maxWidth: maxWidth)
     }
 }
 

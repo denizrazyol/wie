@@ -29,10 +29,11 @@ struct WhatsOnTheTrayView: View {
                     BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray, resetGameAction: resetGame)
                 } else {
                     instructionView(geometry: geometry)
+                        .padding(.horizontal)
                     
                     Text("How many you can remember")
                         .font(.custom("ChalkboardSE-Regular", size: 22))
-                    //.padding(.vertical)
+                        .padding(.top, 8)
                     
                     Button(action: {
                         withAnimation {
@@ -42,8 +43,10 @@ struct WhatsOnTheTrayView: View {
                         Text("Let's See")
                     }
                     .buttonStyle(CustomButtonStyle())
+                    .padding(.top, 16)
                 }
             }
+            .frame(width: geometry.size.width, height: geometry.size.height)
             .onAppear {
                 loadTrayWords()
             }
@@ -67,12 +70,10 @@ struct WhatsOnTheTrayView: View {
             Text("Look carefully at the words on the tray!")
                 .font(.custom("ChalkboardSE-Regular", size: 22))
                 .multilineTextAlignment(.center)
-                .padding(.top,8)
             
             TrayContentStack(tray: $tray, geometry: geometry)
             
         }
-        .padding(.horizontal)
     }
 }
 
@@ -88,14 +89,14 @@ struct TrayContentStack: View {
             VStack(alignment: .center, spacing: 8) {
                 ForEach(Array(stride(from: 0, to: count, by: 2)), id: \.self) { index in
                     HStack(alignment: .top, spacing: 8) {
-                        cardView(word: tray[index], maxWidth: geometry.size.width * 0.5)
+                        cardView(word: tray[index], maxWidth: (geometry.size.width - 48) / 2)
                         if index + 1 < count {
-                            cardView(word: tray[index + 1], maxWidth: geometry.size.width * 0.5)
+                            cardView(word: tray[index + 1], maxWidth: (geometry.size.width - 48) / 2)
                         }
                     }
                 }
             }
-            .padding(8)
+            .padding(.horizontal)
             .padding(.vertical, 20)
         }
     }
@@ -106,8 +107,6 @@ struct TrayContentStack: View {
             maxWidth: maxWidth,
             status: .empty
         )
-        .frame(maxWidth: .infinity)
-        .padding(2)
     }
 }
 
@@ -145,14 +144,7 @@ struct BottomTrayView: View {
                         .shadow(radius: 5)
                         .disabled(showCongratulations)
                 }
-                .onTapGesture {
-                    if !showCongratulations {
-                        withAnimation {
-                            showTray = false
-                        }
-                    }
-                }
-                .padding()
+                .padding(.horizontal)
             }
             
         }
@@ -172,29 +164,23 @@ struct BottomTrayView: View {
         Text("Tap on the words you remember seeing!")
             .font(.custom("ChalkboardSE-Regular", size: 22))
             .multilineTextAlignment(.center)
-            .padding(.top, 8)
+        
     }
     
     @ViewBuilder
     private func feedbackMessage() -> some View {
         if score == 6 {
             Text("Amazing! You remembered all the words! 🎉")
-                .font(.custom("ChalkboardSE-Regular", size: 24))
-                .foregroundColor(.green)
+                .font(.custom("ChalkboardSE-Regular", size: 22))
                 .multilineTextAlignment(.center)
-                .padding()
         } else if score >= 3 {
             Text("Great job! You remembered \(score) out of 6 words!")
-                .font(.custom("ChalkboardSE-Regular", size: 24))
-                .foregroundColor(.orange)
+                .font(.custom("ChalkboardSE-Regular", size: 22))
                 .multilineTextAlignment(.center)
-                .padding()
         } else {
             Text("Good try! Let's practice and try again!")
-                .font(.custom("ChalkboardSE-Regular", size: 24))
-                .foregroundColor(.red)
+                .font(.custom("ChalkboardSE-Regular", size: 22))
                 .multilineTextAlignment(.center)
-                .padding()
         }
     }
     
@@ -203,27 +189,25 @@ struct BottomTrayView: View {
         let shuffledWordList = wordList.shuffled()
         let count = shuffledWordList.count
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .center, spacing: 8) {
             ForEach(Array(stride(from: 0, to: count, by: 2)), id: \.self) { index in
                 HStack(alignment: .top, spacing: 8) {
-                    cardView(word: shuffledWordList[index])
+                    cardView(word: shuffledWordList[index], maxWidth: (UIScreen.main.bounds.width - 48) / 2)
                     if index + 1 < count {
-                        cardView(word: shuffledWordList[index + 1])
+                        cardView(word: shuffledWordList[index + 1], maxWidth: (UIScreen.main.bounds.width - 48) / 2)
                     }
                 }
             }
         }
     }
     
-    private func cardView(word: WordModel) -> some View {
+    private func cardView(word: WordModel, maxWidth: CGFloat) -> some View {
         CardView(
             word: word.word,
-            maxWidth: .infinity,
+            maxWidth: maxWidth,
             backgorundColor: selectedWords.contains(word.word) ? nil : Color.theme.accent,
             status: .empty
         )
-        .frame(maxWidth: .infinity)
-        .padding(2)
         .onTapGesture {
             if !showCongratulations {
                 toggleSelection(of: word.word)
@@ -255,39 +239,43 @@ struct BottomTrayView: View {
     
     @ViewBuilder
     private func congratulatoryView() -> some View {
-        VStack {
-            Text("Great Job! 🎉 You've found all the words!")
-                .font(.largeTitle)
-                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                .padding()
-                .scaleEffect(showCongratulations ? 1.2 : 1.0)
-                .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCongratulations)
-            
-            RewardAnimationView()
-                .padding()
-        }
-        .transition(.scale)
-        .onAppear {
-            if !hasAwardedReward {
-                hasAwardedReward = true
-                showConfetti = true
-                userProgress.earnStar()
-                userProgress.addPoints(10)
+        ZStack(alignment: .center) {
+            VStack() {
+                Text("Great Job! 🎉 You've found all the words!")
+                    .font(.custom("ChalkboardSE-Regular", size: 22))
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .scaleEffect(showCongratulations ? 1.2 : 1.0)
+                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCongratulations)
+                
+                RewardAnimationView()
+                    .padding()
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                withAnimation {
-                    showCongratulations = false
-                    resetGameState()
-                    showConfetti = false
-                    resetGameAction()
-                    showTray = false
+            .transition(.scale)
+            .onAppear {
+                if !hasAwardedReward {
+                    hasAwardedReward = true
+                    showConfetti = true
+                    userProgress.earnStar()
+                    userProgress.addPoints(10)
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation {
+                        showCongratulations = false
+                        resetGameState()
+                        showConfetti = false
+                        resetGameAction()
+                        showTray = false
+                    }
                 }
             }
+            
+            if showConfetti {
+                ConfettiView()
+                    .edgesIgnoringSafeArea(.all)
+            }
         }
-        if showConfetti {
-            ConfettiView()
-                .edgesIgnoringSafeArea(.all)
-        }
+        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, maxHeight: .infinity)
     }
 }
 

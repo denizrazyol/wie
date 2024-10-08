@@ -40,11 +40,11 @@ struct WordBasicView: View {
     
     var body: some View {
         Text(word)
-            .padding(.vertical, 8)
-            .padding(.trailing, 6)
-            .font(.custom("ChalkboardSE-Regular", size: 24))
-            .fontWeight(.semibold)
+            .font(.custom("ChalkboardSE-Regular", size: 26))
             .foregroundColor(Color.white)
+            .minimumScaleFactor(0.2)
+            .lineLimit(1)
+            .multilineTextAlignment(.center)
             .customStrikethrough(isFounded, color: Color.theme.iconColor, lineWidth: 3)
             .animation(.easeInOut(duration: 0.3), value: isFounded)
     }
