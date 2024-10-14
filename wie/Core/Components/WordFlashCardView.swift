@@ -12,18 +12,21 @@ struct WordFlashCardView: View {
     let word: WordModel
     
     var body: some View {
-        
-        Text(word.word)
-            .font(.custom("ChalkboardSE-Regular", size: 30))
-            .minimumScaleFactor(0.3)
-            .lineLimit(1)
-            .multilineTextAlignment(.center)
-            .foregroundColor(Color.black)
-            .frame(maxWidth: .infinity, minHeight: 150)
-            .background(Color.white)
-            .cornerRadius(20)
-            .shadow(color: Color.theme.secondaryText.opacity(0.5), radius: 5, x: 0, y: 5)
-        
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white)
+                .shadow(color: Color.gray.opacity(0.4), radius: 4, x: 0, y: 3)
+            
+            VStack {
+                Text(word.word)
+                    .font(.custom("ChalkboardSE-Regular", size: 30))
+                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    .foregroundColor(Color.black)
+                    .multilineTextAlignment(.center)
+                    .padding(.all,16)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity) 
+        }
     }
 }
 

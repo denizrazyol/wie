@@ -75,7 +75,11 @@ struct MakeAWordWithLetters: View {
                     
                     // Current word display
                     Text(currentWord)
-                        .font(.system(size: letters.count > 10 ? 60 : 80))
+                        .font(.custom("ChalkboardSE-Regular", size: 50))
+                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                        .minimumScaleFactor(0.2)
+                        .lineLimit(1)
+                        .multilineTextAlignment(.center)
                         .foregroundColor(Color.theme.accent)
                         .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 40)
                     

@@ -19,7 +19,9 @@ struct LetterView: View {
     
     var body: some View {
         Text(letter)
-            .font(.largeTitle)
+            .font(.custom("ChalkboardSE-Regular", size: 32))
+            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+            .multilineTextAlignment(.center)
             .padding()
             .background(RoundedRectangle(cornerRadius: 12).fill(Color.theme.iconColor).frame(width: 55, height: 55))
             .foregroundColor(.white)
