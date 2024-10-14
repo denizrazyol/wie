@@ -10,6 +10,7 @@ import SwiftUI
 struct CommonExceptionWordsView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
+    @EnvironmentObject var userProgress: UserProgress
     
     var body: some View {
         GeometryReader { geometry in
@@ -20,12 +21,14 @@ struct CommonExceptionWordsView: View {
                 
                 ScrollView {
                     LazyVStack(spacing: geometry.size.height * 0.02) {
-                        ForEach(vm.currentWordLevel.wordlist.indices, id: \.self) { index in
-                            let word = vm.currentWordLevel.wordlist[index]
+                        ForEach(Array(vm.currentWordLevel.wordlist.enumerated()), id: \.element.id) { index, word in
+                            let wordList = vm.currentWordLevel.wordlist
+                            let viewModel = MakeAWordViewModel(wordList: wordList, currentIndex: index)
                             
                             CustomNavLinkView(
-                                destination: MakeAWordWithLetters(wordList: vm.currentWordLevel.wordlist, currentIndex: index)
+                                destination: MakeAWordWithLetters(viewModel: viewModel)
                                     .customNavigationTitle("Place The Letters")
+                                    .environmentObject(userProgress)
                             ) {
                                 WordFlashCardView(word: word)
                                     .frame(height: geometry.size.height * 0.2)
@@ -43,7 +46,9 @@ struct CommonExceptionWordsView: View {
 
 struct CommonExceptionWordsView_Previews: PreviewProvider {
     static var previews: some View {
-        CommonExceptionWordsView().environmentObject(HomeViewModel())
+        CommonExceptionWordsView()
+            .environmentObject(HomeViewModel())
+            .environmentObject(UserProgress.shared)
     }
 }
 

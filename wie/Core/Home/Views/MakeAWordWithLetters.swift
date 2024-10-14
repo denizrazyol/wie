@@ -1,6 +1,4 @@
 
-
-
 //
 //  MakeAWordWithLetters.swift
 //  wie
@@ -12,234 +10,218 @@ import SwiftUI
 import UniformTypeIdentifiers
 import Foundation
 
+class MakeAWordViewModel: ObservableObject {
+    @Published var wordList: [WordModel]
+    @Published var currentIndex: Int
+    @Published var currentWord: String = ""
+    @Published var targetWord: String
+    @Published var letters: [LetterModel] = []
+    @Published var animateCheckmark = false
+    @Published var showRewardAnimation = false
+    @Published var isCompleted = false
 
-struct LetterModel: Identifiable, Codable {
-    let id: UUID
-    var text: String
-    var position: CGPoint
-    var isVisible: Bool
-    
-}
-
-struct MakeAWordWithLetters: View {
-    
-    var wordList: [WordModel]
-    @State private var currentIndex: Int
-    @State private var word: String
-    
-    @State private var currentWord = ""
-    @State private var letters: [LetterModel] = []
-    @State private var animateCheckmark = false
-    
-    @ObservedObject var userProgress = UserProgress.shared
-    @State private var showRewardAnimation = false
-    
-    @Environment(\.presentationMode) var presentationMode
-    
-    // Layout constants
+    let maxLettersPerLine: Int = 6
+    let letterSize: CGSize = CGSize(width: 55, height: 55)
     let spacing: CGFloat = 10
     let lineSpacing: CGFloat = 10
-    let letterSize: CGSize = CGSize(width: 55, height: 55)
-    let maxLettersPerLine: Int = 6
-    let wordAreaFrame = CGRect(x: 0, y: UIScreen.main.bounds.height * 0.28, width: UIScreen.main.bounds.width, height: 300)
-    
+
     init(wordList: [WordModel], currentIndex: Int) {
         self.wordList = wordList
-        _currentIndex = State(initialValue: currentIndex)
-        _word = State(initialValue: wordList[currentIndex].word)
+        self.currentIndex = currentIndex
+        self.targetWord = wordList[currentIndex].word
+        initializeLetters()
     }
-    
-    var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 20) {
-                ZStack {
-                    // Letter views
-                    ForEach(letters.indices, id: \.self) { index in
-                        if letters[index].isVisible {
-                            LetterView(
-                                letter: letters[index].text,
-                                index: letters[index].id,
-                                onChanged: updatePosition,
-                                onEnded: updateVisibility
-                            )
-                            .position(positionForLetter(at: index, in: geometry.size))
-                        }
-                    }
-                    
-                    // Word area
-                    Rectangle()
-                        .fill(Color.yellow.opacity(0.3))
-                        .frame(width: wordAreaFrame.width, height: wordAreaFrame.height)
-                        .cornerRadius(20)
-                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 50)
-                    
-                    // Current word display
-                    Text(currentWord)
-                        .font(.custom("ChalkboardSE-Regular", size: 50))
-                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                        .minimumScaleFactor(0.2)
-                        .lineLimit(1)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color.theme.accent)
-                        .position(x: wordAreaFrame.midX, y: wordAreaFrame.minY + 40)
-                    
-                    // Success animation
-                    if currentWord == word && letters.allSatisfy({ !$0.isVisible }) {
-                        Image(systemName: "star.fill")
-                            .resizable()
-                            .foregroundColor(Color.yellow).opacity(0.4)
-                            .scaledToFill()
-                            .frame(width: 200, height: 200)
-                            .scaleEffect(animateCheckmark ? 2 : 0.8)
-                            .position(x: wordAreaFrame.midX, y: wordAreaFrame.midY + 30)
-                            .onAppear {
-                                withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                                    animateCheckmark = true
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                    withAnimation {
-                                        animateCheckmark = false
-                                    }
-                                }
-                            }
-                    }
-                    
-                    // Play button
-                    Button {
-                        // Add action here, e.g., play sound
-                    } label: {
-                        Image(systemName: "play.fill")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(Color.theme.iconColor)
-                    }
-                    .position(x: wordAreaFrame.minX + 40, y: wordAreaFrame.minY - 70)
-                }
-                
-                // Next or Finish button logic
-                Group {
-                    if currentWord == word && letters.allSatisfy({ !$0.isVisible }) {
-                        RewardAnimationView()
-                            .onAppear {
-                                if !showRewardAnimation {
-                                    showRewardAnimation = true
-                                    userProgress.earnStar()
-                                    userProgress.addPoints(10)
-                                    
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                        if currentIndex < wordList.count - 1 {
-                                            currentIndex += 1
-                                            word = wordList[currentIndex].word
-                                            resetWordState()
-                                            showRewardAnimation = false
-                                        } else {
-                                            presentationMode.wrappedValue.dismiss()
-                                        }
-                                    }
-                                }
-                            }
-                    } else if !currentWord.isEmpty {
-                        // Try Again button
-                        Button(action: {
-                            resetWordState()
-                        }) {
-                            Text("Try Again")
-                                .font(.headline)
-                                .frame(width: 200, height: 40)
-                        }
-                        .buttonStyle(.borderedProminent)
-                    } else {
-                        // Finish button
-                        Button(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Text("Finish")
-                                .font(.headline)
-                                .frame(width: 200, height: 40)
-                        }
-                        .buttonStyle(.borderedProminent)
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .onAppear {
-                    initializeLetters()
-                }
-                .onChange(of: word) { _ in
-                    checkForCompletion()
-                }
-            }
+
+   
+    func initializeLetters() {
+        let stringLetters = targetWord.map { String($0) }
+        let shuffledLetters = stringLetters.shuffled()
+        letters = shuffledLetters.map { LetterModel(id: UUID(), text: $0, isVisible: true, position: .zero) }
+    }
+
+    func resetWordState() {
+        currentWord = ""
+        initializeLetters()
+    }
+
+    func advanceWord() {
+        if currentIndex < wordList.count - 1 {
+            currentIndex += 1
+            targetWord = wordList[currentIndex].word
+            resetWordState()
+            showRewardAnimation = false
+        } else {
+            isCompleted = true
         }
     }
-    
-    // Functions to manage letters and positions
-    func updatePosition(of id: UUID, with newPosition: CGPoint) {
+
+    func updateLetterPosition(id: UUID, to position: CGPoint) {
         if let index = letters.firstIndex(where: { $0.id == id }) {
-            letters[index].position = newPosition
+            letters[index].position = position
         }
     }
-    
-    func updateVisibility(of id: UUID, with newPosition: CGPoint) {
-        if wordAreaFrame.contains(newPosition) {
+
+    func updateLetterVisibility(id: UUID, at position: CGPoint, in geometry: GeometryProxy) {
+        let targetFrame = CGRect(x: geometry.frame(in: .global).minX,
+                                 y: geometry.frame(in: .global).minY,
+                                 width: geometry.size.width,
+                                 height: 100)
+
+        if targetFrame.contains(position) {
             if let index = letters.firstIndex(where: { $0.id == id }) {
                 letters[index].isVisible = false
                 currentWord += letters[index].text
             }
         }
     }
-    
-    func initializeLetters() {
-        let stringLetters = word.map { String($0) }
-        let shuffledLetters = stringLetters.shuffled()
-        letters = []
-        var x = 90
-        let y = 420
-        for item in shuffledLetters {
-            letters.append(LetterModel(id: UUID(), text: item, position: CGPoint(x: x, y: y), isVisible: true))
-            x += 76
+
+    func checkWordMatch() {
+        if currentWord == targetWord && letters.allSatisfy({ !$0.isVisible }) {
+            showRewardAnimation = true
         }
     }
-    
-    func resetWordState() {
-        currentWord = ""
-        letters.removeAll()
-        initializeLetters()
+}
+
+struct LetterModel: Identifiable, Codable {
+    let id: UUID
+    var text: String
+    var isVisible: Bool
+    var position: CGPoint
+}
+
+struct MakeAWordWithLetters: View {
+    @ObservedObject var viewModel: MakeAWordViewModel
+    @EnvironmentObject var userProgress: UserProgress
+    @Environment(\.presentationMode) var presentationMode
+
+    var body: some View {
+        GeometryReader { geometry in
+            VStack(spacing: 20) {
+                wordDisplayArea()
+                lettersArea(in: geometry)
+                actionButton()
+            }
+            .padding()
+            .onChange(of: viewModel.currentWord) { _ in
+                viewModel.checkWordMatch()
+            }
+            .onAppear {
+                viewModel.resetWordState()
+            }
+        }
     }
-    
-    func checkForCompletion() {
-        if currentWord == word && letters.allSatisfy({ !$0.isVisible }) {
-            if !showRewardAnimation {
-                showRewardAnimation = true
-                userProgress.earnStar()
-                userProgress.addPoints(10)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    if currentIndex < wordList.count - 1 {
-                        currentIndex += 1
-                        word = wordList[currentIndex].word
-                        resetWordState()
-                        showRewardAnimation = false
-                    } else {
-                        presentationMode.wrappedValue.dismiss()
+
+    func wordDisplayArea() -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.yellow.opacity(0.3))
+                .frame(height: 100)
+
+            Text(viewModel.currentWord)
+                .font(.system(size: 32, weight: .bold))
+                .foregroundColor(Color.theme.accent)
+                .padding()
+
+            if viewModel.showRewardAnimation {
+                Image(systemName: "star.fill")
+                    .resizable()
+                    .foregroundColor(Color.yellow.opacity(0.4))
+                    .scaledToFill()
+                    .frame(width: 100, height: 100)
+                    .scaleEffect(viewModel.animateCheckmark ? 1.2 : 0.8)
+                    .animation(
+                        Animation.easeInOut(duration: 0.5)
+                            .repeatCount(3, autoreverses: true),
+                        value: viewModel.animateCheckmark
+                    )
+                    .onAppear {
+                        viewModel.animateCheckmark = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            viewModel.animateCheckmark = false
+                            userProgress.earnStar()
+                            userProgress.addPoints(10)
+                            viewModel.advanceWord()
+                        }
+                    }
+            }
+        }
+    }
+
+    func lettersArea(in geometry: GeometryProxy) -> some View {
+        let letters = viewModel.letters.filter { $0.isVisible }
+        let lines = letters.chunked(into: viewModel.maxLettersPerLine)
+
+        return VStack(spacing: viewModel.lineSpacing) {
+            ForEach(0..<lines.count, id: \.self) { lineIndex in
+                HStack(spacing: viewModel.spacing) {
+                    ForEach(lines[lineIndex]) { letter in
+                        LetterView(
+                            letter: letter.text,
+                            index: letter.id,
+                            onChanged: { id, position in
+                                viewModel.updateLetterPosition(id: id, to: position)
+                            },
+                            onEnded: { id, position in
+                                viewModel.updateLetterVisibility(id: id, at: position, in: geometry)
+                                viewModel.checkWordMatch()
+                            }
+                        )
                     }
                 }
             }
         }
     }
-    
-    
-    func positionForLetter(at index: Int, in size: CGSize) -> CGPoint {
-        let lineIndex = index / maxLettersPerLine
-        let columnIndex = index % maxLettersPerLine
-        let lettersInLine = min(maxLettersPerLine, letters.count - lineIndex * maxLettersPerLine)
-        let totalWidthCurrentLine = CGFloat(lettersInLine) * letterSize.width + CGFloat(lettersInLine - 1) * spacing
-        let startX = (size.width - totalWidthCurrentLine) / 2 + letterSize.width / 2
-        let x = startX + CGFloat(columnIndex) * (letterSize.width + spacing)
-        let y = 50 + CGFloat(lineIndex) * (letterSize.height + lineSpacing)
-        return CGPoint(x: x, y: y)
+
+    func actionButton() -> some View {
+        Group {
+            if viewModel.showRewardAnimation {
+                EmptyView()
+            } else if !viewModel.isCompleted {
+                Button(action: {
+                    viewModel.resetWordState()
+                }) {
+                    Text("Try Again")
+                        .font(.headline)
+                        .frame(height: 44)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.top, 20)
+            } else {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Text("Finish")
+                        .font(.headline)
+                        .frame(height: 44)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.top, 20)
+            }
+        }
+    }
+}
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        var chunks: [[Element]] = []
+        var index = 0
+        while index < count {
+            let chunk = Array(self[index..<Swift.min(index + size, count)])
+            chunks.append(chunk)
+            index += size
+        }
+        return chunks
     }
 }
 
 struct MakeAWordWithLetters_Previews: PreviewProvider {
     static var previews: some View {
-        MakeAWordWithLetters(wordList: [WordModel(fromString: "to")], currentIndex: 0)}
+        // Use your word list from WordModel
+        let wordList = WordModel.year1WordsList
+        let viewModel = MakeAWordViewModel(wordList: wordList, currentIndex: 0)
+        return MakeAWordWithLetters(viewModel: viewModel)
+            .environmentObject(UserProgress.shared)
+    }
 }

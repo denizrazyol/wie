@@ -11,19 +11,20 @@ struct OnboardView: View {
     
     
     @EnvironmentObject private var vm: HomeViewModel
+    @EnvironmentObject var userProgress: UserProgress
     @State private var isFilled = false
     let menuItems = Menu.options
-
+    
     var body: some View {
         VStack(spacing: 0) {
             header
                 .padding()
-                //.frame(maxWidth: maxWidthForIpad)
+            //.frame(maxWidth: maxWidthForIpad)
             menu
         }
-   
+        
     }
-
+    
     private var menu: some View {
         List (menuItems) { item in
             ZStack{
@@ -33,7 +34,7 @@ struct OnboardView: View {
             }
             .listRowSeparator(.hidden)
             .listRowBackground(Color.theme.background)
-            }
+        }
         .listStyle(PlainListStyle())
     }
     
@@ -50,7 +51,7 @@ struct OnboardView: View {
             
             Text(item.title)
                 .font(.custom("ChalkboardSE-Regular", size: 30))
-                //.fontWeight(.semibold)
+            //.fontWeight(.semibold)
                 .foregroundColor(Color.theme.accent)
                 .multilineTextAlignment(.leading)
                 .frame(alignment: .leading)
@@ -61,7 +62,7 @@ struct OnboardView: View {
         .padding(.horizontal, 10)
         .padding(.bottom, 10)
     }
-
+    
     private var heartIconOverlay: some View {
         Image(systemName: isFilled ? "heart.fill" : "heart")
             .font(.system(size: 25))
@@ -75,23 +76,27 @@ struct OnboardView: View {
                 isFilled.toggle()
             }
     }
-
+    
     private func destinationView(selectedId: Int) -> some View {
         switch selectedId {
         case 1:
             return AnyView(CommonExceptionWordsView()
                 .customNavigationTitle("Common Exception Words")
-                .environmentObject(vm))
-             
+                .environmentObject(vm)
+                .environmentObject(UserProgress.shared)
+            )
+            
         case 2:
             return AnyView(WhatsOnTheTrayView()
                 .customNavigationTitle("What's on the Tray")
                 .environmentObject(vm)
-                )
+                .environmentObject(UserProgress.shared)
+            )
         case 3:
             return AnyView(WordSearchView()
                 .customNavigationTitle("Word Search")
                 .environmentObject(vm)
+                .environmentObject(UserProgress.shared)
             )
         default:
             return AnyView(Text("Default View"))
@@ -101,7 +106,9 @@ struct OnboardView: View {
 
 struct Previews_OnboardView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardView().environmentObject(HomeViewModel())
+        OnboardView()
+            .environmentObject(HomeViewModel())
+            .environmentObject(UserProgress.shared)
     }
 }
 
@@ -125,11 +132,11 @@ extension OnboardView {
                             .rotationEffect(Angle(degrees: vm.showWordsList ? 180 : 0))
                     }
             }
-                
+            
             if vm.showWordsList {
                 WordLevelsView().environmentObject(vm)
             }
-         
+            
         }
         .background(Color.theme.fillingColor)
         .cornerRadius(20)
