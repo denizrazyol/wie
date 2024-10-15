@@ -21,7 +21,6 @@ struct CardView: View {
     var status: Status
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(backgorundColor ?? Color.white)
@@ -49,7 +48,6 @@ struct CardView: View {
                     .foregroundColor((backgorundColor != nil) ? .white : .black)
                     .multilineTextAlignment(.center)
             }
-        }
         .frame(maxWidth: maxWidth)
     }
 }

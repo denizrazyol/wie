@@ -13,22 +13,23 @@ struct LetterView: View {
 
     var letter: String
     var index: UUID
+    var maxWidth: CGFloat
 
     var onChanged: ((UUID, CGPoint) -> Void)?
     var onEnded: ((UUID, CGPoint) -> Void)?
 
     var body: some View {
-        Text(letter)
-            .font(.custom("ChalkboardSE-Regular", size: 32))
-            .fontWeight(.bold)
-            .multilineTextAlignment(.center)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.theme.iconColor)
-                    .frame(width: 55, height: 55)
-            )
-            .foregroundColor(.white)
+            ZStack {
+                RoundedRectangle(cornerRadius: maxWidth * 0.2)
+                    .fill(Color.theme.accent)
+
+                Text(letter)
+                    .font(.custom("ChalkboardSE-Regular", size: max(maxWidth * 0.6, 24)))
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(width: maxWidth, height: maxWidth)
             .offset(dragAmount)
             .zIndex(dragAmount == .zero ? 0 : 1)
             .gesture(
@@ -42,11 +43,11 @@ struct LetterView: View {
                         self.dragAmount = .zero
                     }
             )
-    }
+        }
 }
 
 struct LetterView_Previews: PreviewProvider {
     static var previews: some View {
-        LetterView(letter: "t", index: UUID())
+        LetterView(letter: "t", index: UUID(),  maxWidth: 50)
     }
 }

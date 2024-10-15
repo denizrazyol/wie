@@ -24,17 +24,28 @@ struct WhatsOnTheTrayView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            VStack()  {
+            VStack  {
                 if showTray {
                     BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray, resetGameAction: resetGame)
+                        //.frame(height: geometry.size.height * 0.75)
                 } else {
-                    instructionView(geometry: geometry)
-                        .padding(.horizontal)
+                    VStack(spacing: 20) {
+                        instructionView(geometry: geometry)
+                            .padding(.horizontal)
+                        
+                        
+                        Text("How many you can remember")
+                            .font(.custom("ChalkboardSE-Regular", size:  geometry.size.height * 0.029))
+                            .padding(.bottom, geometry.size.height * 0.02)
+                        
+                    }
+                    //.frame(height: geometry.size.height * 0.75)
                     
-                    Text("How many you can remember")
-                        .font(.custom("ChalkboardSE-Regular", size: 22))
-                        .padding(.top, 8)
-                    
+                }
+                
+                Spacer()
+                
+                if !showTray {
                     Button(action: {
                         withAnimation {
                             showTray.toggle()
@@ -43,7 +54,7 @@ struct WhatsOnTheTrayView: View {
                         Text("Let's See")
                     }
                     .buttonStyle(CustomButtonStyle())
-                    .padding(.top, 16)
+                    .padding(.bottom, geometry.size.height * 0.04)
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
@@ -68,8 +79,9 @@ struct WhatsOnTheTrayView: View {
     private func instructionView(geometry: GeometryProxy) -> some View {
         VStack() {
             Text("Look carefully at the words on the tray!")
-                .font(.custom("ChalkboardSE-Regular", size: 22))
+                .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.029))
                 .multilineTextAlignment(.center)
+                .padding(.vertical, geometry.size.height * 0.02)
             
             TrayContentStack(tray: $tray, geometry: geometry)
             
