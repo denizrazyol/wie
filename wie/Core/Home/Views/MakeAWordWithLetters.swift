@@ -92,26 +92,20 @@ struct MakeAWordWithLetters: View {
     
     var body: some View {
         GeometryReader { geometry in
-            VStack {
+            
+            VStack(spacing: geometry.size.height * 0.04) {
                 
-                instructionView(geometry: geometry)
-                    .padding(.horizontal)
-                    .frame(height: geometry.size.height * 0.1)
-                    .padding(.vertical, geometry.size.height * 0.02)
-                
-                
-                VStack(spacing:20) {
+                VStack(spacing: 20) {
+                    instructionView(geometry: geometry)
+                        .frame(height: geometry.size.height * 0.1)
                     wordDisplayArea(in: geometry)
                     lettersArea(in: geometry)
-                    
                 }
-                //.frame(height: geometry.size.height * 0.75)
+                .padding(.horizontal)
                 
-                Spacer()
                 
                 actionButton()
-                    .padding(.bottom, geometry.size.height * 0.04)
-                
+                //.padding(.bottom, geometry.size.height * 0.05)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .onChange(of: viewModel.currentWord) { _ in
@@ -125,49 +119,66 @@ struct MakeAWordWithLetters: View {
     
     @ViewBuilder
     func instructionView(geometry: GeometryProxy) -> some View {
-        Text(viewModel.showRewardAnimation ? "Great Job! 🎉 " : "Drag and drop the letters to form the correct word!")
+        Text(viewModel.showRewardAnimation ? "Great Job!" : "Drag and drop the letters to form the correct word!")
             .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
             .multilineTextAlignment(.center)
     }
     
     func wordDisplayArea(in geometry: GeometryProxy) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.yellow.opacity(0.3))
+        let horizontalPadding: CGFloat = 10
+        let maxBoxWidth: CGFloat = 60
+        let spacing: CGFloat = 5
+        let availableWidth = geometry.size.width - 2 * horizontalPadding - CGFloat(viewModel.targetWord.count - 1) * spacing
+        let boxWidth = min(maxBoxWidth, availableWidth / CGFloat(viewModel.targetWord.count))
+        let boxHeight: CGFloat = boxWidth + 5
+        let underlineHeight: CGFloat = 2
+        
+        return ZStack(alignment: .center) {
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.yellow.opacity(0.9))
                 .frame(height: geometry.size.height * 0.4)
-                .padding(.horizontal)
+                .shadow(color: Color.gray.opacity(0.5), radius: 10, x: 5, y: 5)
             
-            Text(viewModel.currentWord)
-                .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.1))
-                .foregroundColor(Color.theme.accent)
-                .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.2)
-                .lineLimit(1)
-                .padding()
-            
-            if viewModel.showRewardAnimation {
-                
-                
-                ConfettiView()
-                    .edgesIgnoringSafeArea(.all)
-                    .onAppear {
-                        viewModel.animateCheckmark = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            viewModel.animateCheckmark = false
-                            userProgress.earnStar()
-                            userProgress.addPoints(10)
-                            viewModel.advanceWord()
-                        }
+            VStack {
+                HStack(spacing: 3) {
+                    ForEach(0..<viewModel.targetWord.count, id: \.self) { index in
+                        Text(viewModel.currentWord.count > index ? String(viewModel.currentWord[viewModel.currentWord.index(viewModel.currentWord.startIndex, offsetBy: index)]) : "")
+                            .font(.custom("ChalkboardSE-Regular", size: 40))
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.theme.accent)
+                            .frame(width: boxWidth, height: boxHeight)
+                            .overlay(
+                                Rectangle()
+                                    .fill(Color.theme.secondaryText)
+                                    .frame(height: underlineHeight)
+                                    .padding(.top, boxHeight - underlineHeight)
+                                , alignment: .top
+                            )
                     }
+                }
+                
+                if viewModel.showRewardAnimation {
+                    Text(viewModel.targetWord)
+                        .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.09))
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.theme.accent)
+                        .multilineTextAlignment(.center)
+                        .minimumScaleFactor(0.2)
+                        .lineLimit(1)
+                        .transition(.scale.combined(with: .opacity))
+                        .padding(.top, 10)
+                }
             }
         }
     }
+    
+    
     
     func lettersArea(in geometry: GeometryProxy) -> some View {
         let letters = viewModel.letters.filter { $0.isVisible }
         let horizontalPadding: CGFloat = 16
         let spacing: CGFloat = 10
-        let maxLetterWidth: CGFloat = 54
+        let maxLetterWidth: CGFloat = 60
         let availableWidth = geometry.size.width - 2 * horizontalPadding + spacing
         let maxLettersPerLine = min(letters.count, Int(availableWidth / (maxLetterWidth + spacing)))
         let totalSpacing = CGFloat(maxLettersPerLine - 1) * spacing
@@ -175,7 +186,7 @@ struct MakeAWordWithLetters: View {
         let letterWidth = min(maxLetterWidth, totalWidth / CGFloat(maxLettersPerLine))
         let lines = letters.chunked(into: maxLettersPerLine)
         
-        return VStack(spacing: spacing) {
+        return VStack() {
             ForEach(0..<lines.count, id: \.self) { lineIndex in
                 HStack(spacing: spacing) {
                     ForEach(lines[lineIndex]) { letter in
@@ -196,7 +207,7 @@ struct MakeAWordWithLetters: View {
             }
         }
         .padding(.horizontal, horizontalPadding)
-        .padding(.top, geometry.size.height * 0.02)
+        .padding(.top, 10)
     }
     
     
@@ -204,26 +215,27 @@ struct MakeAWordWithLetters: View {
         Group {
             if viewModel.showRewardAnimation {
                 EmptyView()
-            } else if !viewModel.isCompleted {
+            } else {
                 Button(action: {
                     withAnimation {
                         viewModel.resetWordState()
                     }
                 }) {
-                    Text("Try Again")
-                }
-                .buttonStyle(CustomButtonStyle())
-                
-            } else {
-                Button(action: {
-                    withAnimation {
-                        presentationMode.wrappedValue.dismiss()
+                    HStack {
+                        Image(systemName: "arrow.counterclockwise.circle.fill")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.white)
+                        Text("Try Again")
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
                     }
-                }) {
-                    Text("Finish")
+                    .padding()
+                    .background(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.yellow]), startPoint: .leading, endPoint: .trailing))
+                    .cornerRadius(15)
+                    .shadow(radius: 5)
                 }
-                .buttonStyle(CustomButtonStyle())
-                
+                .buttonStyle(PlainButtonStyle())
             }
         }
     }
@@ -244,7 +256,7 @@ extension Array {
 
 struct MakeAWordWithLetters_Previews: PreviewProvider {
     static var previews: some View {
-        let wordList = WordModel.year1WordsList
+        let wordList = WordModel.year5And6WordsList
         let viewModel = MakeAWordViewModel(wordList: wordList, currentIndex: 0)
         return MakeAWordWithLetters(viewModel: viewModel)
             .environmentObject(UserProgress.shared)

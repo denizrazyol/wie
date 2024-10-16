@@ -43,7 +43,6 @@ struct WhatsOnTheTrayView: View {
                     
                 }
                 
-                Spacer()
                 
                 if !showTray {
                     Button(action: {
@@ -51,10 +50,21 @@ struct WhatsOnTheTrayView: View {
                             showTray.toggle()
                         }
                     }) {
-                        Text("Let's See")
+                        HStack {
+                            Image(systemName: "arrow.right")
+                                .resizable()
+                                .frame(width: 20, height: 15)
+                                .foregroundColor(.white)
+                            Text("Let's See")
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                        .background(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.yellow]), startPoint: .leading, endPoint: .trailing))
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
                     }
-                    .buttonStyle(CustomButtonStyle())
-                    .padding(.bottom, geometry.size.height * 0.04)
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
