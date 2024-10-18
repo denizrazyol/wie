@@ -92,22 +92,36 @@ struct MakeAWordWithLetters: View {
     
     var body: some View {
         GeometryReader { geometry in
-            
-            VStack(spacing: geometry.size.height * 0.04) {
+            ZStack {
                 
-                VStack(spacing: 20) {
+                Image("makeasentence")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geometry.size.width)
+                    .ignoresSafeArea()
+                
+                VStack() {
+        
                     instructionView(geometry: geometry)
                         .frame(height: geometry.size.height * 0.1)
-                    wordDisplayArea(in: geometry)
-                    lettersArea(in: geometry)
+                    
+                    Spacer(minLength: geometry.size.height * 0.08)
+                    
+                    VStack() {
+                        wordDisplayArea(in: geometry)
+                        lettersArea(in: geometry)
+                        Spacer()
+                    }
+                    Spacer()
+                    actionButton()
+                    
                 }
                 .padding(.horizontal)
-                
-                
-                actionButton()
-                //.padding(.bottom, geometry.size.height * 0.05)
+                .padding(.top, geometry.size.height * 0.15)
+                .padding(.bottom, geometry.size.height * 0.1)
+             
             }
-            .frame(width: geometry.size.width, height: geometry.size.height)
+            
             .onChange(of: viewModel.currentWord) { _ in
                 viewModel.checkWordMatch()
             }
@@ -134,11 +148,7 @@ struct MakeAWordWithLetters: View {
         let underlineHeight: CGFloat = 2
         
         return ZStack(alignment: .center) {
-            RoundedRectangle(cornerRadius: 15)
-                .fill(Color.yellow.opacity(0.9))
-                .frame(height: geometry.size.height * 0.4)
-                .shadow(color: Color.gray.opacity(0.5), radius: 10, x: 5, y: 5)
-            
+   
             VStack {
                 HStack(spacing: 3) {
                     ForEach(0..<viewModel.targetWord.count, id: \.self) { index in
@@ -222,18 +232,21 @@ struct MakeAWordWithLetters: View {
                     }
                 }) {
                     HStack {
-                        Image(systemName: "arrow.counterclockwise.circle.fill")
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                            .foregroundColor(.white)
                         Text("Try Again")
-                            .fontWeight(.bold)
+                            .font(.custom("ChalkboardSE-Bold", size: 24))
                             .foregroundColor(.white)
+                            .padding(.bottom, 7)
+                        
+                        Image(systemName: "arrow.counterclockwise.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.white)
+                        
                     }
-                    .padding()
-                    .background(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.yellow]), startPoint: .leading, endPoint: .trailing))
-                    .cornerRadius(15)
-                    .shadow(radius: 5)
+                    .padding(.horizontal, 60)
+                    .padding(.vertical,10)
+                    .background(Color.theme.iconColor)
+                    .clipShape(Capsule())
+                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
                 }
                 .buttonStyle(PlainButtonStyle())
             }

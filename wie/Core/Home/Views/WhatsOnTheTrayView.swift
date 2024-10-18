@@ -27,7 +27,6 @@ struct WhatsOnTheTrayView: View {
             VStack  {
                 if showTray {
                     BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray, resetGameAction: resetGame)
-                        //.frame(height: geometry.size.height * 0.75)
                 } else {
                     VStack(spacing: 20) {
                         instructionView(geometry: geometry)
@@ -39,39 +38,42 @@ struct WhatsOnTheTrayView: View {
                             .padding(.bottom, geometry.size.height * 0.02)
                         
                     }
-                    //.frame(height: geometry.size.height * 0.75)
-                    
                 }
                 
                 
                 if !showTray {
+                    
                     Button(action: {
-                        withAnimation {
+                        withAnimation{
                             showTray.toggle()
                         }
                     }) {
                         HStack {
-                            Image(systemName: "arrow.right")
-                                .resizable()
-                                .frame(width: 20, height: 15)
-                                .foregroundColor(.white)
                             Text("Let's See")
-                                .fontWeight(.bold)
+                                .font(.custom("ChalkboardSE-Bold", size: 24))
                                 .foregroundColor(.white)
+                                .padding(.bottom, 7)
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 24))
+                                .foregroundColor(.white)
+                            
+                         
                         }
-                        .padding()
-                        .background(LinearGradient(gradient: Gradient(colors: [Color.orange, Color.yellow]), startPoint: .leading, endPoint: .trailing))
-                        .cornerRadius(15)
-                        .shadow(radius: 5)
+                        .padding(.horizontal, 60)
+                        .padding(.vertical,10)
+                        .background(Color.theme.iconColor)
+                        .clipShape(Capsule())
+                        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .onAppear {
                 loadTrayWords()
             }
-            
         }
     }
     
