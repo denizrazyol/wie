@@ -98,10 +98,11 @@ struct MakeAWordWithLetters: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometry.size.width)
+                    .clipped()
                     .ignoresSafeArea()
                 
                 VStack() {
-        
+                    
                     instructionView(geometry: geometry)
                         .frame(height: geometry.size.height * 0.1)
                     
@@ -117,9 +118,9 @@ struct MakeAWordWithLetters: View {
                     
                 }
                 .padding(.horizontal)
-                .padding(.top, geometry.size.height * 0.15)
+                .padding(.top, geometry.size.height * 0.12)
                 .padding(.bottom, geometry.size.height * 0.1)
-             
+                
             }
             
             .onChange(of: viewModel.currentWord) { _ in
@@ -133,9 +134,20 @@ struct MakeAWordWithLetters: View {
     
     @ViewBuilder
     func instructionView(geometry: GeometryProxy) -> some View {
-        Text(viewModel.showRewardAnimation ? "Great Job!" : "Drag and drop the letters to form the correct word!")
-            .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
-            .multilineTextAlignment(.center)
+        if viewModel.showRewardAnimation {
+            ZStack() {
+                Text("Great Job!")
+                    .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
+                    .foregroundColor(Color.black.opacity(0.6))
+                    .multilineTextAlignment(.center)
+                RewardAnimationView()
+            }
+        } else {
+            Text("Drag and drop the letters to form the correct word!")
+                .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
+                .foregroundColor(Color.black.opacity(0.6))
+                .multilineTextAlignment(.center)
+        }
     }
     
     func wordDisplayArea(in geometry: GeometryProxy) -> some View {
@@ -148,7 +160,7 @@ struct MakeAWordWithLetters: View {
         let underlineHeight: CGFloat = 2
         
         return ZStack(alignment: .center) {
-   
+            
             VStack {
                 HStack(spacing: 3) {
                     ForEach(0..<viewModel.targetWord.count, id: \.self) { index in
@@ -168,6 +180,7 @@ struct MakeAWordWithLetters: View {
                 }
                 
                 if viewModel.showRewardAnimation {
+                    
                     Text(viewModel.targetWord)
                         .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.09))
                         .fontWeight(.bold)
@@ -176,7 +189,15 @@ struct MakeAWordWithLetters: View {
                         .minimumScaleFactor(0.2)
                         .lineLimit(1)
                         .transition(.scale.combined(with: .opacity))
-                        .padding(.top, 10)
+                        .onAppear {
+                            viewModel.animateCheckmark = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                viewModel.animateCheckmark = false
+                                userProgress.earnStar()
+                                userProgress.addPoints(10)
+                                viewModel.advanceWord()
+                            }
+                        }
                 }
             }
         }

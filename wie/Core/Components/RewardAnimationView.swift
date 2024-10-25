@@ -12,11 +12,10 @@ struct RewardAnimationView: View {
     @State private var animate = false
     
     var body: some View {
-           ZStack {
                Image(systemName: "star.fill")
                    .resizable()
                    .foregroundColor(Color.yellow)
-                   .frame(width: 100, height: 100)
+                   .frame(width: 250, height: 250)
                    .scaleEffect(animate ? 1.5 : 1.0)
                    .opacity(animate ? 0.0 : 1.0)
                    .onAppear {
@@ -24,7 +23,6 @@ struct RewardAnimationView: View {
                            animate = true
                        }
                    }
-           }
        }
 }
 
