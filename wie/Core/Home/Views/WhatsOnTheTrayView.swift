@@ -24,55 +24,67 @@ struct WhatsOnTheTrayView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            VStack  {
-                if showTray {
-                    BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray, resetGameAction: resetGame)
-                } else {
-                    VStack(spacing: 20) {
-                        instructionView(geometry: geometry)
-                            .padding(.horizontal)
+            
+            ZStack {
+                
+                Image("makeasentenceplain")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geometry.size.width)
+                    .clipped()
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 20)   {
+                    if showTray {
+                        BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray, resetGameAction: resetGame)
+                    } else {
                         
-                        
-                        Text("How many you can remember")
-                            .font(.custom("ChalkboardSE-Regular", size:  geometry.size.height * 0.029))
-                            .padding(.bottom, geometry.size.height * 0.02)
+                            instructionView(geometry: geometry)
+                                .padding(.horizontal)
+                            
+                        VStack(spacing: 10) {
+                            
+                            Text("How many you can remember")
+                                .font(.custom("ChalkboardSE-Regular", size:  geometry.size.height * 0.028))
+                                .foregroundColor(Color.black.opacity(0.6))
+                           
+                            
+                            Button(action: {
+                                withAnimation{
+                                    showTray.toggle()
+                                }
+                            }) {
+                                HStack {
+                                    Text("Let's See")
+                                        .font(.custom("ChalkboardSE-Bold", size: 24))
+                                        .foregroundColor(.white)
+                                        .padding(.bottom, 7)
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 24))
+                                        .foregroundColor(.white)
+                                    
+                                    
+                                }
+                                .padding(.horizontal, 60)
+                                .padding(.vertical,10)
+                                .background(Color.theme.iconColor)
+                                .clipShape(Capsule())
+                                .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
+                            }
+                            .padding(.bottom, 10)
+                            .buttonStyle(PlainButtonStyle())
+                            
+                        }
                         
                     }
-                }
-                
-                
-                if !showTray {
                     
-                    Button(action: {
-                        withAnimation{
-                            showTray.toggle()
-                        }
-                    }) {
-                        HStack {
-                            Text("Let's See")
-                                .font(.custom("ChalkboardSE-Bold", size: 24))
-                                .foregroundColor(.white)
-                                .padding(.bottom, 7)
-                            
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 24))
-                                .foregroundColor(.white)
-                            
-                         
-                        }
-                        .padding(.horizontal, 60)
-                        .padding(.vertical,10)
-                        .background(Color.theme.iconColor)
-                        .clipShape(Capsule())
-                        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
-                    }
-                    .buttonStyle(PlainButtonStyle())
                     
                 }
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .onAppear {
-                loadTrayWords()
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .onAppear {
+                    loadTrayWords()
+                }
             }
         }
     }
@@ -92,8 +104,9 @@ struct WhatsOnTheTrayView: View {
         VStack() {
             Text("Look carefully at the words on the tray!")
                 .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.029))
+                .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
-                .padding(.vertical, geometry.size.height * 0.02)
+                .padding(.top, geometry.size.height * 0.02)
             
             TrayContentStack(tray: $tray, geometry: geometry)
             
@@ -165,10 +178,11 @@ struct BottomTrayView: View {
                     
                     wordPairsStack()
                         .cornerRadius(20)
-                        .shadow(radius: 5)
+                        .shadow(radius: 3)
                         .disabled(showCongratulations)
                 }
-                .padding(.horizontal)
+                .padding(.all)
+                //.padding(.bottom,45)
             }
             
         }
@@ -187,8 +201,9 @@ struct BottomTrayView: View {
     private func instructionText() -> some View {
         Text("Tap on the words you remember seeing!")
             .font(.custom("ChalkboardSE-Regular", size: 22))
+            .foregroundColor(Color.black.opacity(0.6))
             .multilineTextAlignment(.center)
-        
+            .padding(.horizontal)
     }
     
     @ViewBuilder

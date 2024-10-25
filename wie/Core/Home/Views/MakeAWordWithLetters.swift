@@ -108,40 +108,55 @@ struct MakeAWordWithLetters: View {
                     
                     Spacer(minLength: geometry.size.height * 0.08)
                     
-                    VStack() {
-                        wordDisplayArea(in: geometry)
-                        lettersArea(in: geometry)
-                        Spacer()
-                    }
+                    wordDisplayArea(in: geometry)
+                    
+                    lettersArea(in: geometry)
+                    
                     Spacer()
-                    actionButton()
+                    
+                    if !viewModel.showRewardAnimation {
+                        actionButton()
+                    }
                     
                 }
                 .padding(.horizontal)
                 .padding(.top, geometry.size.height * 0.12)
                 .padding(.bottom, geometry.size.height * 0.1)
                 
+                if viewModel.showRewardAnimation {
+                    ConfettiView()
+                        .edgesIgnoringSafeArea(.all)
+                        .transition(.opacity)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                withAnimation {
+                                    userProgress.earnStar()
+                                    userProgress.addPoints(10)
+                                    viewModel.advanceWord()
+                                }
+                            }
+                        }
+                }
             }
-            
             .onChange(of: viewModel.currentWord) { _ in
                 viewModel.checkWordMatch()
             }
             .onAppear {
                 viewModel.resetWordState()
             }
+            
         }
     }
     
     @ViewBuilder
     func instructionView(geometry: GeometryProxy) -> some View {
         if viewModel.showRewardAnimation {
-            ZStack() {
-                Text("Great Job!")
-                    .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
-                    .foregroundColor(Color.black.opacity(0.6))
-                    .multilineTextAlignment(.center)
-                RewardAnimationView()
-            }
+            
+            Text("🎉 Great Job 🎉")
+                .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.04))
+                .foregroundColor(Color.black.opacity(0.6))
+                .multilineTextAlignment(.center)
+            
         } else {
             Text("Drag and drop the letters to form the correct word!")
                 .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))

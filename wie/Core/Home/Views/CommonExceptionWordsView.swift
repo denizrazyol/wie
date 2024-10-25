@@ -16,7 +16,7 @@ struct CommonExceptionWordsView: View {
         GeometryReader { geometry in
             ZStack {
                 
-                Image("makeasentence")
+                Image("makeasentenceplain")
                     .resizable()
                     .scaledToFill()
                     .frame(width: geometry.size.width)
@@ -26,12 +26,12 @@ struct CommonExceptionWordsView: View {
                 VStack(spacing: geometry.size.height * 0.02) {
                     Text("Tap on a word to start!")
                         .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
-                        .padding(.top, geometry.size.height * 0.12)
-                        //.padding(.bottom, geometry.size.height * 0.02)
+                        .padding(.top, geometry.size.height * 0.02)
+                        .padding(.bottom, geometry.size.height * 0.02)
                         .foregroundColor(Color.black.opacity(0.6))
                     
                     ScrollView {
-                        LazyVStack(spacing: geometry.size.height * 0.03) {
+                        LazyVStack(spacing: geometry.size.height * 0.025) {
                             ForEach(Array(vm.currentWordLevel.wordlist.enumerated()), id: \.element.id) { index, word in
                                 let wordList = vm.currentWordLevel.wordlist
                                 let viewModel = MakeAWordViewModel(wordList: wordList, currentIndex: index)
@@ -42,7 +42,7 @@ struct CommonExceptionWordsView: View {
                                         .environmentObject(userProgress)
                                 ) {
                                     WordFlashCardView(word: word)
-                                        .frame(height: geometry.size.height * 0.2)
+                                        .frame(height: geometry.size.height * 0.23)
                                         .padding(.horizontal, geometry.size.width * 0.02)
                                 }
                             }

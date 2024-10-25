@@ -15,6 +15,7 @@ struct WordSearchView: View {
     @State private var hasAwardedReward = false
     @State private var foundWords: [String] = []
     @State private var tray: [WordModel] = []
+    @State private var long = false
     @State private var showConfetti = false
     @ObservedObject var userProgress = UserProgress.shared
     @StateObject private var game = WordSearchGame()
@@ -22,6 +23,14 @@ struct WordSearchView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                
+                Image("makeasentenceplain")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geometry.size.width)
+                    .clipped()
+                    .ignoresSafeArea()
+                
                 VStack(spacing:0){
                     if showReward {
                         
@@ -72,22 +81,22 @@ struct WordSearchView: View {
                         Spacer()
                         
                         VStack(spacing: 10) {
-                            HStack(spacing: 15) {
+                            HStack(spacing: long ? 8 : 20) {
                                 ForEach(tray.indices.prefix(3), id: \.self) { number in
                                     WordBasicView(word: tray[number].word, index: tray[number].id, isFounded: foundWords.contains(tray[number].word))
                                     
                                 }
                             }
-                            HStack(spacing: 15) {
+                            HStack(spacing: long ? 8 : 20) {
                                 ForEach(tray.indices.dropFirst(3).prefix(3), id: \.self) { number in
                                     WordBasicView(word: tray[number].word, index: tray[number].id, isFounded: foundWords.contains(tray[number].word))
                                     
                                 }
                             }
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical)
-                        .background(Color.theme.accent)
+                        .padding()
+                        .frame(width: geometry.size.width * 0.92)
+                        .background(RoundedRectangle(cornerRadius: 20).fill(Color.theme.accent))
                         
                     }
                 }
@@ -96,6 +105,7 @@ struct WordSearchView: View {
                     if tray.isEmpty {
                         tray = Array(vm.currentWordLevel.wordlist.shuffled().prefix(6))
                         game.setAimWords(tray.map { $0.word })
+                        long = vm.currentWordLevel.name == "Year 5 & Year 6" ? true : false
                     }
                 }
                 if showConfetti {

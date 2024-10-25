@@ -16,7 +16,7 @@ struct OnboardView: View {
     let menuItems = Menu.options
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack() {
             header
                 .padding()
             //.frame(maxWidth: maxWidthForIpad)
@@ -60,7 +60,7 @@ struct OnboardView: View {
                 .padding(.trailing, item.id == 1 ? 10 : 0)
         }
         .padding(.horizontal, 10)
-        .padding(.bottom, 10)
+        .padding(.vertical, 10)
     }
     
     private var heartIconOverlay: some View {
