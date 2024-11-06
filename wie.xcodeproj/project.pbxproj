@@ -40,7 +40,6 @@
 		917612EC2AEAA6EC006D3718 /* StoryWritingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612EB2AEAA6EC006D3718 /* StoryWritingView.swift */; };
 		917612F22AEBD809006D3718 /* ProgressCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612F12AEBD809006D3718 /* ProgressCircleView.swift */; };
 		9178EA902BE24A99004C7FE5 /* WordCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9178EA8F2BE24A99004C7FE5 /* WordCardModel.swift */; };
-		917AACD42CDA383700390EED /* OpenAITTS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917AACD32CDA383700390EED /* OpenAITTS.swift */; };
 		917AACD62CDA67DE00390EED /* TextToSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917AACD52CDA67DE00390EED /* TextToSpeech.swift */; };
 		918145B02C9C36BA00D93222 /* UserProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918145AF2C9C36BA00D93222 /* UserProgress.swift */; };
 		918145B22C9C44E400D93222 /* RewardAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918145B12C9C44E400D93222 /* RewardAnimationView.swift */; };
@@ -99,7 +98,6 @@
 		917612EB2AEAA6EC006D3718 /* StoryWritingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryWritingView.swift; sourceTree = "<group>"; };
 		917612F12AEBD809006D3718 /* ProgressCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCircleView.swift; sourceTree = "<group>"; };
 		9178EA8F2BE24A99004C7FE5 /* WordCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCardModel.swift; sourceTree = "<group>"; };
-		917AACD32CDA383700390EED /* OpenAITTS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAITTS.swift; sourceTree = "<group>"; };
 		917AACD52CDA67DE00390EED /* TextToSpeech.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeech.swift; sourceTree = "<group>"; };
 		918145AF2C9C36BA00D93222 /* UserProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProgress.swift; sourceTree = "<group>"; };
 		918145B12C9C44E400D93222 /* RewardAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardAnimationView.swift; sourceTree = "<group>"; };
@@ -246,7 +244,6 @@
 				914AB01A2B0CF1D000D25DD7 /* WordLevel.swift */,
 				91B8E3CC2B5A854100C989A2 /* SoundModel.swift */,
 				918145AF2C9C36BA00D93222 /* UserProgress.swift */,
-				917AACD32CDA383700390EED /* OpenAITTS.swift */,
 				917AACD52CDA67DE00390EED /* TextToSpeech.swift */,
 			);
 			path = Models;
@@ -392,7 +389,6 @@
 				918145B22C9C44E400D93222 /* RewardAnimationView.swift in Sources */,
 				91B8E3CD2B5A854100C989A2 /* SoundModel.swift in Sources */,
 				9122BD102C9C529A00288AE9 /* MainView.swift in Sources */,
-				917AACD42CDA383700390EED /* OpenAITTS.swift in Sources */,
 				917612DB2AEA87E2006D3718 /* OnboardView.swift in Sources */,
 				913755702BA9CA2500EA3DC9 /* CustomNavView.swift in Sources */,
 				917612D42AEA864B006D3718 /* wie.xcdatamodeld in Sources */,
