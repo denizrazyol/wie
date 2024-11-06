@@ -132,6 +132,8 @@ struct MakeAWordWithLetters: View {
                                 withAnimation {
                                     userProgress.earnStar()
                                     userProgress.addPoints(10)
+                                    let currentWordID = viewModel.wordList[viewModel.currentIndex].uuid
+                                    userProgress.incrementPlayCount(for: currentWordID)
                                     viewModel.advanceWord()
                                 }
                             }

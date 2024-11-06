@@ -14,6 +14,8 @@ class UserProgress: ObservableObject {
     @Published var totalPoints: Int = 0
     @Published var badgesEarned: [String] = []
     
+    @Published var wordPlayCounts: [UUID: Int] = [:]
+    
     private init() {
         loadProgress()
     }
@@ -44,7 +46,15 @@ class UserProgress: ObservableObject {
         if totalPoints == 100 && !badgesEarned.contains("100 Points") {
             earnBadge("100 Points")
         }
-        // Add more badge conditions as needed
+    }
+    
+    func incrementPlayCount(for wordID: UUID) {
+        wordPlayCounts[wordID, default: 0] += 1
+        saveProgress()
+    }
+    
+    func playCount(for wordID: UUID) -> Int {
+        return wordPlayCounts[wordID, default: 0]
     }
     
     private func saveProgress(){
@@ -52,6 +62,10 @@ class UserProgress: ObservableObject {
         defaults.setValue(totalStars, forKey: "totalStars")
         defaults.setValue(totalPoints, forKey: "totalPoints")
         defaults.setValue(badgesEarned, forKey: "badgesEarned")
+        
+        if let data = try? JSONEncoder().encode(wordPlayCounts) {
+            defaults.setValue(data, forKey: "wordPlayCounts")
+        }
     }
     
     private func loadProgress() {
@@ -59,5 +73,12 @@ class UserProgress: ObservableObject {
         totalStars = defaults.integer(forKey: "totalStars")
         totalPoints = defaults.integer(forKey: "totalPoints")
         badgesEarned = defaults.stringArray(forKey: "badgesEarned") ?? []
+        
+        if let data = defaults.data(forKey: "wordPlayCounts"),
+           let decoded = try? JSONDecoder().decode([UUID: Int].self, from: data) {
+            wordPlayCounts = decoded
+        } else {
+            wordPlayCounts = [:]
+        }
     }
 }

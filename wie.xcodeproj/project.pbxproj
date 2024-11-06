@@ -22,6 +22,7 @@
 		91488CCE2B2C9CD300696F54 /* LabelledDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91488CCD2B2C9CD300696F54 /* LabelledDividerView.swift */; };
 		914AB01B2B0CF1D000D25DD7 /* WordLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914AB01A2B0CF1D000D25DD7 /* WordLevel.swift */; };
 		914C8DF32B69876900238A5B /* appExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 914C8DF22B69876900238A5B /* appExceptionWords.strings */; };
+		91572B1E2CDB9797001DBF2D /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91572B1D2CDB9797001DBF2D /* CircularProgressView.swift */; };
 		916723062AFBC84300F5D823 /* WordFlashCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916723052AFBC84300F5D823 /* WordFlashCardView.swift */; };
 		9168B3BC2AFE4A73004B956E /* MakeAWordWithLetters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9168B3BB2AFE4A73004B956E /* MakeAWordWithLetters.swift */; };
 		916969942B0B7E6A00BCFF99 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916969932B0B7E6A00BCFF99 /* SearchBarView.swift */; };
@@ -39,6 +40,8 @@
 		917612EC2AEAA6EC006D3718 /* StoryWritingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612EB2AEAA6EC006D3718 /* StoryWritingView.swift */; };
 		917612F22AEBD809006D3718 /* ProgressCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917612F12AEBD809006D3718 /* ProgressCircleView.swift */; };
 		9178EA902BE24A99004C7FE5 /* WordCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9178EA8F2BE24A99004C7FE5 /* WordCardModel.swift */; };
+		917AACD42CDA383700390EED /* OpenAITTS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917AACD32CDA383700390EED /* OpenAITTS.swift */; };
+		917AACD62CDA67DE00390EED /* TextToSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917AACD52CDA67DE00390EED /* TextToSpeech.swift */; };
 		918145B02C9C36BA00D93222 /* UserProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918145AF2C9C36BA00D93222 /* UserProgress.swift */; };
 		918145B22C9C44E400D93222 /* RewardAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918145B12C9C44E400D93222 /* RewardAnimationView.swift */; };
 		9183943B2AEC1D6700ABD18D /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9183943A2AEC1D6700ABD18D /* Color.swift */; };
@@ -77,6 +80,7 @@
 		91488CCD2B2C9CD300696F54 /* LabelledDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelledDividerView.swift; sourceTree = "<group>"; };
 		914AB01A2B0CF1D000D25DD7 /* WordLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordLevel.swift; sourceTree = "<group>"; };
 		914C8DF22B69876900238A5B /* appExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = appExceptionWords.strings; sourceTree = "<group>"; };
+		91572B1D2CDB9797001DBF2D /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		916723052AFBC84300F5D823 /* WordFlashCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordFlashCardView.swift; sourceTree = "<group>"; };
 		9168B3BB2AFE4A73004B956E /* MakeAWordWithLetters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAWordWithLetters.swift; sourceTree = "<group>"; };
 		916969932B0B7E6A00BCFF99 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
@@ -95,6 +99,8 @@
 		917612EB2AEAA6EC006D3718 /* StoryWritingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryWritingView.swift; sourceTree = "<group>"; };
 		917612F12AEBD809006D3718 /* ProgressCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCircleView.swift; sourceTree = "<group>"; };
 		9178EA8F2BE24A99004C7FE5 /* WordCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordCardModel.swift; sourceTree = "<group>"; };
+		917AACD32CDA383700390EED /* OpenAITTS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAITTS.swift; sourceTree = "<group>"; };
+		917AACD52CDA67DE00390EED /* TextToSpeech.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToSpeech.swift; sourceTree = "<group>"; };
 		918145AF2C9C36BA00D93222 /* UserProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProgress.swift; sourceTree = "<group>"; };
 		918145B12C9C44E400D93222 /* RewardAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardAnimationView.swift; sourceTree = "<group>"; };
 		9183943A2AEC1D6700ABD18D /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -179,6 +185,7 @@
 				918145B12C9C44E400D93222 /* RewardAnimationView.swift */,
 				9122BD0B2C9C51B200288AE9 /* BadgesView.swift */,
 				9122BD0D2C9C51DA00288AE9 /* ConfettiView.swift */,
+				91572B1D2CDB9797001DBF2D /* CircularProgressView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -239,6 +246,8 @@
 				914AB01A2B0CF1D000D25DD7 /* WordLevel.swift */,
 				91B8E3CC2B5A854100C989A2 /* SoundModel.swift */,
 				918145AF2C9C36BA00D93222 /* UserProgress.swift */,
+				917AACD32CDA383700390EED /* OpenAITTS.swift */,
+				917AACD52CDA67DE00390EED /* TextToSpeech.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -360,6 +369,7 @@
 				918394432AEC20D700ABD18D /* CommonWordListProvider.swift in Sources */,
 				919127D42BD7D26B00D1AA23 /* Card.swift in Sources */,
 				918145B02C9C36BA00D93222 /* UserProgress.swift in Sources */,
+				91572B1E2CDB9797001DBF2D /* CircularProgressView.swift in Sources */,
 				9122BD0C2C9C51B300288AE9 /* BadgesView.swift in Sources */,
 				9137556E2BA9C4EC00EA3DC9 /* CustomNavBarContainerView.swift in Sources */,
 				91899EBF2B627E5C000F4D57 /* WordBasicView.swift in Sources */,
@@ -367,6 +377,7 @@
 				91966F112B58049C0097C02F /* WrapView2.swift in Sources */,
 				917612E62AEAA67A006D3718 /* WordSearchView.swift in Sources */,
 				91488CCC2B2C92FB00696F54 /* WrapView.swift in Sources */,
+				917AACD62CDA67DE00390EED /* TextToSpeech.swift in Sources */,
 				912591922BAC42E300B59151 /* CustomNavBarPreferenceKeys.swift in Sources */,
 				9178EA902BE24A99004C7FE5 /* WordCardModel.swift in Sources */,
 				9128FA552B5552D800F2C303 /* Word.swift in Sources */,
@@ -381,6 +392,7 @@
 				918145B22C9C44E400D93222 /* RewardAnimationView.swift in Sources */,
 				91B8E3CD2B5A854100C989A2 /* SoundModel.swift in Sources */,
 				9122BD102C9C529A00288AE9 /* MainView.swift in Sources */,
+				917AACD42CDA383700390EED /* OpenAITTS.swift in Sources */,
 				917612DB2AEA87E2006D3718 /* OnboardView.swift in Sources */,
 				913755702BA9CA2500EA3DC9 /* CustomNavView.swift in Sources */,
 				917612D42AEA864B006D3718 /* wie.xcdatamodeld in Sources */,

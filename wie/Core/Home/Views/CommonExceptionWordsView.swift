@@ -12,6 +12,8 @@ struct CommonExceptionWordsView: View {
     @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject var userProgress: UserProgress
     
+    private let tts = TextToSpeech()
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -41,17 +43,23 @@ struct CommonExceptionWordsView: View {
                                         .customNavigationTitle("Place The Letters")
                                         .environmentObject(userProgress)
                                 ) {
-                                    WordFlashCardView(word: word)
-                                        .frame(height: geometry.size.height * 0.23)
+                                    WordFlashCardView(word: word) {
+                                        vm.playSound(soundName: word.word)
+                                    }
+                                        .frame(height: geometry.size.height * 0.27)
                                         .padding(.horizontal, geometry.size.width * 0.02)
+                                        .environmentObject(userProgress)
                                 }
                             }
                         }
                     }
-                
+                    
                 }
                 .padding(.horizontal, geometry.size.width * 0.03)
             }
+        }
+        .onAppear {
+                //vm.playSlowSound(soundName: "TapOnAWordToStart")
         }
     }
 }

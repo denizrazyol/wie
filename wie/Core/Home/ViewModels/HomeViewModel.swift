@@ -92,7 +92,23 @@ class HomeViewModel: ObservableObject {
         
         do {
             player = try AVAudioPlayer(data: soundFile.data)
-            player?.play()
+            self.player?.play()
+        } catch {
+            print("Failed to load the sound: \(error)")
+        }
+    }
+    
+    func playSlowSound(soundName: String) {
+        
+        guard let soundFile = NSDataAsset(name: soundName) else {
+            return
+        }
+        
+        do {
+            player = try AVAudioPlayer(data: soundFile.data)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.player?.play()
+            }
         } catch {
             print("Failed to load the sound: \(error)")
         }

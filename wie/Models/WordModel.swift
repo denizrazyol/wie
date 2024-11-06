@@ -9,6 +9,7 @@ import Foundation
 
 class WordModel:  Identifiable, Codable {
     var id: Int
+    var uuid: UUID
     var word: String
     
     required init(fromString string: String) {
@@ -17,10 +18,12 @@ class WordModel:  Identifiable, Codable {
             
         if components.count == 2 {
             self.id = Int(components[0].trimmingCharacters(in: .whitespacesAndNewlines))!
+            self.uuid = UUID()
             self.word = components[1].trimmingCharacters(in: .whitespacesAndNewlines)
         }
         else{
             self.id =  10
+            self.uuid = UUID()
             self.word = ""
         }
     }
