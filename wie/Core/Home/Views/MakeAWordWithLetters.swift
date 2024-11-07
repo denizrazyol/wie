@@ -90,6 +90,8 @@ struct MakeAWordWithLetters: View {
     @EnvironmentObject var userProgress: UserProgress
     @Environment(\.presentationMode) var presentationMode
     
+    @State private var scaleEffect: CGFloat = 0.0
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -101,20 +103,23 @@ struct MakeAWordWithLetters: View {
                     .clipped()
                     .ignoresSafeArea()
                 
-                VStack() {
+                VStack()  {
                     
                     instructionView(geometry: geometry)
                         .frame(height: geometry.size.height * 0.1)
                     
-                    Spacer(minLength: geometry.size.height * 0.08)
+                    //Spacer(minLength: geometry.size.height * 0.08)
                     
                     wordDisplayArea(in: geometry)
+                        .padding(.top, geometry.size.height * 0.08)
                     
                     lettersArea(in: geometry)
+                        .fixedSize(horizontal: false, vertical: true)
                     
-                    Spacer()
+                    //Spacer()
                     
                     if !viewModel.showRewardAnimation {
+                        Spacer()
                         actionButton()
                     }
                     
@@ -124,12 +129,11 @@ struct MakeAWordWithLetters: View {
                 .padding(.bottom, geometry.size.height * 0.1)
                 
                 if viewModel.showRewardAnimation {
-                    ConfettiView()
-                        .edgesIgnoringSafeArea(.all)
-                        .transition(.opacity)
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                                withAnimation {
+                    withAnimation {
+                        ConfettiView()
+                            .transition(.opacity)
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                                     userProgress.earnStar()
                                     userProgress.addPoints(10)
                                     let currentWordID = viewModel.wordList[viewModel.currentIndex].uuid
@@ -137,11 +141,19 @@ struct MakeAWordWithLetters: View {
                                     viewModel.advanceWord()
                                 }
                             }
-                        }
+                    }
                 }
             }
             .onChange(of: viewModel.currentWord) { _ in
                 viewModel.checkWordMatch()
+            }
+            .onChange(of: viewModel.showRewardAnimation) { newValue in
+                if newValue {
+                    scaleEffect = 0.0
+                    withAnimation(.easeOut(duration: 0.6)) {
+                        scaleEffect = 1.0
+                    }
+                }
             }
             .onAppear {
                 viewModel.resetWordState()
@@ -154,11 +166,19 @@ struct MakeAWordWithLetters: View {
     func instructionView(geometry: GeometryProxy) -> some View {
         if viewModel.showRewardAnimation {
             
-            Text("🎉 Great Job 🎉")
-                .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.04))
-                .foregroundColor(Color.black.opacity(0.6))
-                .multilineTextAlignment(.center)
-            
+            HStack {
+                Image("iconReward")
+                
+                Text("Great Job")
+                    .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
+                    .foregroundColor(Color.theme.accent)
+                    .multilineTextAlignment(.center)
+                    .scaleEffect(scaleEffect)
+                    .opacity(scaleEffect)
+                    .animation(.easeOut(duration: 0.6), value: scaleEffect)
+                
+                Image("iconReward")
+            }
         } else {
             Text("Drag and drop the letters to form the correct word!")
                 .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
@@ -206,15 +226,7 @@ struct MakeAWordWithLetters: View {
                         .minimumScaleFactor(0.2)
                         .lineLimit(1)
                         .transition(.scale.combined(with: .opacity))
-                        .onAppear {
-                            viewModel.animateCheckmark = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                viewModel.animateCheckmark = false
-                                userProgress.earnStar()
-                                userProgress.addPoints(10)
-                                viewModel.advanceWord()
-                            }
-                        }
+                    
                 }
             }
         }
@@ -255,7 +267,7 @@ struct MakeAWordWithLetters: View {
             }
         }
         .padding(.horizontal, horizontalPadding)
-        .padding(.top, 10)
+        .padding(.top,10)
     }
     
     
