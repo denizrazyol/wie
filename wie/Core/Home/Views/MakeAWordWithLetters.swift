@@ -147,14 +147,6 @@ struct MakeAWordWithLetters: View {
             .onChange(of: viewModel.currentWord) { _ in
                 viewModel.checkWordMatch()
             }
-            .onChange(of: viewModel.showRewardAnimation) { newValue in
-                if newValue {
-                    scaleEffect = 0.0
-                    withAnimation(.easeOut(duration: 0.6)) {
-                        scaleEffect = 1.0
-                    }
-                }
-            }
             .onAppear {
                 viewModel.resetWordState()
             }
@@ -166,16 +158,14 @@ struct MakeAWordWithLetters: View {
     func instructionView(geometry: GeometryProxy) -> some View {
         if viewModel.showRewardAnimation {
             
-            HStack {
+            HStack(spacing: 20) {
                 Image("iconReward")
                 
                 Text("Great Job")
                     .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
                     .foregroundColor(Color.theme.accent)
                     .multilineTextAlignment(.center)
-                    .scaleEffect(scaleEffect)
-                    .opacity(scaleEffect)
-                    .animation(.easeOut(duration: 0.6), value: scaleEffect)
+                    
                 
                 Image("iconReward")
             }

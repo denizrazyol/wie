@@ -43,10 +43,10 @@ struct OnboardView: View {
             Image("\(item.id)")
                 .resizable()
                 .scaledToFill()
-                .overlay(
-                    heartIconOverlay,
-                    alignment: .topTrailing
-                )
+                //.overlay(
+                  //  heartIconOverlay,
+                    //alignment: .topTrailing
+                //)
                 .clipShape(RoundedRectangle(cornerRadius: 25.0))
             
             Text(item.title)

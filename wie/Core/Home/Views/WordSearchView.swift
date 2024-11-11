@@ -34,16 +34,34 @@ struct WordSearchView: View {
                 VStack(spacing:0){
                     if showReward {
                         
-                        VStack {
-                            Text("Great Job! 🎉 You've found all the words!")
-                                .font(.custom("ChalkboardSE-Regular", size: 22))
-                                .multilineTextAlignment(.center)
-                                .padding()
-                                .scaleEffect(gameCompleted ? 1.2 : 1.0)
-                                .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: gameCompleted)
-                            
-                            RewardAnimationView()
-                                .padding()
+                        withAnimation {
+                            ZStack {
+                                
+                                ConfettiView()
+                                VStack {
+                                    HStack(spacing: 20) {
+                                        Image("iconReward")
+                                        
+                                        Text("Great Job")
+                                            .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
+                                            .foregroundColor(Color.theme.accent)
+                                            .multilineTextAlignment(.center)
+                                            
+                                                                      
+                                            
+                                        
+                                        Image("iconReward")
+                                    }
+                                    Text("You've found all the words!")
+                                        .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
+                                        .foregroundColor(Color.theme.accent)
+                                        .multilineTextAlignment(.center)
+                                        
+                                                            
+                                    
+                                }
+                                
+                            }
                         }
                         .transition(.scale)
                         .onAppear {

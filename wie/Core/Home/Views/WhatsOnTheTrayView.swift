@@ -81,7 +81,6 @@ struct WhatsOnTheTrayView: View {
                     
                     
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height)
                 .onAppear {
                     loadTrayWords()
                 }
@@ -96,6 +95,7 @@ struct WhatsOnTheTrayView: View {
     }
     
     private func resetGame() {
+        showTray = false
         loadTrayWords()
     }
     
@@ -168,6 +168,12 @@ struct BottomTrayView: View {
         VStack {
             if showCongratulations {
                 congratulatoryView()
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            resetGameState()
+                        }
+                    }
+                
             } else {
                 VStack {
                     if score > 0 {
@@ -186,15 +192,15 @@ struct BottomTrayView: View {
             }
             
         }
-        .onAppear {
-            resetGameState()
-        }
+        
     }
     
     private func resetGameState() {
         selectedWords.removeAll()
         score = 0
         hasAwardedReward = false
+        showCongratulations = false
+        resetGameAction()
     }
     
     @ViewBuilder
@@ -244,7 +250,7 @@ struct BottomTrayView: View {
         CardView(
             word: word.word,
             maxWidth: maxWidth,
-            backgorundColor: selectedWords.contains(word.word) ? nil : Color.theme.accent,
+            backgorundColor: !selectedWords.contains(word.word) ? nil : Color.theme.accent,
             status: .empty
         )
         .onTapGesture {
@@ -278,43 +284,36 @@ struct BottomTrayView: View {
     
     @ViewBuilder
     private func congratulatoryView() -> some View {
-        ZStack(alignment: .center) {
-            VStack() {
-                Text("Great Job! 🎉 You've found all the words!")
-                    .font(.custom("ChalkboardSE-Regular", size: 22))
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .scaleEffect(showCongratulations ? 1.2 : 1.0)
-                    .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: showCongratulations)
+        GeometryReader { geometry in
+        withAnimation {
+            ZStack {
                 
-                RewardAnimationView()
-                    .padding()
-            }
-            .transition(.scale)
-            .onAppear {
-                if !hasAwardedReward {
-                    hasAwardedReward = true
-                    showConfetti = true
-                    userProgress.earnStar()
-                    userProgress.addPoints(10)
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation {
-                        showCongratulations = false
-                        resetGameState()
-                        showConfetti = false
-                        resetGameAction()
-                        showTray = false
-                    }
-                }
-            }
-            
-            if showConfetti {
                 ConfettiView()
-                    .edgesIgnoringSafeArea(.all)
+                VStack {
+                    HStack(spacing: 20) {
+                        Image("iconReward")
+                        
+                        Text("Great Job")
+                            .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
+                            .foregroundColor(Color.theme.accent)
+                            .multilineTextAlignment(.center)
+                        
+                        
+                        
+                        
+                        Image("iconReward")
+                    }
+                    Text("You've found all the words!")
+                        .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
+                        .foregroundColor(Color.theme.accent)
+                        .multilineTextAlignment(.center)
+                    
+                    
+                    
+                }
+            }
             }
         }
-        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, maxHeight: .infinity)
     }
 }
 
