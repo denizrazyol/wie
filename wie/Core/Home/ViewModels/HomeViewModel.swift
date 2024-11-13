@@ -114,6 +114,19 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    func playSound(named soundName: String, withExtension ext: String = "mp3") {
+        guard let soundFile = NSDataAsset(name: soundName) else {
+            return
+        }
+        
+        do {
+            player = try AVAudioPlayer(data: soundFile.data)
+            self.player?.play()
+        } catch {
+            print("Error playing sound \(soundName): \(error.localizedDescription)")
+        }
+    }
+    
     func generateWordSearchGrid(rows: Int, columns: Int, words: [String]) -> [[Character]] {
         let letters = "abcdefghijklmnopqrstuvwxyz"
         var grid = Array(repeating: Array(repeating: Character(" "), count: columns), count: rows)

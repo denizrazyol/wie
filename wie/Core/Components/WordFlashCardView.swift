@@ -11,7 +11,7 @@ struct WordFlashCardView: View {
     
     let word: WordModel
     let onPlayButtonTapped: () -> Void
-    @EnvironmentObject var userProgress: UserProgress
+    @ObservedObject var userProgress = UserProgress.shared
     
     var body: some View {
         ZStack {
@@ -58,8 +58,9 @@ struct WordFlashCardView: View {
     }
     
     var progress: Double {
-        let playCount = userProgress.playCount(for: word.uuid)
-        let maxPlayCount = 5.0 // Set your desired max play count
+        let playCount = userProgress.playCount(for: word.word)
+      
+        let maxPlayCount = 5.0
         return min(Double(playCount) / maxPlayCount, 1.0)
     }
 }
@@ -70,6 +71,5 @@ struct WordFlashCardView_Previews: PreviewProvider {
         WordFlashCardView(word: WordModel(fromString: "1, New Word")) {
             
         }
-        .environmentObject(UserProgress.shared)
     }
 }

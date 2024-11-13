@@ -20,7 +20,7 @@ struct WhatsOnTheTrayView: View {
     @State private var wordList: [WordModel] = []
     @State private var tray: [WordModel] = []
     
-    @ObservedObject var userProgress = UserProgress.shared
+    @EnvironmentObject private var userProgress: UserProgress
     
     var body: some View {
         GeometryReader { geometry in
@@ -83,6 +83,7 @@ struct WhatsOnTheTrayView: View {
                 }
                 .onAppear {
                     loadTrayWords()
+                    //vm.playSlowSound(soundName: "LookCarefully")
                 }
             }
         }
@@ -162,6 +163,7 @@ struct BottomTrayView: View {
     @State private var showConfetti = false
     private let maxSelection = 6
     
+    @ObservedObject var vm = HomeViewModel()
     @ObservedObject var userProgress = UserProgress.shared
     
     var body: some View {
@@ -169,6 +171,7 @@ struct BottomTrayView: View {
             if showCongratulations {
                 congratulatoryView()
                     .onAppear {
+                        vm.playSound(named: "game-bonus", withExtension: "mp3")
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             resetGameState()
                         }
@@ -192,7 +195,9 @@ struct BottomTrayView: View {
             }
             
         }
-        
+        .onAppear() {
+            //score > 0 ? vm.playSlowSound(soundName: "TapOnAWordToStart") : vm.playSlowSound(soundName: "TapOnAWordToStart")
+        }
     }
     
     private func resetGameState() {
@@ -217,15 +222,21 @@ struct BottomTrayView: View {
         if score == 6 {
             Text("Amazing! You remembered all the words! 🎉")
                 .font(.custom("ChalkboardSE-Regular", size: 22))
+                .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
+                .padding(.horizontal)
         } else if score >= 3 {
             Text("Great job! You remembered \(score) out of 6 words!")
+                .foregroundColor(Color.black.opacity(0.6))
                 .font(.custom("ChalkboardSE-Regular", size: 22))
                 .multilineTextAlignment(.center)
+                .padding(.horizontal)
         } else {
             Text("Good try! Let's practice and try again!")
                 .font(.custom("ChalkboardSE-Regular", size: 22))
+                .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
+                .padding(.horizontal)
         }
     }
     

@@ -11,7 +11,7 @@ struct OnboardView: View {
     
     
     @EnvironmentObject private var vm: HomeViewModel
-    @EnvironmentObject var userProgress: UserProgress
+    @EnvironmentObject private var userProgress: UserProgress
     @State private var isFilled = false
     let menuItems = Menu.options
     
@@ -83,20 +83,20 @@ struct OnboardView: View {
             return AnyView(CommonExceptionWordsView()
                 .customNavigationTitle("Common Exception Words")
                 .environmentObject(vm)
-                .environmentObject(UserProgress.shared)
+                .environmentObject(userProgress)
             )
             
         case 2:
             return AnyView(WhatsOnTheTrayView()
                 .customNavigationTitle("What's on the Tray")
                 .environmentObject(vm)
-                .environmentObject(UserProgress.shared)
+                .environmentObject(userProgress)
             )
         case 3:
             return AnyView(WordSearchView()
                 .customNavigationTitle("Word Search")
                 .environmentObject(vm)
-                .environmentObject(UserProgress.shared)
+                .environmentObject(userProgress)
             )
         default:
             return AnyView(Text("Default View"))

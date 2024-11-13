@@ -10,6 +10,8 @@ import SwiftUI
 struct WordSearchView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
+    @EnvironmentObject private var userProgress: UserProgress
+    
     @State private var gameCompleted = false
     @State private var showReward = false
     @State private var hasAwardedReward = false
@@ -17,7 +19,7 @@ struct WordSearchView: View {
     @State private var tray: [WordModel] = []
     @State private var long = false
     @State private var showConfetti = false
-    @ObservedObject var userProgress = UserProgress.shared
+  
     @StateObject private var game = WordSearchGame()
     
     var body: some View {
@@ -38,6 +40,9 @@ struct WordSearchView: View {
                             ZStack {
                                 
                                 ConfettiView()
+                                    .onAppear(){
+                                        vm.playSound(named: "game-bonus", withExtension: "mp3")
+                                    }
                                 VStack {
                                     HStack(spacing: 20) {
                                         Image("iconReward")
@@ -90,6 +95,7 @@ struct WordSearchView: View {
                             gameCompleted = true
                             showReward = true
                         }, onUpdateWord: { matchedWords in
+                            vm.playSound(soundName: matchedWords.last!)
                             foundWords = matchedWords
                         })
                         .frame(width: geometry.size.width * 0.92, height: geometry.size.height * 0.8)
@@ -137,7 +143,8 @@ struct WordSearchView: View {
 
 struct WordSearchView_Previews: PreviewProvider {
     static var previews: some View {
-        WordSearchView().environmentObject(HomeViewModel())
-        
+        WordSearchView()    
+            .environmentObject(HomeViewModel())
+            .environmentObject(UserProgress.shared)
     }
 }

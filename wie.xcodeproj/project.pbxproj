@@ -57,7 +57,6 @@
 		91B6A9072AFD0016003E60A9 /* year1CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91B6A9062AFD0016003E60A9 /* year1CommonExceptionWords.strings */; };
 		91B6A90B2AFD2729003E60A9 /* MenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B6A90A2AFD2729003E60A9 /* MenuItem.swift */; };
 		91B8E3CD2B5A854100C989A2 /* SoundModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B8E3CC2B5A854100C989A2 /* SoundModel.swift */; };
-		91BCED532CDCCEC600C11CB1 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 91BCED522CDCCEC600C11CB1 /* Vortex */; };
 		91EB18482B59425B00D27696 /* year3And4CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */; };
 		91EB184A2B59426700D27696 /* year5And6CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */; };
 		91F27C742CAECC470068F31D /* CustomButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F27C732CAECC470068F31D /* CustomButtonStyle.swift */; };
@@ -127,7 +126,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91BCED532CDCCEC600C11CB1 /* Vortex in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,7 +298,6 @@
 			);
 			name = wie;
 			packageProductDependencies = (
-				91BCED522CDCCEC600C11CB1 /* Vortex */,
 			);
 			productName = wie;
 			productReference = 917612C42AEA864A006D3718 /* wie.app */;
@@ -331,7 +328,6 @@
 			);
 			mainGroup = 917612BB2AEA864A006D3718;
 			packageReferences = (
-				91BCED512CDCCEC600C11CB1 /* XCRemoteSwiftPackageReference "Vortex" */,
 			);
 			productRefGroup = 917612C52AEA864A006D3718 /* Products */;
 			projectDirPath = "";
@@ -609,25 +605,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		91BCED512CDCCEC600C11CB1 /* XCRemoteSwiftPackageReference "Vortex" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/twostraws/Vortex";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		91BCED522CDCCEC600C11CB1 /* Vortex */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 91BCED512CDCCEC600C11CB1 /* XCRemoteSwiftPackageReference "Vortex" */;
-			productName = Vortex;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		917612D22AEA864B006D3718 /* wie.xcdatamodeld */ = {

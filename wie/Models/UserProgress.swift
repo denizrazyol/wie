@@ -14,7 +14,7 @@ class UserProgress: ObservableObject {
     @Published var totalPoints: Int = 0
     @Published var badgesEarned: [String] = []
     
-    @Published var wordPlayCounts: [UUID: Int] = [:]
+    @Published var wordPlayCounts: [String: Int] = [:]
     
     private init() {
         loadProgress()
@@ -48,13 +48,17 @@ class UserProgress: ObservableObject {
         }
     }
     
-    func incrementPlayCount(for wordID: UUID) {
-        wordPlayCounts[wordID, default: 0] += 1
+    func incrementPlayCount(for word: String) {
+        wordPlayCounts[word, default: 0] += 1
+        if(wordPlayCounts[word, default: 0] == 5) {
+            earnStar()
+            addPoints(10)
+        }
         saveProgress()
     }
     
-    func playCount(for wordID: UUID) -> Int {
-        return wordPlayCounts[wordID, default: 0]
+    func playCount(for word: String) -> Int {
+        return wordPlayCounts[word, default: 0]
     }
     
     private func saveProgress(){
@@ -75,7 +79,7 @@ class UserProgress: ObservableObject {
         badgesEarned = defaults.stringArray(forKey: "badgesEarned") ?? []
         
         if let data = defaults.data(forKey: "wordPlayCounts"),
-           let decoded = try? JSONDecoder().decode([UUID: Int].self, from: data) {
+           let decoded = try? JSONDecoder().decode([String: Int].self, from: data) {
             wordPlayCounts = decoded
         } else {
             wordPlayCounts = [:]

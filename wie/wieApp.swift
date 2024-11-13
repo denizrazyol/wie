@@ -12,6 +12,7 @@ struct wieApp: App {
 
     
     @StateObject private var vm = HomeViewModel()
+    //@StateObject private var userProgress = UserProgress.shared
     
     var body: some Scene {
         WindowGroup {

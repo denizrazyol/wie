@@ -87,7 +87,8 @@ struct LetterModel: Identifiable, Codable {
 
 struct MakeAWordWithLetters: View {
     @ObservedObject var viewModel: MakeAWordViewModel
-    @EnvironmentObject var userProgress: UserProgress
+    @EnvironmentObject private var vm: HomeViewModel
+    @EnvironmentObject private var userProgress: UserProgress
     @Environment(\.presentationMode) var presentationMode
     
     @State private var scaleEffect: CGFloat = 0.0
@@ -134,11 +135,9 @@ struct MakeAWordWithLetters: View {
                             .transition(.opacity)
                             .onAppear {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                                    userProgress.earnStar()
-                                    userProgress.addPoints(10)
-                                    let currentWordID = viewModel.wordList[viewModel.currentIndex].uuid
-                                    userProgress.incrementPlayCount(for: currentWordID)
+                                    userProgress.incrementPlayCount(for: viewModel.currentWord)
                                     viewModel.advanceWord()
+                                   
                                 }
                             }
                     }
@@ -157,18 +156,18 @@ struct MakeAWordWithLetters: View {
     @ViewBuilder
     func instructionView(geometry: GeometryProxy) -> some View {
         if viewModel.showRewardAnimation {
-            
+     
             HStack(spacing: 20) {
                 Image("iconReward")
-                
+ 
                 Text("Great Job")
                     .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
                     .foregroundColor(Color.theme.accent)
                     .multilineTextAlignment(.center)
                     
-                
                 Image("iconReward")
             }
+           
         } else {
             Text("Drag and drop the letters to form the correct word!")
                 .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
@@ -312,6 +311,8 @@ struct MakeAWordWithLetters_Previews: PreviewProvider {
         let wordList = WordModel.year5And6WordsList
         let viewModel = MakeAWordViewModel(wordList: wordList, currentIndex: 0)
         return MakeAWordWithLetters(viewModel: viewModel)
+            .environmentObject(HomeViewModel())
             .environmentObject(UserProgress.shared)
+        
     }
 }

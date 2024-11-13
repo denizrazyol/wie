@@ -10,7 +10,7 @@ import SwiftUI
 struct CommonExceptionWordsView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
-    @EnvironmentObject var userProgress: UserProgress
+    @EnvironmentObject private var userProgress: UserProgress
     
     private let tts = TextToSpeech()
     
@@ -41,6 +41,7 @@ struct CommonExceptionWordsView: View {
                                 CustomNavLinkView(
                                     destination: MakeAWordWithLetters(viewModel: viewModel)
                                         .customNavigationTitle("Place The Letters")
+                                        .environmentObject(vm)
                                         .environmentObject(userProgress)
                                 ) {
                                     WordFlashCardView(word: word) {
@@ -48,7 +49,6 @@ struct CommonExceptionWordsView: View {
                                     }
                                         .frame(height: geometry.size.height * 0.27)
                                         .padding(.horizontal, geometry.size.width * 0.02)
-                                        .environmentObject(userProgress)
                                 }
                             }
                         }
