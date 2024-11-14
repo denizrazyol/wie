@@ -41,7 +41,6 @@ struct CommonExceptionWordsView: View {
                                 CustomNavLinkView(
                                     destination: MakeAWordWithLetters(viewModel: viewModel)
                                         .customNavigationTitle("Place The Letters")
-                                        .environmentObject(vm)
                                         .environmentObject(userProgress)
                                 ) {
                                     WordFlashCardView(word: word) {

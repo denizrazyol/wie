@@ -9,6 +9,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import Foundation
+import AVFoundation
 
 class MakeAWordViewModel: ObservableObject {
     @Published var wordList: [WordModel]
@@ -19,6 +20,9 @@ class MakeAWordViewModel: ObservableObject {
     @Published var animateCheckmark = false
     @Published var showRewardAnimation = false
     @Published var isCompleted = false
+    
+    @Published var player1: AVAudioPlayer?
+    @Published var player2: AVAudioPlayer?
     
     
     init(wordList: [WordModel], currentIndex: Int) {
@@ -38,17 +42,6 @@ class MakeAWordViewModel: ObservableObject {
     func resetWordState() {
         currentWord = ""
         initializeLetters()
-    }
-    
-    func advanceWord() {
-        if currentIndex < wordList.count - 1 {
-            currentIndex += 1
-            targetWord = wordList[currentIndex].word
-            resetWordState()
-            showRewardAnimation = false
-        } else {
-            isCompleted = true
-        }
     }
     
     func updateLetterPosition(id: UUID, to position: CGPoint) {
@@ -76,6 +69,31 @@ class MakeAWordViewModel: ObservableObject {
             showRewardAnimation = true
         }
     }
+    
+    
+    func playFirstSound(soundName: String) {
+        guard let soundFile = NSDataAsset(name: soundName) else {
+            return
+        }
+        do {
+            player1 = try AVAudioPlayer(data: soundFile.data)
+            player1?.play()
+        } catch {
+            print("Failed to load the sound: \(error)")
+        }
+    }
+
+    func playSecondSound(soundName: String) {
+        guard let soundFile = NSDataAsset(name: soundName) else {
+            return
+        }
+        do {
+            player2 = try AVAudioPlayer(data: soundFile.data)
+            player2?.play()
+        } catch {
+            print("Failed to load the sound: \(error)")
+        }
+    }
 }
 
 struct LetterModel: Identifiable, Codable {
@@ -87,11 +105,8 @@ struct LetterModel: Identifiable, Codable {
 
 struct MakeAWordWithLetters: View {
     @ObservedObject var viewModel: MakeAWordViewModel
-    @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject private var userProgress: UserProgress
     @Environment(\.presentationMode) var presentationMode
-    
-    @State private var scaleEffect: CGFloat = 0.0
     
     var body: some View {
         GeometryReader { geometry in
@@ -104,51 +119,71 @@ struct MakeAWordWithLetters: View {
                     .clipped()
                     .ignoresSafeArea()
                 
-                VStack()  {
-                    
-                    instructionView(geometry: geometry)
-                        .frame(height: geometry.size.height * 0.1)
-                    
-                    //Spacer(minLength: geometry.size.height * 0.08)
-                    
-                    wordDisplayArea(in: geometry)
-                        .padding(.top, geometry.size.height * 0.08)
-                    
-                    lettersArea(in: geometry)
-                        .fixedSize(horizontal: false, vertical: true)
-                    
-                    //Spacer()
-                    
-                    if !viewModel.showRewardAnimation {
-                        Spacer()
-                        actionButton()
-                    }
-                    
-                }
-                .padding(.horizontal)
-                .padding(.top, geometry.size.height * 0.12)
-                .padding(.bottom, geometry.size.height * 0.1)
-                
-                if viewModel.showRewardAnimation {
-                    withAnimation {
-                        ConfettiView()
-                            .transition(.opacity)
-                            .onAppear {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                                    userProgress.incrementPlayCount(for: viewModel.currentWord)
-                                    viewModel.advanceWord()
-                                   
+                VStack(spacing:0){
+                    if viewModel.showRewardAnimation {
+                        withAnimation {
+                            ZStack {
+                                
+                                ConfettiView()
+                                    .onAppear(){
+                                        viewModel.playFirstSound(soundName: "game-bonus")
+                                        viewModel.playSecondSound(soundName: viewModel.targetWord)
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                        
+                                            userProgress.incrementPlayCount(for: viewModel.currentWord)
+                                            viewModel.resetWordState()
+                                        }
+                                        
+                                    }
+                                
+                                VStack()  {
+                                    
+                                    instructionView(geometry: geometry)
+                                        .frame(height: geometry.size.height * 0.1)
+                                    
+                                    
+                                    
+                                    wordDisplayArea(in: geometry)
+                                        .padding(.top, geometry.size.height * 0.08)
                                 }
                             }
+                          
+                            
+                        }
                     }
+                    else{
+                        
+                        VStack()  {
+                            
+                            instructionView(geometry: geometry)
+                                .frame(height: geometry.size.height * 0.1)
+                            
+                            
+                            
+                            wordDisplayArea(in: geometry)
+                                .padding(.top, geometry.size.height * 0.08)
+                            
+                            lettersArea(in: geometry)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            
+                            
+                            Spacer()
+                            actionButton()
+                            
+                            
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, geometry.size.height * 0.12)
+                        .padding(.bottom, geometry.size.height * 0.1)
+                    }
+                    
+                    
                 }
+                
             }
-            .onChange(of: viewModel.currentWord) { _ in
-                viewModel.checkWordMatch()
-            }
-            .onAppear {
-                viewModel.resetWordState()
-            }
+            
+            
             
         }
     }
@@ -156,18 +191,18 @@ struct MakeAWordWithLetters: View {
     @ViewBuilder
     func instructionView(geometry: GeometryProxy) -> some View {
         if viewModel.showRewardAnimation {
-     
+            
             HStack(spacing: 20) {
                 Image("iconReward")
- 
+                
                 Text("Great Job")
                     .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
                     .foregroundColor(Color.theme.accent)
                     .multilineTextAlignment(.center)
-                    
+                
                 Image("iconReward")
             }
-           
+            
         } else {
             Text("Drag and drop the letters to form the correct word!")
                 .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
@@ -311,7 +346,6 @@ struct MakeAWordWithLetters_Previews: PreviewProvider {
         let wordList = WordModel.year5And6WordsList
         let viewModel = MakeAWordViewModel(wordList: wordList, currentIndex: 0)
         return MakeAWordWithLetters(viewModel: viewModel)
-            .environmentObject(HomeViewModel())
             .environmentObject(UserProgress.shared)
         
     }
