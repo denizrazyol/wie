@@ -12,6 +12,7 @@ struct WordFlashCardView: View {
     let word: WordModel
     let onPlayButtonTapped: () -> Void
     @ObservedObject var userProgress = UserProgress.shared
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
         ZStack {
@@ -21,7 +22,7 @@ struct WordFlashCardView: View {
             
             VStack {
                 Text(word.word)
-                    .font(.custom("ChalkboardSE-Regular", size: 32))
+                    .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 45 : 32))
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     .foregroundColor(Color.black)
                     .multilineTextAlignment(.center)

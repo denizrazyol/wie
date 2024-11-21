@@ -12,7 +12,7 @@ struct CommonExceptionWordsView: View {
     @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject private var userProgress: UserProgress
     
-    private let tts = TextToSpeech()
+    @AppStorage("hasPlayedTapSound") private var hasPlayedTapSound: Bool = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -46,8 +46,8 @@ struct CommonExceptionWordsView: View {
                                     WordFlashCardView(word: word) {
                                         vm.playSound(soundName: word.word)
                                     }
-                                        .frame(height: geometry.size.height * 0.27)
-                                        .padding(.horizontal, geometry.size.width * 0.02)
+                                    .frame(height: geometry.size.height * 0.27)
+                                    .padding(.horizontal, geometry.size.width * 0.02)
                                 }
                             }
                         }
@@ -58,16 +58,32 @@ struct CommonExceptionWordsView: View {
             }
         }
         .onAppear {
-                //vm.playSlowSound(soundName: "TapOnAWordToStart")
+            if !hasPlayedTapSound {
+                vm.playSlowSound(soundName: "TapOnAWordToStart")
+                hasPlayedTapSound = true 
+            }
         }
     }
 }
 
 struct CommonExceptionWordsView_Previews: PreviewProvider {
     static var previews: some View {
-        CommonExceptionWordsView()
-            .environmentObject(HomeViewModel())
-            .environmentObject(UserProgress.shared)
+        
+        Group {
+            
+            CommonExceptionWordsView()
+                .environmentObject(HomeViewModel())
+                .environmentObject(UserProgress.shared)
+                .previewDevice(PreviewDevice(rawValue: "iPhone 15 Pro Max"))
+                .previewDisplayName("iPhone 15 Pro Max")
+            
+            
+            CommonExceptionWordsView()
+                .environmentObject(HomeViewModel())
+                .environmentObject(UserProgress.shared)
+                .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
+                .previewDisplayName("iPad (10th generation)")
+        }
     }
 }
 

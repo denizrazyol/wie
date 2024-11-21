@@ -12,6 +12,8 @@ struct OnboardView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject private var userProgress: UserProgress
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     @State private var isFilled = false
     let menuItems = Menu.options
     
@@ -39,7 +41,7 @@ struct OnboardView: View {
     }
     
     private func menuItemView(_ item: MenuItem) -> some View {
-        ZStack(alignment: .leading) {
+        ZStack() {
             Image("\(item.id)")
                 .resizable()
                 .scaledToFill()
@@ -50,8 +52,7 @@ struct OnboardView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 25.0))
             
             Text(item.title)
-                .font(.custom("ChalkboardSE-Regular", size: 30))
-            //.fontWeight(.semibold)
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 40 : 30))
                 .foregroundColor(Color.theme.accent)
                 .multilineTextAlignment(.leading)
                 .frame(alignment: .leading)
@@ -106,9 +107,21 @@ struct OnboardView: View {
 
 struct Previews_OnboardView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardView()
-            .environmentObject(HomeViewModel())
-            .environmentObject(UserProgress.shared)
+        Group {
+              
+                   OnboardView()
+                       .environmentObject(HomeViewModel())
+                       .environmentObject(UserProgress.shared)
+                       .previewDevice(PreviewDevice(rawValue: "iPhone 15 Pro Max"))
+                       .previewDisplayName("iPhone 15 Pro Max")
+                   
+             
+                   OnboardView()
+                       .environmentObject(HomeViewModel())
+                       .environmentObject(UserProgress.shared)
+                       .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
+                       .previewDisplayName("iPad (10th generation)")
+               }
     }
 }
 
@@ -118,14 +131,14 @@ extension OnboardView {
         VStack {
             Button(action: vm.toogleWordsList) {
                 Text(vm.currentWordLevel.name)
-                    .font(.custom("ChalkboardSE-Regular", size: 24))
+                    .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 30 : 24))
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     .foregroundColor(Color.theme.accent)
                     .frame(height: 55)
                     .frame(maxWidth: .infinity)
                     .overlay(alignment: .leading) {
                         Image(systemName: "arrow.down")
-                            .font(.headline)
+                            .font(horizontalSizeClass == .regular ? .title : .headline)
                             .fontWeight(.bold)
                             .foregroundColor(Color.theme.accent)
                             .padding()

@@ -60,6 +60,8 @@ class MakeAWordViewModel: ObservableObject {
             if let index = letters.firstIndex(where: { $0.id == id }) {
                 letters[index].isVisible = false
                 currentWord += letters[index].text
+                
+                playLetterSound(letter: letters[index].text)
             }
         }
     }
@@ -82,16 +84,32 @@ class MakeAWordViewModel: ObservableObject {
             print("Failed to load the sound: \(error)")
         }
     }
-
+    
     func playSecondSound(soundName: String) {
         guard let soundFile = NSDataAsset(name: soundName) else {
             return
         }
         do {
             player2 = try AVAudioPlayer(data: soundFile.data)
-            player2?.play()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                self.player2?.play()
+            }
         } catch {
             print("Failed to load the sound: \(error)")
+        }
+    }
+    
+    func playLetterSound(letter: String) {
+        let soundName = letter.lowercased() // Assuming sound files are named as "a.mp3", "b.mp3", etc.
+        guard let soundFile = NSDataAsset(name: soundName) else {
+            print("Sound file for letter \(letter) not found")
+            return
+        }
+        do {
+            player1 = try AVAudioPlayer(data: soundFile.data)
+            player1?.play()
+        } catch {
+            print("Failed to play the sound for letter \(letter): \(error)")
         }
     }
 }
@@ -107,6 +125,11 @@ struct MakeAWordWithLetters: View {
     @ObservedObject var viewModel: MakeAWordViewModel
     @EnvironmentObject private var userProgress: UserProgress
     @Environment(\.presentationMode) var presentationMode
+    
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    
+    @AppStorage("hasPlayedDragSound") private var hasPlayedDragSound: Bool = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -126,10 +149,10 @@ struct MakeAWordWithLetters: View {
                                 
                                 ConfettiView()
                                     .onAppear(){
-                                        viewModel.playFirstSound(soundName: "game-bonus")
-                                        viewModel.playSecondSound(soundName: viewModel.targetWord)
+                                        viewModel.playFirstSound(soundName: viewModel.targetWord)
+                                        viewModel.playSecondSound(soundName: "game-bonus" )
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                        
+                                            
                                             userProgress.incrementPlayCount(for: viewModel.currentWord)
                                             viewModel.resetWordState()
                                         }
@@ -147,7 +170,7 @@ struct MakeAWordWithLetters: View {
                                         .padding(.top, geometry.size.height * 0.08)
                                 }
                             }
-                          
+                            
                             
                         }
                     }
@@ -161,7 +184,8 @@ struct MakeAWordWithLetters: View {
                             
                             
                             wordDisplayArea(in: geometry)
-                                .padding(.top, geometry.size.height * 0.08)
+                                .padding(.top, horizontalSizeClass == .regular ? geometry.size.height * 0.2 :
+                                    geometry.size.height * 0.08)
                             
                             lettersArea(in: geometry)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -176,15 +200,17 @@ struct MakeAWordWithLetters: View {
                         .padding(.horizontal)
                         .padding(.top, geometry.size.height * 0.12)
                         .padding(.bottom, geometry.size.height * 0.1)
+                        .onAppear(){
+                            
+                            if !hasPlayedDragSound {
+                                viewModel.playSecondSound(soundName: "DragDrop")
+                                hasPlayedDragSound = true
+                            }
+                        }
                     }
-                    
-                    
                 }
                 
             }
-            
-            
-            
         }
     }
     
@@ -226,7 +252,7 @@ struct MakeAWordWithLetters: View {
                 HStack(spacing: 3) {
                     ForEach(0..<viewModel.targetWord.count, id: \.self) { index in
                         Text(viewModel.currentWord.count > index ? String(viewModel.currentWord[viewModel.currentWord.index(viewModel.currentWord.startIndex, offsetBy: index)]) : "")
-                            .font(.custom("ChalkboardSE-Regular", size: 40))
+                            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 50 : 40))
                             .fontWeight(.bold)
                             .foregroundColor(Color.theme.accent)
                             .frame(width: boxWidth, height: boxHeight)
@@ -283,6 +309,7 @@ struct MakeAWordWithLetters: View {
                             },
                             onEnded: { id, position in
                                 viewModel.updateLetterVisibility(id: id, at: position, in: geometry)
+                                viewModel.playLetterSound(letter: letter.text)
                                 viewModel.checkWordMatch()
                             }
                         )
@@ -307,12 +334,12 @@ struct MakeAWordWithLetters: View {
                 }) {
                     HStack {
                         Text("Try Again")
-                            .font(.custom("ChalkboardSE-Bold", size: 24))
+                            .font(.custom("ChalkboardSE-Bold", size: horizontalSizeClass == .regular ? 32 : 24))
                             .foregroundColor(.white)
                             .padding(.bottom, 7)
                         
                         Image(systemName: "arrow.counterclockwise.circle.fill")
-                            .font(.system(size: 24))
+                            .font(.system(size: horizontalSizeClass == .regular ? 32 : 24))
                             .foregroundColor(.white)
                         
                     }
@@ -345,8 +372,23 @@ struct MakeAWordWithLetters_Previews: PreviewProvider {
     static var previews: some View {
         let wordList = WordModel.year5And6WordsList
         let viewModel = MakeAWordViewModel(wordList: wordList, currentIndex: 0)
-        return MakeAWordWithLetters(viewModel: viewModel)
-            .environmentObject(UserProgress.shared)
         
+        
+        Group {
+            
+            MakeAWordWithLetters(viewModel: viewModel)
+            
+                .environmentObject(UserProgress.shared)
+                .previewDevice(PreviewDevice(rawValue: "iPhone 15 Pro Max"))
+                .previewDisplayName("iPhone 15 Pro Max")
+            
+            
+            MakeAWordWithLetters(viewModel: viewModel)
+            
+                .environmentObject(UserProgress.shared)
+                .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
+                .previewDisplayName("iPad (10th generation)")
+            
+        }
     }
 }

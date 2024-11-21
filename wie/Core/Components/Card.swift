@@ -20,6 +20,8 @@ struct CardView: View {
     var backgorundColor: Color?
     var status: Status
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     var body: some View {
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
@@ -43,7 +45,7 @@ struct CardView: View {
                     )
                 
                 Text(word)
-                    .font(.custom("ChalkboardSE-Regular", size: 28))
+                    .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 40 : 28))
                     .lineLimit(1)
                     .foregroundColor((backgorundColor != nil) ? .white : .black)
                     .multilineTextAlignment(.center)

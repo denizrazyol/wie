@@ -21,7 +21,8 @@ class HomeViewModel: ObservableObject {
     @Published var currentWordModel: WordModel
     @Published var showWordsList : Bool = false
     
-    @Published var player: AVAudioPlayer?
+    @Published var player1: AVAudioPlayer?
+    @Published var player2: AVAudioPlayer?
     
     init() {
         
@@ -91,10 +92,24 @@ class HomeViewModel: ObservableObject {
         }
         
         do {
-            player = try AVAudioPlayer(data: soundFile.data)
-            self.player?.play()
+            player1 = try AVAudioPlayer(data: soundFile.data)
+            self.player1?.play()
         } catch {
             print("Failed to load the sound: \(error)")
+        }
+    }
+    
+    
+    func playSound(named soundName: String, withExtension ext: String = "mp3") {
+        guard let soundFile = NSDataAsset(name: soundName) else {
+            return
+        }
+        
+        do {
+            player1 = try AVAudioPlayer(data: soundFile.data)
+            self.player1?.play()
+        } catch {
+            print("Error playing sound \(soundName): \(error.localizedDescription)")
         }
     }
     
@@ -105,27 +120,45 @@ class HomeViewModel: ObservableObject {
         }
         
         do {
-            player = try AVAudioPlayer(data: soundFile.data)
+            player1 = try AVAudioPlayer(data: soundFile.data)
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.player?.play()
+                self.player1?.play()
             }
         } catch {
             print("Failed to load the sound: \(error)")
         }
     }
     
-    func playSound(named soundName: String, withExtension ext: String = "mp3") {
+    func playSecondSound(soundName: String) {
+        
         guard let soundFile = NSDataAsset(name: soundName) else {
             return
         }
         
         do {
-            player = try AVAudioPlayer(data: soundFile.data)
-            self.player?.play()
+            player2 = try AVAudioPlayer(data: soundFile.data)
+            self.player2?.play()
         } catch {
-            print("Error playing sound \(soundName): \(error.localizedDescription)")
+            print("Failed to load the sound: \(error)")
         }
     }
+    
+    func playSlowSecondSound(soundName: String) {
+        
+        guard let soundFile = NSDataAsset(name: soundName) else {
+            return
+        }
+        
+        do {
+            player2 = try AVAudioPlayer(data: soundFile.data)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.player2?.play()
+            }
+        } catch {
+            print("Failed to load the sound: \(error)")
+        }
+    }
+   
     
     func generateWordSearchGrid(rows: Int, columns: Int, words: [String]) -> [[Character]] {
         let letters = "abcdefghijklmnopqrstuvwxyz"

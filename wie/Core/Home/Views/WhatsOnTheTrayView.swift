@@ -84,6 +84,7 @@ struct WhatsOnTheTrayView: View {
                 .onAppear {
                     loadTrayWords()
                     //vm.playSlowSound(soundName: "LookCarefully")
+                    //vm.playVerySlowSound(soundName: "HowManyYouCan")
                 }
             }
         }
@@ -166,12 +167,15 @@ struct BottomTrayView: View {
     @ObservedObject var vm = HomeViewModel()
     @ObservedObject var userProgress = UserProgress.shared
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     var body: some View {
         VStack {
             if showCongratulations {
                 congratulatoryView()
                     .onAppear {
                         vm.playSound(named: "game-bonus", withExtension: "mp3")
+                        vm.playSecondSound(soundName: "GreatJob")
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             resetGameState()
                         }
@@ -211,7 +215,7 @@ struct BottomTrayView: View {
     @ViewBuilder
     private func instructionText() -> some View {
         Text("Tap on the words you remember seeing!")
-            .font(.custom("ChalkboardSE-Regular", size: 22))
+            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
             .foregroundColor(Color.black.opacity(0.6))
             .multilineTextAlignment(.center)
             .padding(.horizontal)
@@ -221,19 +225,19 @@ struct BottomTrayView: View {
     private func feedbackMessage() -> some View {
         if score == 6 {
             Text("Amazing! You remembered all the words! 🎉")
-                .font(.custom("ChalkboardSE-Regular", size: 22))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
                 .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
         } else if score >= 3 {
             Text("Great job! You remembered \(score) out of 6 words!")
                 .foregroundColor(Color.black.opacity(0.6))
-                .font(.custom("ChalkboardSE-Regular", size: 22))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
         } else {
             Text("Good try! Let's practice and try again!")
-                .font(.custom("ChalkboardSE-Regular", size: 22))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
                 .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -309,17 +313,12 @@ struct BottomTrayView: View {
                             .foregroundColor(Color.theme.accent)
                             .multilineTextAlignment(.center)
                         
-                        
-                        
-                        
                         Image("iconReward")
                     }
                     Text("You've found all the words!")
                         .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
                         .foregroundColor(Color.theme.accent)
                         .multilineTextAlignment(.center)
-                    
-                    
                     
                 }
             }
@@ -330,8 +329,24 @@ struct BottomTrayView: View {
 
 struct MakeSentenceView_Previews: PreviewProvider {
     static var previews: some View {
-        WhatsOnTheTrayView()
-            .environmentObject(HomeViewModel())
-            .ignoresSafeArea()
+       
+        
+        
+        Group {
+            
+            WhatsOnTheTrayView()
+                .environmentObject(HomeViewModel())
+                .ignoresSafeArea()
+                .previewDevice(PreviewDevice(rawValue: "iPhone 15 Pro Max"))
+                .previewDisplayName("iPhone 15 Pro Max")
+            
+            
+            WhatsOnTheTrayView()
+                .environmentObject(HomeViewModel())
+                .ignoresSafeArea()
+                .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
+                .previewDisplayName("iPad (10th generation)")
+            
+        }
     }
 }

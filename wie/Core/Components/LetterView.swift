@@ -17,14 +17,17 @@ struct LetterView: View {
 
     var onChanged: ((UUID, CGPoint) -> Void)?
     var onEnded: ((UUID, CGPoint) -> Void)?
+    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
             ZStack {
                 RoundedRectangle(cornerRadius: maxWidth * 0.2)
                     .fill(Color.theme.accent)
+                    .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
 
                 Text(letter)
-                    .font(.custom("ChalkboardSE-Regular", size: max(maxWidth * 0.6, 24)))
+                    .font(.custom("ChalkboardSE-Regular", size: dynamicFontSize()))
                     .fontWeight(.bold)
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
@@ -43,6 +46,18 @@ struct LetterView: View {
                         self.dragAmount = .zero
                     }
             )
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text("Draggable letter: \(letter)"))
+        }
+    
+    private func dynamicFontSize() -> CGFloat {
+            if horizontalSizeClass == .regular {
+                // Larger font size for iPads
+                return max(maxWidth * 0.8, 30)
+            } else {
+                // Default font size for iPhones
+                return max(maxWidth * 0.6, 24)
+            }
         }
 }
 
