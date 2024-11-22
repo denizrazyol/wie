@@ -13,7 +13,6 @@ class UserProgress: ObservableObject {
     @Published var totalStars: Int = 0
     @Published var totalPoints: Int = 0
     @Published var badgesEarned: [String] = []
-    
     @Published var wordPlayCounts: [String: Int] = [:]
     
     private init() {
@@ -50,7 +49,7 @@ class UserProgress: ObservableObject {
     
     func incrementPlayCount(for word: String) {
         wordPlayCounts[word, default: 0] += 1
-        if(wordPlayCounts[word, default: 0] == 5) {
+        if wordPlayCounts[word, default: 0] == 5 {
             earnStar()
             addPoints(10)
         }
@@ -61,14 +60,14 @@ class UserProgress: ObservableObject {
         return wordPlayCounts[word, default: 0]
     }
     
-    private func saveProgress(){
+    private func saveProgress() {
         let defaults = UserDefaults.standard
-        defaults.setValue(totalStars, forKey: "totalStars")
-        defaults.setValue(totalPoints, forKey: "totalPoints")
-        defaults.setValue(badgesEarned, forKey: "badgesEarned")
+        defaults.set(totalStars, forKey: "totalStars")
+        defaults.set(totalPoints, forKey: "totalPoints")
+        defaults.set(badgesEarned, forKey: "badgesEarned")
         
         if let data = try? JSONEncoder().encode(wordPlayCounts) {
-            defaults.setValue(data, forKey: "wordPlayCounts")
+            defaults.set(data, forKey: "wordPlayCounts")
         }
     }
     
@@ -78,9 +77,14 @@ class UserProgress: ObservableObject {
         totalPoints = defaults.integer(forKey: "totalPoints")
         badgesEarned = defaults.stringArray(forKey: "badgesEarned") ?? []
         
-        if let data = defaults.data(forKey: "wordPlayCounts"),
-           let decoded = try? JSONDecoder().decode([String: Int].self, from: data) {
-            wordPlayCounts = decoded
+        if let data = defaults.data(forKey: "wordPlayCounts") {
+            do {
+                let decoded = try JSONDecoder().decode([String: Int].self, from: data)
+                wordPlayCounts = decoded
+            } catch {
+                print("Failed to decode wordPlayCounts: \(error.localizedDescription)")
+                wordPlayCounts = [:]
+            }
         } else {
             wordPlayCounts = [:]
         }

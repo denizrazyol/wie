@@ -135,9 +135,11 @@ struct LetterCell: View {
     var letter: Character
     var isSelected: Bool
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     var body: some View {
         Text(String(letter))
-            .font(.custom("ChalkboardSE-Regular", size: 30))
+            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 35: 28))
             .fixedSize()
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/ , maxHeight: .infinity)
             .foregroundColor(.black)

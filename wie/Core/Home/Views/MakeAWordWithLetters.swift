@@ -149,8 +149,8 @@ struct MakeAWordWithLetters: View {
                                 
                                 ConfettiView()
                                     .onAppear(){
-                                        viewModel.playFirstSound(soundName: viewModel.targetWord)
-                                        viewModel.playSecondSound(soundName: "game-bonus" )
+                                        viewModel.playFirstSound(soundName: "game-bonus")
+                                        viewModel.playSecondSound(soundName: viewModel.targetWord)
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                             
                                             userProgress.incrementPlayCount(for: viewModel.currentWord)
@@ -252,7 +252,7 @@ struct MakeAWordWithLetters: View {
                 HStack(spacing: 3) {
                     ForEach(0..<viewModel.targetWord.count, id: \.self) { index in
                         Text(viewModel.currentWord.count > index ? String(viewModel.currentWord[viewModel.currentWord.index(viewModel.currentWord.startIndex, offsetBy: index)]) : "")
-                            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 50 : 40))
+                            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 45 : 40))
                             .fontWeight(.bold)
                             .foregroundColor(Color.theme.accent)
                             .frame(width: boxWidth, height: boxHeight)

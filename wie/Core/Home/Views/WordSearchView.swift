@@ -17,9 +17,11 @@ struct WordSearchView: View {
     @State private var hasAwardedReward = false
     @State private var foundWords: [String] = []
     @State private var tray: [WordModel] = []
-    @State private var long = false
+    @State private var isLong = false
     @State private var showConfetti = false
   
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     @StateObject private var game = WordSearchGame()
     
     var body: some View {
@@ -33,7 +35,7 @@ struct WordSearchView: View {
                     .clipped()
                     .ignoresSafeArea()
                 
-                VStack(spacing:0){
+                VStack(spacing:geometry.size.height * 0.02){
                     if showReward {
                         
                         withAnimation {
@@ -41,13 +43,14 @@ struct WordSearchView: View {
                                 
                                 ConfettiView()
                                     .onAppear(){
-                                        vm.playSound(named: "game-bonus", withExtension: "mp3")
+                                        vm.playSound(soundName: "game-bonus")
+                                        vm.playSecondSound(soundName: "awesome")
                                     }
                                 VStack {
                                     HStack(spacing: 20) {
                                         Image("iconReward")
                                         
-                                        Text("Great Job")
+                                        Text("Awesome")
                                             .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
                                             .foregroundColor(Color.theme.accent)
                                             .multilineTextAlignment(.center)
@@ -89,7 +92,7 @@ struct WordSearchView: View {
                             }
                         }
                     } else {
-                        Spacer()
+                        //Spacer()
                         
                         GridView(game: game, onCompletion: {
                             gameCompleted = true
@@ -102,18 +105,19 @@ struct WordSearchView: View {
                         .background(RoundedRectangle(cornerRadius: 20).fill(Color.white))
                         .shadow(color: Color.gray.opacity(0.5), radius: 20)
                         
-                        Spacer()
+                        //Spacer()
                         
                         VStack(spacing: 10) {
-                            HStack(spacing: long ? 8 : 20) {
+                            HStack(spacing: isLong ? (horizontalSizeClass == .regular ? 50 : 8) : (horizontalSizeClass == .regular ? 50 : 20)) {
                                 ForEach(tray.indices.prefix(3), id: \.self) { number in
-                                    WordBasicView(word: tray[number].word, index: tray[number].id, isFounded: foundWords.contains(tray[number].word))
+                                    WordBasicView(word: tray[number].word, index: tray[number].id, isFounded: foundWords.contains(tray[number].word), isLong: isLong)
                                     
                                 }
                             }
-                            HStack(spacing: long ? 8 : 20) {
+                            
+                            HStack(spacing: isLong ? (horizontalSizeClass == .regular ? 50 : 8) : (horizontalSizeClass == .regular ? 50 : 20)) {
                                 ForEach(tray.indices.dropFirst(3).prefix(3), id: \.self) { number in
-                                    WordBasicView(word: tray[number].word, index: tray[number].id, isFounded: foundWords.contains(tray[number].word))
+                                    WordBasicView(word: tray[number].word, index: tray[number].id, isFounded: foundWords.contains(tray[number].word), isLong: isLong)
                                     
                                 }
                             }
@@ -124,12 +128,12 @@ struct WordSearchView: View {
                         
                     }
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height)
+                .padding()
                 .onAppear {
                     if tray.isEmpty {
                         tray = Array(vm.currentWordLevel.wordlist.shuffled().prefix(6))
                         game.setAimWords(tray.map { $0.word })
-                        long = vm.currentWordLevel.name == "Year 5 & Year 6" ? true : false
+                        isLong = vm.currentWordLevel.name == "Year 5 & Year 6" ? true : false
                     }
                 }
                 if showConfetti {
@@ -143,8 +147,22 @@ struct WordSearchView: View {
 
 struct WordSearchView_Previews: PreviewProvider {
     static var previews: some View {
-        WordSearchView()    
-            .environmentObject(HomeViewModel())
-            .environmentObject(UserProgress.shared)
+        
+        Group {
+            
+            WordSearchView()
+                .environmentObject(HomeViewModel())
+                .environmentObject(UserProgress.shared)
+                .previewDevice(PreviewDevice(rawValue: "iPhone 15 Pro Max"))
+                .previewDisplayName("iPhone 15 Pro Max")
+            
+            
+            WordSearchView()
+                .environmentObject(HomeViewModel())
+                .environmentObject(UserProgress.shared)
+                .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
+                .previewDisplayName("iPad (10th generation)")
+            
+        }
     }
 }

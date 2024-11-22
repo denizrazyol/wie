@@ -6,19 +6,18 @@
 //
 
 import Foundation
-class SoundModel:  Identifiable, Codable {
-    
-    let id = UUID().uuidString
-    let soundName: String
-    let word: WordModel
-    
-    init(soundName: String, word: WordModel) {
+
+class SoundModel: Identifiable, Codable {
+    var id: String
+    var soundName: String
+    var word: WordModel
+
+    init(id: String = UUID().uuidString, soundName: String, word: WordModel) {
+        self.id = id
         self.soundName = soundName
         self.word = word
     }
-    
-    static func == (lhs: SoundModel, rhs: SoundModel) -> Bool {
-        lhs.id == rhs.id
-    }
-  
+
+    // No need to implement `==` since we're conforming to `Identifiable` and can compare `id`s directly.
 }
+

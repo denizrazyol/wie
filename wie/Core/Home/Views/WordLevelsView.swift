@@ -26,7 +26,6 @@ struct WordLevelsView: View {
         }
         .listStyle(PlainListStyle())
         .frame(maxHeight: listMaxHeight)
-        .padding(.trailing, 25)
     }
 }
 
@@ -45,13 +44,13 @@ extension WordLevelsView {
     
     
     private var listMaxHeight: CGFloat? {
-        horizontalSizeClass == .regular ? 280 : 210
+        horizontalSizeClass == .regular ? 250 : 200
     }
     
     private func listRowView(name: String) -> some View {
         VStack() {
             Text(name)
-                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 30 : 22))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 28 : 22))
                 .foregroundColor(Color.theme.accent)
     
         }

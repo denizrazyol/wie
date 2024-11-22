@@ -72,7 +72,7 @@ struct WhatsOnTheTrayView: View {
                                 .clipShape(Capsule())
                                 .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
                             }
-                            .padding(.bottom, 10)
+                           
                             .buttonStyle(PlainButtonStyle())
                             
                         }
@@ -81,6 +81,7 @@ struct WhatsOnTheTrayView: View {
                     
                     
                 }
+                .padding(.bottom,30)
                 .onAppear {
                     loadTrayWords()
                     //vm.playSlowSound(soundName: "LookCarefully")
@@ -174,8 +175,8 @@ struct BottomTrayView: View {
             if showCongratulations {
                 congratulatoryView()
                     .onAppear {
-                        vm.playSound(named: "game-bonus", withExtension: "mp3")
-                        vm.playSecondSound(soundName: "GreatJob")
+                        vm.playSound(soundName: "game-bonus")
+                        vm.playSecondSound(soundName: "awesome")
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             resetGameState()
                         }
@@ -194,11 +195,11 @@ struct BottomTrayView: View {
                         .shadow(radius: 3)
                         .disabled(showCongratulations)
                 }
-                .padding(.all)
-                //.padding(.bottom,45)
+               
             }
             
         }
+        .padding()
         .onAppear() {
             //score > 0 ? vm.playSlowSound(soundName: "TapOnAWordToStart") : vm.playSlowSound(soundName: "TapOnAWordToStart")
         }
@@ -215,7 +216,7 @@ struct BottomTrayView: View {
     @ViewBuilder
     private func instructionText() -> some View {
         Text("Tap on the words you remember seeing!")
-            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
+            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 28 : 22))
             .foregroundColor(Color.black.opacity(0.6))
             .multilineTextAlignment(.center)
             .padding(.horizontal)
@@ -308,7 +309,7 @@ struct BottomTrayView: View {
                     HStack(spacing: 20) {
                         Image("iconReward")
                         
-                        Text("Great Job")
+                        Text("Awesome")
                             .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.05))
                             .foregroundColor(Color.theme.accent)
                             .multilineTextAlignment(.center)
@@ -329,9 +330,6 @@ struct BottomTrayView: View {
 
 struct MakeSentenceView_Previews: PreviewProvider {
     static var previews: some View {
-       
-        
-        
         Group {
             
             WhatsOnTheTrayView()

@@ -37,12 +37,15 @@ struct WordBasicView: View {
     var word: String
     var index : Int
     var isFounded: Bool = false
+    var isLong = false
+    
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
         Text(word)
-            .font(.custom("ChalkboardSE-Regular", size: 26))
+            .font(.custom("ChalkboardSE-Regular", size: 30))
             .foregroundColor(Color.white)
-            .minimumScaleFactor(0.2)
+            .minimumScaleFactor(isLong ? 0.72 : 0.8)
             .lineLimit(1)
             .multilineTextAlignment(.center)
             .customStrikethrough(isFounded, color: Color.theme.iconColor, lineWidth: 3)

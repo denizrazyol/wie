@@ -7,22 +7,38 @@
 
 import SwiftUI
 
+import AVFoundation
+
+func configureAudioSession() {
+    do {
+        try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+        try AVAudioSession.sharedInstance().setActive(true)
+        print("Audio session configured.")
+    } catch {
+        print("Failed to set audio session category: \(error.localizedDescription)")
+    }
+}
+
 @main
 struct wieApp: App {
 
     
     @StateObject private var vm = HomeViewModel()
-    //@StateObject private var userProgress = UserProgress.shared
+    @StateObject private var userProgress = UserProgress.shared
+    
+    init() {
+           configureAudioSession()
+       }
     
     var body: some Scene {
         WindowGroup {
             NavigationView {
                 OnboardView()
                     .environmentObject(vm)
-                    .environmentObject(UserProgress.shared)
+                    .environmentObject(userProgress)
                 
             }
-            
+            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }

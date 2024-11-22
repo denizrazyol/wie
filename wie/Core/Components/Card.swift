@@ -45,7 +45,7 @@ struct CardView: View {
                     )
                 
                 Text(word)
-                    .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 40 : 28))
+                    .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 35 : 28))
                     .lineLimit(1)
                     .foregroundColor((backgorundColor != nil) ? .white : .black)
                     .multilineTextAlignment(.center)

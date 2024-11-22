@@ -1,159 +1,153 @@
-//
-//  OnboardView.swift
-//  wie
-//
-//  Created by raziye yolasigmazoglu on 26/10/2023.
-//
-
 import SwiftUI
 
 struct OnboardView: View {
-    
-    
     @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject private var userProgress: UserProgress
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
-    @State private var isFilled = false
+
     let menuItems = Menu.options
-    
+
     var body: some View {
-        VStack() {
-            header
-                .padding()
-            //.frame(maxWidth: maxWidthForIpad)
-            menu
-        }
+        GeometryReader { geometry in
         
-    }
-    
-    private var menu: some View {
-        List (menuItems) { item in
-            ZStack{
-                CustomNavLinkView(destination: destinationView(selectedId: item.id)) {EmptyView()}
-                    .opacity(0.0)
-                menuItemView(item)
-            }
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.theme.background)
-        }
-        .listStyle(PlainListStyle())
-    }
-    
-    private func menuItemView(_ item: MenuItem) -> some View {
-        ZStack() {
-            Image("\(item.id)")
-                .resizable()
-                .scaledToFill()
-                //.overlay(
-                  //  heartIconOverlay,
-                    //alignment: .topTrailing
-                //)
-                .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                VStack(alignment: .leading) {
+                    header
+                        .padding(.horizontal)
+                    // WordLevelsView().environmentObject(vm)
+                    //Spacer()
+                    
+                    menu(in: geometry)
+                        .padding()
+                }
             
+            
+        }
+    }
+
+    private func menu(in geometry: GeometryProxy) -> some View {
+        let totalHeight = vm.showWordsList ? geometry.size.height * 0.6 : geometry.size.height * 0.87
+        let itemHeight = totalHeight / CGFloat(menuItems.count)
+
+        return VStack(alignment: .leading, spacing: horizontalSizeClass == .regular ? 30 : 20) {
+            ForEach(menuItems) { item in
+                ZStack {
+                    CustomNavLinkView(destination: destinationView(selectedId: item.id)) { EmptyView() }
+                        .opacity(0.0)
+
+                    menuItemView(item, height: itemHeight, geometry: geometry)
+                }
+                
+            }
+        }
+        //
+    }
+
+    private func menuItemView(_ item: MenuItem, height: CGFloat, geometry: GeometryProxy) -> some View {
+        ZStack(alignment: .leading) {
+            if horizontalSizeClass == .regular {
+                Image("\(item.id)")
+                    .resizable()
+                    .scaledToFill()
+                    .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                    .padding(.trailing, 230)
+            } else {
+                Image("\(item.id)")
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 25.0))
+            }
+
             Text(item.title)
                 .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 40 : 30))
                 .foregroundColor(Color.theme.accent)
                 .multilineTextAlignment(.leading)
-                .frame(alignment: .leading)
-                .padding(.leading, 115)
+                .padding(.leading, horizontalSizeClass == .regular ? 200 : 115)
                 .padding(.top, item.id == 1 ? 42 : 15)
-                .padding(.trailing, item.id == 1 ? 10 : 0)
+                .padding(.trailing, horizontalSizeClass == .regular ? 100 : 0)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 10)
+        //.frame(width: .infinity)
+        .frame(width: geometry.size.width * (horizontalSizeClass == .regular ? 0.95 : 0.92))
+        .frame(height: height + ((vm.showWordsList && horizontalSizeClass == .regular) ? 10 : 0))
+        .background(Color.theme.fillingColor)
+        .cornerRadius(15)
+        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
+     
     }
-    
-    private var heartIconOverlay: some View {
-        Image(systemName: isFilled ? "heart.fill" : "heart")
-            .font(.system(size: 25))
-            .padding()
-            .foregroundColor(Color.theme.accent)
-            .background(
-                Circle()
-                    .fill(Color.theme.yellow.opacity(0.2)))
-            .padding(8)
-            .onTapGesture {
-                isFilled.toggle()
-            }
-    }
-    
+
     private func destinationView(selectedId: Int) -> some View {
         switch selectedId {
         case 1:
             return AnyView(CommonExceptionWordsView()
                 .customNavigationTitle("Common Exception Words")
                 .environmentObject(vm)
-                .environmentObject(userProgress)
-            )
-            
+                .environmentObject(userProgress))
         case 2:
             return AnyView(WhatsOnTheTrayView()
                 .customNavigationTitle("What's on the Tray")
                 .environmentObject(vm)
-                .environmentObject(userProgress)
-            )
+                .environmentObject(userProgress))
         case 3:
             return AnyView(WordSearchView()
                 .customNavigationTitle("Word Search")
                 .environmentObject(vm)
-                .environmentObject(userProgress)
-            )
+                .environmentObject(userProgress))
         default:
             return AnyView(Text("Default View"))
         }
     }
+
+    private var header: some View {
+            VStack {
+                Button(action: {
+                    withAnimation {
+                        vm.toogleWordsList()
+                    }
+                })  {
+                    Text(vm.currentWordLevel.name)
+                        .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 30 : 24))
+                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                        .foregroundColor(Color.theme.accent)
+                        .frame(height: 55)
+                        .frame(maxWidth: .infinity)
+                        .overlay(alignment: .leading) {
+                            Image(systemName: "arrow.down")
+                                .font(horizontalSizeClass == .regular ? .title : .headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(Color.theme.accent)
+                                .padding()
+                                .rotationEffect(Angle(degrees: vm.showWordsList ? 180 : 0))
+                        }
+                              }
+                              
+                              if vm.showWordsList {
+                                  WordLevelsView().environmentObject(vm)
+                               
+                              }
+                              
+                          }
+                          .background(Color.theme.fillingColor)
+                          .cornerRadius(20)
+                          .shadow(color: Color.theme.fillingColor.opacity(0.5), radius: 20, x: 0, y: 15)
+                          
+                      }
+                  
 }
 
 struct Previews_OnboardView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-              
-                   OnboardView()
-                       .environmentObject(HomeViewModel())
-                       .environmentObject(UserProgress.shared)
-                       .previewDevice(PreviewDevice(rawValue: "iPhone 15 Pro Max"))
-                       .previewDisplayName("iPhone 15 Pro Max")
-                   
-             
-                   OnboardView()
-                       .environmentObject(HomeViewModel())
-                       .environmentObject(UserProgress.shared)
-                       .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
-                       .previewDisplayName("iPad (10th generation)")
-               }
-    }
-}
+            OnboardView()
+                .environmentObject(HomeViewModel())
+                .environmentObject(UserProgress.shared)
+                .previewDevice(PreviewDevice(rawValue: "iPhone 15 Pro Max"))
+                .previewDisplayName("iPhone 15 Pro Max")
 
-
-extension OnboardView {
-    private var header: some View {
-        VStack {
-            Button(action: vm.toogleWordsList) {
-                Text(vm.currentWordLevel.name)
-                    .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 30 : 24))
-                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                    .foregroundColor(Color.theme.accent)
-                    .frame(height: 55)
-                    .frame(maxWidth: .infinity)
-                    .overlay(alignment: .leading) {
-                        Image(systemName: "arrow.down")
-                            .font(horizontalSizeClass == .regular ? .title : .headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color.theme.accent)
-                            .padding()
-                            .rotationEffect(Angle(degrees: vm.showWordsList ? 180 : 0))
-                    }
-            }
-            
-            if vm.showWordsList {
-                WordLevelsView().environmentObject(vm)
-            }
-            
+            OnboardView()
+                .environmentObject(HomeViewModel())
+                .environmentObject(UserProgress.shared)
+                .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
+                .previewDisplayName("iPad (10th generation)")
         }
-        .background(Color.theme.fillingColor)
-        .cornerRadius(20)
-        .shadow(color: Color.theme.fillingColor.opacity(0.5), radius: 20, x: 0, y: 15)
-        
     }
 }
+
