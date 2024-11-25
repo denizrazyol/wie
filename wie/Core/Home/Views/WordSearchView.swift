@@ -88,7 +88,7 @@ struct WordSearchView: View {
                                 showConfetti = false
                                 tray = Array(vm.currentWordLevel.wordlist.shuffled().prefix(6))
                                 foundWords.removeAll()
-                                game.setAimWords(tray.map { $0.word })
+                                game.setAimWords(tray.map { $0.word }, horizontalSizeClass: horizontalSizeClass ?? .compact)
                             }
                         }
                     } else {
@@ -122,17 +122,18 @@ struct WordSearchView: View {
                                 }
                             }
                         }
-                        .padding()
+                        .padding(10)
                         .frame(width: geometry.size.width * 0.92)
                         .background(RoundedRectangle(cornerRadius: 20).fill(Color.theme.accent))
                         
                     }
                 }
-                .padding()
+                .padding(10)
+                .padding(.top, 5)
                 .onAppear {
                     if tray.isEmpty {
                         tray = Array(vm.currentWordLevel.wordlist.shuffled().prefix(6))
-                        game.setAimWords(tray.map { $0.word })
+                        game.setAimWords(tray.map { $0.word }, horizontalSizeClass: horizontalSizeClass ?? .compact)
                         isLong = vm.currentWordLevel.name == "Year 5 & Year 6" ? true : false
                     }
                 }

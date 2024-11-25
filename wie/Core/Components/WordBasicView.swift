@@ -43,9 +43,9 @@ struct WordBasicView: View {
     
     var body: some View {
         Text(word)
-            .font(.custom("ChalkboardSE-Regular", size: 30))
+            .font(.custom("ChalkboardSE-Regular", size: (horizontalSizeClass == .regular ?  32: 30)))
             .foregroundColor(Color.white)
-            .minimumScaleFactor(isLong ? 0.72 : 0.8)
+            .minimumScaleFactor(isLong ? 0.73 : 0.8)
             .lineLimit(1)
             .multilineTextAlignment(.center)
             .customStrikethrough(isFounded, color: Color.theme.iconColor, lineWidth: 3)

@@ -12,6 +12,7 @@ struct OnboardView: View {
         
                 VStack(alignment: .leading) {
                     header
+                        .padding(.top)
                         .padding(.horizontal)
                     // WordLevelsView().environmentObject(vm)
                     //Spacer()
@@ -25,21 +26,19 @@ struct OnboardView: View {
     }
 
     private func menu(in geometry: GeometryProxy) -> some View {
-        let totalHeight = vm.showWordsList ? geometry.size.height * 0.6 : geometry.size.height * 0.87
+        let totalHeight = vm.showWordsList ? geometry.size.height * 0.58 : geometry.size.height * 0.82
         let itemHeight = totalHeight / CGFloat(menuItems.count)
 
         return VStack(alignment: .leading, spacing: horizontalSizeClass == .regular ? 30 : 20) {
             ForEach(menuItems) { item in
                 ZStack {
-                    CustomNavLinkView(destination: destinationView(selectedId: item.id)) { EmptyView() }
-                        .opacity(0.0)
-
-                    menuItemView(item, height: itemHeight, geometry: geometry)
+                    CustomNavLinkView(destination: destinationView(selectedId: item.id)) {
+                        menuItemView(item, height: itemHeight, geometry: geometry)
+                    }
                 }
                 
             }
         }
-        //
     }
 
     private func menuItemView(_ item: MenuItem, height: CGFloat, geometry: GeometryProxy) -> some View {
@@ -66,12 +65,12 @@ struct OnboardView: View {
                 .padding(.trailing, horizontalSizeClass == .regular ? 100 : 0)
         }
         //.frame(width: .infinity)
-        .frame(width: geometry.size.width * (horizontalSizeClass == .regular ? 0.95 : 0.92))
+        .frame(width: geometry.size.width * (horizontalSizeClass == .regular ? 0.96 : 0.92))
         .frame(height: height + ((vm.showWordsList && horizontalSizeClass == .regular) ? 10 : 0))
         .background(Color.theme.fillingColor)
         .cornerRadius(15)
         .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
-     
+        //.padding(.leading)
     }
 
     private func destinationView(selectedId: Int) -> some View {

@@ -91,7 +91,7 @@ class MakeAWordViewModel: ObservableObject {
         }
         do {
             player2 = try AVAudioPlayer(data: soundFile.data)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.player2?.play()
             }
         } catch {

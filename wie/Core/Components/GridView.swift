@@ -23,12 +23,15 @@ class WordSearchGame: ObservableObject {
     var aimWords: [String] = []
     var selectedLetters: [(character: Character, position: IndexPath)] = []
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     init() {}
     
-    func setAimWords(_ words: [String]) {
-        self.aimWords = words
-        generateWordSearchGrid(rows: 13, columns: 9, words: aimWords)
-        // Reset game state
+    func setAimWords(_ words: [String], horizontalSizeClass: UserInterfaceSizeClass) {
+         self.aimWords = words
+        let columns = (horizontalSizeClass == .regular ? 12 : 9)
+            generateWordSearchGrid(rows: 13, columns: columns, words: aimWords)
+
         selectedIndices.removeAll()
         verifiedIndices.removeAll()
         matchedWords.removeAll()
@@ -151,6 +154,7 @@ struct LetterCell: View {
 struct GridView: View {
     
     @ObservedObject var game: WordSearchGame
+    
     var onCompletion: () -> Void
     var onUpdateWord: ([String]) -> Void
     
@@ -242,8 +246,8 @@ struct GridView: View {
 struct GridView_Previews: PreviewProvider {
     static var previews: some View {
         let game = WordSearchGame()
-        game.setAimWords(["sample", "words", "for", "preview"])
-        
+        game.setAimWords(["sample", "words", "for", "preview"], horizontalSizeClass: .compact)
+
         return GridView(game: game, onCompletion: {
             
         }, onUpdateWord: { matchedWords in

@@ -50,7 +50,7 @@ extension WordLevelsView {
     private func listRowView(name: String) -> some View {
         VStack() {
             Text(name)
-                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 28 : 22))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 26 : 22))
                 .foregroundColor(Color.theme.accent)
     
         }

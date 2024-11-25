@@ -13,7 +13,7 @@ struct TrayView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: horizontalSizeClass == .regular ? 20 : 10)
                 .stroke(Color.theme.accent, lineWidth: 8)
                 .background(Color.theme.accent)
                 .frame(width: geometry.size.width, height: geometry.size.height)

@@ -22,6 +22,8 @@ struct WhatsOnTheTrayView: View {
     
     @EnvironmentObject private var userProgress: UserProgress
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     var body: some View {
         GeometryReader { geometry in
             
@@ -39,15 +41,16 @@ struct WhatsOnTheTrayView: View {
                         BottomTrayView(showTray: $showTray, wordList: $wordList, tray: $tray, resetGameAction: resetGame)
                     } else {
                         
-                            instructionView(geometry: geometry)
-                                .padding(.horizontal)
-                            
-                        VStack(spacing: 10) {
+                        instructionView(geometry: geometry)
+                            .padding(.horizontal)
+                        
+                        //Spacer()
+                        
+                        VStack(spacing:10) {
                             
                             Text("How many you can remember")
-                                .font(.custom("ChalkboardSE-Regular", size:  geometry.size.height * 0.028))
-                                .foregroundColor(Color.black.opacity(0.6))
-                           
+                                .font(.custom("ChalkboardSE-Regular", size: (horizontalSizeClass == .regular ?  geometry.size.height * 0.025 : geometry.size.height * 0.028)))
+                                    .foregroundColor(Color.black.opacity(0.6))
                             
                             Button(action: {
                                 withAnimation{
@@ -66,25 +69,24 @@ struct WhatsOnTheTrayView: View {
                                     
                                     
                                 }
-                                .padding(.horizontal, 60)
-                                .padding(.vertical,10)
+                                .padding(.horizontal, (horizontalSizeClass == .regular ? 80 : 60))
+                                .padding(.vertical, (horizontalSizeClass == .regular ? 20 : 10))
+                                //.padding()
                                 .background(Color.theme.iconColor)
                                 .clipShape(Capsule())
                                 .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
                             }
-                           
+                            .padding(.bottom, (horizontalSizeClass == .regular ? 45 : 10))
                             .buttonStyle(PlainButtonStyle())
                             
                         }
-                        
                     }
                     
-                    
                 }
-                .padding(.bottom,30)
+                .padding(.horizontal, horizontalSizeClass == .regular ? 20 : 0)
                 .onAppear {
                     loadTrayWords()
-                    //vm.playSlowSound(soundName: "LookCarefully")
+                    vm.playSlowSound(soundName: "LookCarefully")
                     //vm.playVerySlowSound(soundName: "HowManyYouCan")
                 }
             }
@@ -106,10 +108,11 @@ struct WhatsOnTheTrayView: View {
     private func instructionView(geometry: GeometryProxy) -> some View {
         VStack() {
             Text("Look carefully at the words on the tray!")
-                .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.029))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 26 : 21))
                 .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
-                .padding(.top, geometry.size.height * 0.02)
+                .padding(.vertical,(horizontalSizeClass == .regular ? 25 : 10))
+                
             
             TrayContentStack(tray: $tray, geometry: geometry)
             
@@ -121,14 +124,16 @@ struct TrayContentStack: View {
     @Binding var tray: [WordModel]
     let geometry: GeometryProxy
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     var body: some View {
         let count = tray.count
         
         ZStack {
             TrayView()
-            VStack(alignment: .center, spacing: 8) {
+            VStack(alignment: .center, spacing: (horizontalSizeClass == .regular ?  12 : 8)) {
                 ForEach(Array(stride(from: 0, to: count, by: 2)), id: \.self) { index in
-                    HStack(alignment: .top, spacing: 8) {
+                    HStack(alignment: .top, spacing: (horizontalSizeClass == .regular ?  12 : 8)) {
                         cardView(word: tray[index], maxWidth: (geometry.size.width - 48) / 2)
                         if index + 1 < count {
                             cardView(word: tray[index + 1], maxWidth: (geometry.size.width - 48) / 2)
@@ -183,9 +188,10 @@ struct BottomTrayView: View {
                     }
                 
             } else {
-                VStack {
+                VStack( ) {
                     if score > 0 {
                         feedbackMessage()
+                            .padding()
                     } else {
                         instructionText()
                     }
@@ -193,15 +199,18 @@ struct BottomTrayView: View {
                     wordPairsStack()
                         .cornerRadius(20)
                         .shadow(radius: 3)
+                        .padding(.bottom,40)
                         .disabled(showCongratulations)
+                    
+                
                 }
                
             }
             
         }
-        .padding()
+        .padding(.horizontal, horizontalSizeClass == .regular ? 30 : 0)
         .onAppear() {
-            //score > 0 ? vm.playSlowSound(soundName: "TapOnAWordToStart") : vm.playSlowSound(soundName: "TapOnAWordToStart")
+            score > 0 ? vm.playSlowSound(soundName: "TapOnAWordToStart") : vm.playSlowSound(soundName: "TapOnAWordToStart")
         }
     }
     
@@ -216,10 +225,11 @@ struct BottomTrayView: View {
     @ViewBuilder
     private func instructionText() -> some View {
         Text("Tap on the words you remember seeing!")
-            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 28 : 22))
+            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 26 : 21))
             .foregroundColor(Color.black.opacity(0.6))
             .multilineTextAlignment(.center)
-            .padding(.horizontal)
+            .padding(.horizontal, 20)
+            .padding(.vertical, (horizontalSizeClass == .regular ? 25 : 10))
     }
     
     @ViewBuilder
@@ -229,19 +239,19 @@ struct BottomTrayView: View {
                 .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
                 .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
-                .padding(.horizontal)
+           
         } else if score >= 3 {
             Text("Great job! You remembered \(score) out of 6 words!")
                 .foregroundColor(Color.black.opacity(0.6))
                 .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
                 .multilineTextAlignment(.center)
-                .padding(.horizontal)
+         
         } else {
             Text("Good try! Let's practice and try again!")
                 .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
                 .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
-                .padding(.horizontal)
+                
         }
     }
     
@@ -250,16 +260,18 @@ struct BottomTrayView: View {
         let shuffledWordList = wordList.shuffled()
         let count = shuffledWordList.count
         
-        VStack(alignment: .center, spacing: 8) {
+        VStack(alignment: .center, spacing:  (horizontalSizeClass == .regular ?  12 : 8)) {
             ForEach(Array(stride(from: 0, to: count, by: 2)), id: \.self) { index in
-                HStack(alignment: .top, spacing: 8) {
+                HStack(alignment: .top, spacing:  (horizontalSizeClass == .regular ?  12 : 8)) {
                     cardView(word: shuffledWordList[index], maxWidth: (UIScreen.main.bounds.width - 48) / 2)
                     if index + 1 < count {
                         cardView(word: shuffledWordList[index + 1], maxWidth: (UIScreen.main.bounds.width - 48) / 2)
+                            
                     }
                 }
             }
         }
+        .padding(.bottom)
     }
     
     private func cardView(word: WordModel, maxWidth: CGFloat) -> some View {
@@ -272,6 +284,7 @@ struct BottomTrayView: View {
         .onTapGesture {
             if !showCongratulations {
                 toggleSelection(of: word.word)
+                vm.playSound(soundName: word.word)
             }
         }
     }
