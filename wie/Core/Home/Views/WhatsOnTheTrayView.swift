@@ -210,7 +210,7 @@ struct BottomTrayView: View {
         }
         .padding(.horizontal, horizontalSizeClass == .regular ? 30 : 0)
         .onAppear() {
-            score > 0 ? vm.playSlowSound(soundName: "TapOnAWordToStart") : vm.playSlowSound(soundName: "TapOnAWordToStart")
+            score > 0 ? vm.playSlowSound(soundName: "TapOnTheWord") : vm.playSlowSound(soundName: "TapOnTheWord")
         }
     }
     
@@ -236,19 +236,19 @@ struct BottomTrayView: View {
     private func feedbackMessage() -> some View {
         if score == 6 {
             Text("Amazing! You remembered all the words! 🎉")
-                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 26 : 22))
                 .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
            
         } else if score >= 3 {
             Text("Great job! You remembered \(score) out of 6 words!")
                 .foregroundColor(Color.black.opacity(0.6))
-                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 26 : 22))
                 .multilineTextAlignment(.center)
          
         } else {
             Text("Good try! Let's practice and try again!")
-                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 34 : 22))
+                .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 26 : 22))
                 .foregroundColor(Color.black.opacity(0.6))
                 .multilineTextAlignment(.center)
                 

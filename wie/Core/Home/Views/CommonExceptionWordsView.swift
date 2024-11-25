@@ -12,6 +12,8 @@ struct CommonExceptionWordsView: View {
     @EnvironmentObject private var vm: HomeViewModel
     @EnvironmentObject private var userProgress: UserProgress
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
     @AppStorage("hasPlayedTapSound") private var hasPlayedTapSound: Bool = false
     
     var body: some View {
@@ -27,7 +29,7 @@ struct CommonExceptionWordsView: View {
                 
                 VStack(spacing: geometry.size.height * 0.02) {
                     Text("Tap on a word to start!")
-                        .font(.custom("ChalkboardSE-Regular", size: geometry.size.height * 0.03))
+                        .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 26 : 21))
                         .padding(.top, geometry.size.height * 0.02)
                         .padding(.bottom, geometry.size.height * 0.02)
                         .foregroundColor(Color.black.opacity(0.6))

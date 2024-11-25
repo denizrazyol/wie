@@ -122,14 +122,14 @@ struct WordSearchView: View {
                                 }
                             }
                         }
-                        .padding(10)
+                        .padding(horizontalSizeClass == .regular ?  12 : 10)
                         .frame(width: geometry.size.width * 0.92)
                         .background(RoundedRectangle(cornerRadius: 20).fill(Color.theme.accent))
                         
                     }
                 }
                 .padding(10)
-                .padding(.top, 5)
+                .padding(.top, horizontalSizeClass == .regular ? 0 : 5)
                 .onAppear {
                     if tray.isEmpty {
                         tray = Array(vm.currentWordLevel.wordlist.shuffled().prefix(6))
