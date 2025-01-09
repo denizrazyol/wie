@@ -142,7 +142,7 @@ struct LetterCell: View {
     
     var body: some View {
         Text(String(letter))
-            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 35: 28))
+            .font(.custom("ChalkboardSE-Regular", size: horizontalSizeClass == .regular ? 35: 29))
             .fixedSize()
             .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/ , maxHeight: .infinity)
             .foregroundColor(.black)

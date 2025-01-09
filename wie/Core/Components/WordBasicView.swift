@@ -43,7 +43,7 @@ struct WordBasicView: View {
     
     var body: some View {
         Text(word)
-            .font(.custom("ChalkboardSE-Regular", size: (horizontalSizeClass == .regular ?  32: 30)))
+            .font(.custom("ChalkboardSE-Regular", size: (horizontalSizeClass == .regular ?  32: 27)))
             .foregroundColor(Color.white)
             .minimumScaleFactor(isLong ? 0.73 : 0.8)
             .lineLimit(1)
