@@ -57,6 +57,7 @@
 		91B6A9072AFD0016003E60A9 /* year1CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91B6A9062AFD0016003E60A9 /* year1CommonExceptionWords.strings */; };
 		91B6A90B2AFD2729003E60A9 /* MenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B6A90A2AFD2729003E60A9 /* MenuItem.swift */; };
 		91B8E3CD2B5A854100C989A2 /* SoundModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91B8E3CC2B5A854100C989A2 /* SoundModel.swift */; };
+		91C1B2AA2D37CA580043735D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91C1B2A92D37CA580043735D /* LaunchScreen.storyboard */; };
 		91EB18482B59425B00D27696 /* year3And4CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */; };
 		91EB184A2B59426700D27696 /* year5And6CommonExceptionWords.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */; };
 		91F27C742CAECC470068F31D /* CustomButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F27C732CAECC470068F31D /* CustomButtonStyle.swift */; };
@@ -115,6 +116,8 @@
 		91B6A9062AFD0016003E60A9 /* year1CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year1CommonExceptionWords.strings; sourceTree = "<group>"; };
 		91B6A90A2AFD2729003E60A9 /* MenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuItem.swift; sourceTree = "<group>"; };
 		91B8E3CC2B5A854100C989A2 /* SoundModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundModel.swift; sourceTree = "<group>"; };
+		91C1B2A92D37CA580043735D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		91D6AA352D368FC30034F2F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91EB18472B59425B00D27696 /* year3And4CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year3And4CommonExceptionWords.strings; sourceTree = "<group>"; };
 		91EB18492B59426700D27696 /* year5And6CommonExceptionWords.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = year5And6CommonExceptionWords.strings; sourceTree = "<group>"; };
 		91F27C732CAECC470068F31D /* CustomButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonStyle.swift; sourceTree = "<group>"; };
@@ -156,6 +159,14 @@
 				913F7E8E2AFA70C700E064E7 /* HomeViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		91440EE22D36901F00DD8DF9 /* Launch */ = {
+			isa = PBXGroup;
+			children = (
+				91C1B2A92D37CA580043735D /* LaunchScreen.storyboard */,
+			);
+			path = Launch;
 			sourceTree = "<group>";
 		};
 		916723042AFBC82B00F5D823 /* Components */ = {
@@ -207,6 +218,7 @@
 		917612C62AEA864A006D3718 /* wie */ = {
 			isa = PBXGroup;
 			children = (
+				91D6AA352D368FC30034F2F1 /* Info.plist */,
 				917612C72AEA864A006D3718 /* wieApp.swift */,
 				918394392AEC1D2E00ABD18D /* Utilities */,
 				9183943C2AEC1D8200ABD18D /* Extensions */,
@@ -231,6 +243,7 @@
 			children = (
 				916723042AFBC82B00F5D823 /* Components */,
 				9183943D2AEC1DEC00ABD18D /* Home */,
+				91440EE22D36901F00DD8DF9 /* Launch */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -344,6 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				917612CF2AEA864B006D3718 /* Preview Assets.xcassets in Resources */,
+				91C1B2AA2D37CA580043735D /* LaunchScreen.storyboard in Resources */,
 				91A8E5A92B04E92B003BBC5C /* year2CommonExceptionWords.strings in Resources */,
 				91B6A9072AFD0016003E60A9 /* year1CommonExceptionWords.strings in Resources */,
 				91EB18482B59425B00D27696 /* year3And4CommonExceptionWords.strings in Resources */,
@@ -532,16 +546,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"wie/Preview Content\"";
 				DEVELOPMENT_TEAM = JZPZYT4CDD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = wie/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Wie;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -563,16 +580,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"wie/Preview Content\"";
 				DEVELOPMENT_TEAM = JZPZYT4CDD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = wie/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Wie;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
