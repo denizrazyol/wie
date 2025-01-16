@@ -1,0 +1,39 @@
+Privacy Policy
+Effective Date: 2015
+
+1. Introduction
+Thank you for using our app (the “App”). We respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we handle data when you use our App.
+
+2. Information We Do Not Collect
+Personal Data: We do not request, collect, or store any personally identifiable information (such as name, email, or phone number) from users.
+Location Data: We do not track or store your precise geographic location.
+Financial or Payment Details: We do not collect any credit card information or payment details through the App. All in-app purchases, if any, are handled by the App Store on Apple’s platform, which is governed by Apple’s own privacy policies.
+3. Automatically Collected Information
+Analytics Data (Optional): If the App uses basic analytics, it may collect anonymized usage data (e.g., which app features are used most frequently) to help us understand how the App is being used. This data is not tied to any specific user identity.
+4. Third-Party Services
+Our App does not integrate or share data with any third-party advertising or analytics networks unless otherwise stated. If we do integrate with a third-party service in the future, we will:
+
+Update this Privacy Policy accordingly.
+Provide information on what data the third-party collects and how it is used.
+5. Children’s Privacy
+If your app is directed to children under the age of 13 (or equivalent minimum age in the relevant jurisdiction):
+
+We comply with applicable children’s privacy regulations, such as the U.S. Children’s Online Privacy Protection Act (COPPA), the UK’s Age-Appropriate Design Code (AADC), or other local regulations.
+We do not knowingly collect personal information from children without verifiable parental consent.
+Parents or guardians who believe we have unintentionally collected personal information from a child under their care can contact us (details below) to request deletion of that information.
+6. Cookies and Tracking
+The App does not use cookies or employ any form of tracking technology beyond the standard device identifiers necessary for functionality (if applicable).
+We do not support any form of cross-site or cross-app tracking.
+7. Security
+We take reasonable measures to protect the information we collect from unauthorized access, alteration, or destruction. However, no security measure is completely foolproof.
+
+8. External Links
+The App may contain links to external websites or resources, but only if necessary (for example, a “Support” or “Privacy Policy” link). We do not control third-party websites, and they are governed by their own privacy policies. We recommend reviewing the privacy policies of any third-party websites you visit.
+
+9. Changes to This Privacy Policy
+We may update this Privacy Policy from time to time. When we do, we will revise the “Effective Date” at the top of the policy. Your continued use of the App after any changes indicates your acceptance of the updated policy.
+
+10. Contact Us
+If you have questions or concerns about this Privacy Policy or our data practices, please contact us at:
+
+Email: raziyeaka89@gmail.com
