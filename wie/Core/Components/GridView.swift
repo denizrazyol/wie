@@ -28,18 +28,17 @@ class WordSearchGame: ObservableObject {
     init() {}
     
     func setAimWords(_ words: [String], horizontalSizeClass: UserInterfaceSizeClass) {
-         self.aimWords = words
+        self.aimWords = words
+        // Revert back to original grid size
         let columns = (horizontalSizeClass == .regular ? 12 : 9)
-            generateWordSearchGrid(rows: 13, columns: columns, words: aimWords)
-
+        generateWordSearchGrid(rows: 13, columns: columns, words: aimWords)
+        
         selectedIndices.removeAll()
         verifiedIndices.removeAll()
         matchedWords.removeAll()
         selectedLetters.removeAll()
         foundWordSelections.removeAll()
     }
-    
-    
     
     func updateSelection(from position: CGPoint, in geometry: GeometryProxy) {
         let rowHeight = geometry.size.height / CGFloat(grid.count)
@@ -48,11 +47,61 @@ class WordSearchGame: ObservableObject {
         let rowIndex = Int(position.y / rowHeight)
         let columnIndex = Int(position.x / columnWidth)
         
-        if rowIndex >= 0 && rowIndex < grid.count && columnIndex >= 0 && columnIndex < grid[0].count {
-            let indexPath = IndexPath(row: rowIndex, section: columnIndex)
-            if !selectedIndices.contains(indexPath) {
-                selectedIndices.insert(indexPath)
-                selectedLetters.append((character: grid[rowIndex][columnIndex], position: indexPath))
+        guard rowIndex >= 0 && rowIndex < grid.count && columnIndex >= 0 && columnIndex < grid[0].count else {
+            return
+        }
+        
+        let indexPath = IndexPath(row: rowIndex, section: columnIndex)
+        
+        // If this is the first letter being selected
+        if selectedLetters.isEmpty {
+            selectedIndices.insert(indexPath)
+            selectedLetters.append((character: grid[rowIndex][columnIndex], position: indexPath))
+            return
+        }
+        
+        // Get the first selected position
+        guard let firstPosition = selectedLetters.first?.position else { return }
+        
+        // Calculate direction from first selected letter to current position
+        let rowDiff = indexPath.row - firstPosition.row
+        let colDiff = indexPath.section - firstPosition.section
+        
+        // Check if selection is in a straight line (horizontal, vertical, or diagonal)
+        let isHorizontal = rowDiff == 0
+        let isVertical = colDiff == 0
+        let isDiagonal = abs(rowDiff) == abs(colDiff)
+        
+        if isHorizontal || isVertical || isDiagonal {
+            // Keep verified indices (found words) and add new selection
+            selectedIndices = verifiedIndices
+            selectedLetters.removeAll()
+            
+            // Add first letter back
+            selectedLetters.append((character: grid[firstPosition.row][firstPosition.section], 
+                                  position: firstPosition))
+            selectedIndices.insert(firstPosition)
+            
+            // Calculate step direction
+            let stepRow = rowDiff == 0 ? 0 : rowDiff / abs(rowDiff)
+            let stepCol = colDiff == 0 ? 0 : colDiff / abs(colDiff)
+            
+            // Add all letters in the line from first to current position
+            var currentRow = firstPosition.row
+            var currentCol = firstPosition.section
+            
+            while true {
+                currentRow += stepRow
+                currentCol += stepCol
+                
+                let currentPath = IndexPath(row: currentRow, section: currentCol)
+                selectedIndices.insert(currentPath)
+                selectedLetters.append((character: grid[currentRow][currentCol], 
+                                      position: currentPath))
+                
+                if currentRow == indexPath.row && currentCol == indexPath.section {
+                    break
+                }
             }
         }
     }
@@ -69,38 +118,48 @@ class WordSearchGame: ObservableObject {
         let letters = "abcdefghijklmnopqrstuvwxyz"
         var grid = Array(repeating: Array(repeating: Character(" "), count: columns), count: rows)
         
-        for word in words.shuffled() {
-            var attempts = 0
+        // Sort words by length (longest first)
+        let sortedWords = words.sorted { $0.count > $1.count }
+        
+        // Define all possible directions
+        let directions = [
+            (0, 1),   // horizontal
+            (1, 0),   // vertical
+            (1, 1),   // diagonal down-right
+            (1, -1),  // diagonal down-left
+        ]
+        
+        for word in sortedWords {
             var placed = false
-            while !placed && attempts < 100 {
-                let horizontal = Bool.random()
-                let startRow = Int.random(in: 0..<rows)
-                let startCol = Int.random(in: 0..<columns)
-                
-                if horizontal && startCol + word.count <= columns {
-                    
-                    if canPlaceWord(word, in: grid, at: (startRow, startCol), horizontal: true) {
-                        for (index, char) in word.enumerated() {
-                            grid[startRow][startCol + index] = char
+            let wordChars = Array(word.lowercased())
+            
+            // Try each direction until word is placed
+            for (dRow, dCol) in directions where !placed {
+                // Try each starting position
+                for row in 0..<rows where !placed {
+                    for col in 0..<columns {
+                        // Calculate end position
+                        let endRow = row + (dRow * (wordChars.count - 1))
+                        let endCol = col + (dCol * (wordChars.count - 1))
+                        
+                        // Check if word fits within grid bounds
+                        if endRow >= 0 && endRow < rows && endCol >= 0 && endCol < columns {
+                            if canPlaceWordAt(word: wordChars, row: row, col: col, dRow: dRow, dCol: dCol, in: grid) {
+                                placeWord(wordChars, at: row, col: col, dRow: dRow, dCol: dCol, in: &grid)
+                                placed = true
+                                break
+                            }
                         }
-                        placed = true
-                    }
-                } else if !horizontal && startRow + word.count <= rows {
-                    
-                    if canPlaceWord(word, in: grid, at: (startRow, startCol), horizontal: false) {
-                        for (index, char) in word.enumerated() {
-                            grid[startRow + index][startCol] = char
-                        }
-                        placed = true
                     }
                 }
-                attempts += 1
             }
+            
             if !placed {
-                //print("Failed to place word: \(word)")
+                print("Warning: Could not place word: \(word). Consider increasing grid size.")
             }
         }
         
+        // Fill remaining spaces with random letters
         for i in 0..<rows {
             for j in 0..<columns {
                 if grid[i][j] == " " {
@@ -109,29 +168,143 @@ class WordSearchGame: ObservableObject {
             }
         }
         
-        self.grid =  grid
+        self.grid = grid
     }
     
-    private func canPlaceWord(_ word: String, in grid: [[Character]], at position: (Int, Int), horizontal: Bool) -> Bool {
-        let (row, col) = position
-        if horizontal {
-            for j in 0..<word.count {
-                if grid[row][col + j] != " " { return false }
-            }
-        } else {
-            for i in 0..<word.count {
-                if grid[row + i][col] != " " { return false }
+    private func canPlaceWordAt(word: [Character], row: Int, col: Int, dRow: Int, dCol: Int, in grid: [[Character]]) -> Bool {
+        let length = word.count
+        
+        // Check if the word fits
+        for i in 0..<length {
+            let newRow = row + (dRow * i)
+            let newCol = col + (dCol * i)
+            
+            let currentCell = grid[newRow][newCol]
+            if currentCell != " " && currentCell != word[i] {
+                return false
             }
         }
         return true
     }
     
-    func clearSelection() {
-        selectedIndices.removeAll()
-        selectedLetters.removeAll()
-        selectedIndices = verifiedIndices
+    private func placeWord(_ word: [Character], at row: Int, col: Int, dRow: Int, dCol: Int, in grid: inout [[Character]]) {
+        for (index, char) in word.enumerated() {
+            let newRow = row + (dRow * index)
+            let newCol = col + (dCol * index)
+            grid[newRow][newCol] = char
+        }
     }
     
+    func clearSelection() {
+        // Keep verified indices (found words) but clear current selection
+        selectedIndices = verifiedIndices
+        selectedLetters.removeAll()
+    }
+    
+    func runTests() {
+        print("\n=== Starting Word Search Tests ===")
+        
+        // Test Case 1: Long Words
+        let testCase1 = [
+            "understanding",  // 13 letters
+            "particularly",   // 12 letters
+            "mathematics",    // 11 letters
+            "information"     // 11 letters
+        ]
+        testWordPlacement(words: testCase1, name: "Long Words")
+        
+        // Test Case 2: Long Words with Common Letters
+        let testCase2 = [
+            "interesting",    // 11 letters
+            "intelligent",    // 11 letters
+            "interaction",    // 11 letters
+            "interface"       // 9 letters
+        ]
+        testWordPlacement(words: testCase2, name: "Long Words with Common Letters")
+        
+        // Test Case 3: Mixed Lengths with Long Words
+        let testCase3 = [
+            "development",    // 11 letters
+            "programming",    // 11 letters
+            "code",          // 4 letters
+            "application"     // 11 letters
+        ]
+        testWordPlacement(words: testCase3, name: "Mixed Lengths with Long Words")
+        
+        // Test Case 4: Long Words that Share Letters
+        let testCase4 = [
+            "teaching",      // 8 letters
+            "reaching",      // 8 letters
+            "learning",      // 8 letters
+            "earning"        // 7 letters
+        ]
+        testWordPlacement(words: testCase4, name: "Long Words that Share Letters")
+        
+        print("\n=== Word Search Tests Completed ===")
+    }
+    
+    private func testWordPlacement(words: [String], name: String) {
+        print("\n--- Testing \(name) ---")
+        
+        // Generate grid
+        generateWordSearchGrid(rows: 13, columns: 12, words: words)
+        
+        // Verify each word
+        var allWordsFound = true
+        print("Grid size: \(grid.count)x\(grid[0].count)")
+        print("Words to find: \(words)")
+        
+        // Print grid
+        print("\nGrid Contents:")
+        for row in grid {
+            print(row.map { String($0) }.joined(separator: " "))
+        }
+        
+        // Find each word
+        print("\nSearching for words:")
+        for word in words {
+            if findWord(word.lowercased()) {
+                print("✓ Found: \(word)")
+            } else {
+                print("✗ Missing: \(word)")
+                allWordsFound = false
+            }
+        }
+        
+        print("\nTest Result: \(allWordsFound ? "PASS" : "FAIL")")
+    }
+    
+    private func findWord(_ word: String) -> Bool {
+        let chars = Array(word)
+        let rows = grid.count
+        let cols = grid[0].count
+        
+        // Check horizontal, vertical, and diagonal
+        let directions = [(0, 1), (1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        
+        for row in 0..<rows {
+            for col in 0..<cols {
+                for (dRow, dCol) in directions {
+                    var matches = true
+                    for i in 0..<chars.count {
+                        let newRow = row + (dRow * i)
+                        let newCol = col + (dCol * i)
+                        
+                        if newRow < 0 || newRow >= rows || 
+                           newCol < 0 || newCol >= cols ||
+                           grid[newRow][newCol].lowercased() != String(chars[i]) {
+                            matches = false
+                            break
+                        }
+                    }
+                    if matches {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
 }
 
 struct LetterCell: View {
@@ -247,6 +420,7 @@ struct GridView_Previews: PreviewProvider {
     static var previews: some View {
         let game = WordSearchGame()
         game.setAimWords(["sample", "words", "for", "preview"], horizontalSizeClass: .compact)
+        game.runTests()
 
         return GridView(game: game, onCompletion: {
             
