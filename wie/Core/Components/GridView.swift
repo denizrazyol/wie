@@ -135,14 +135,15 @@ class WordSearchGame: ObservableObject {
             
             // Try each direction until word is placed
             for (dRow, dCol) in directions where !placed {
-                // Try each starting position
-                for row in 0..<rows where !placed {
-                    for col in 0..<columns {
-                        // Calculate end position
+                // Try positions starting from different rows for better distribution
+                let rowSequence = Array(0..<rows).shuffled()
+                let colSequence = Array(0..<columns).shuffled()
+                
+                for row in rowSequence where !placed {
+                    for col in colSequence {
                         let endRow = row + (dRow * (wordChars.count - 1))
                         let endCol = col + (dCol * (wordChars.count - 1))
                         
-                        // Check if word fits within grid bounds
                         if endRow >= 0 && endRow < rows && endCol >= 0 && endCol < columns {
                             if canPlaceWordAt(word: wordChars, row: row, col: col, dRow: dRow, dCol: dCol, in: grid) {
                                 placeWord(wordChars, at: row, col: col, dRow: dRow, dCol: dCol, in: &grid)
@@ -173,17 +174,32 @@ class WordSearchGame: ObservableObject {
     
     private func canPlaceWordAt(word: [Character], row: Int, col: Int, dRow: Int, dCol: Int, in grid: [[Character]]) -> Bool {
         let length = word.count
+        let rows = grid.count
+        let cols = grid[0].count
         
-        // Check if the word fits
-        for i in 0..<length {
+        // Check if the word fits with spacing
+        for i in -1...length {  // Keep original padding of 1
             let newRow = row + (dRow * i)
             let newCol = col + (dCol * i)
             
-            let currentCell = grid[newRow][newCol]
-            if currentCell != " " && currentCell != word[i] {
-                return false
+            // Check main word placement area
+            if i >= 0 && i < length {
+                if newRow < 0 || newRow >= rows || newCol < 0 || newCol >= cols {
+                    return false
+                }
+                let currentCell = grid[newRow][newCol]
+                if currentCell != " " && currentCell != word[i] {
+                    return false
+                }
+            }
+            // Check spacing around word
+            else if newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols {
+                if grid[newRow][newCol] != " " {
+                    return false
+                }
             }
         }
+        
         return true
     }
     
