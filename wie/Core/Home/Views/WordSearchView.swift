@@ -92,8 +92,6 @@ struct WordSearchView: View {
                             }
                         }
                     } else {
-                        //Spacer()
-                        
                         GridView(game: game, onCompletion: {
                             gameCompleted = true
                             showReward = true
@@ -104,8 +102,13 @@ struct WordSearchView: View {
                         .frame(width: geometry.size.width * 0.92, height: geometry.size.height * 0.8)
                         .background(RoundedRectangle(cornerRadius: 20).fill(Color.white))
                         .shadow(color: Color.gray.opacity(0.5), radius: 20)
-                        
-                        //Spacer()
+                        .onAppear {
+                            tray = Array(vm.currentWordLevel.wordlist.shuffled().prefix(6))
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                game.setAimWords(tray.map { $0.word }, horizontalSizeClass: horizontalSizeClass ?? .compact)
+                            }
+                            isLong = vm.currentWordLevel.name == "Year 5 & Year 6"
+                        }
                         
                         VStack(spacing: 10) {
                             HStack(spacing: isLong ? (horizontalSizeClass == .regular ? 50 : 8) : (horizontalSizeClass == .regular ? 50 : 20)) {
@@ -130,13 +133,6 @@ struct WordSearchView: View {
                 }
                 .padding(10)
                 .padding(.top, horizontalSizeClass == .regular ? 0 : 5)
-                .onAppear {
-                    if tray.isEmpty {
-                        tray = Array(vm.currentWordLevel.wordlist.shuffled().prefix(6))
-                        game.setAimWords(tray.map { $0.word }, horizontalSizeClass: horizontalSizeClass ?? .compact)
-                        isLong = vm.currentWordLevel.name == "Year 5 & Year 6" ? true : false
-                    }
-                }
                 if showConfetti {
                     ConfettiView()
                         .edgesIgnoringSafeArea(.all)
