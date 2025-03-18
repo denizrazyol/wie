@@ -1,4 +1,3 @@
-
 //
 //  MakeAWordWithLetters.swift
 //  wie
@@ -24,6 +23,8 @@ class MakeAWordViewModel: ObservableObject {
     @Published var player1: AVAudioPlayer?
     @Published var player2: AVAudioPlayer?
     
+    // Audio player pool
+    private var audioPlayers: [String: AVAudioPlayer] = [:]
     
     init(wordList: [WordModel], currentIndex: Int) {
         self.wordList = wordList
@@ -50,17 +51,20 @@ class MakeAWordViewModel: ObservableObject {
         }
     }
     
+    // Batch update letters
     func updateLetterVisibility(id: UUID, at position: CGPoint, in geometry: GeometryProxy) {
         let targetFrame = CGRect(x: geometry.frame(in: .global).minX,
-                                 y: geometry.frame(in: .global).minY,
-                                 width: geometry.size.width,
-                                 height: geometry.size.height * 0.6)
+                               y: geometry.frame(in: .global).minY,
+                               width: geometry.size.width,
+                               height: geometry.size.height * 0.6)
         
         if targetFrame.contains(position) {
             if let index = letters.firstIndex(where: { $0.id == id }) {
-                letters[index].isVisible = false
-                currentWord += letters[index].text
-                
+                // Batch updates together
+                withAnimation {
+                    letters[index].isVisible = false
+                    currentWord += letters[index].text
+                }
                 playLetterSound(letter: letters[index].text)
             }
         }
@@ -99,18 +103,32 @@ class MakeAWordViewModel: ObservableObject {
         }
     }
     
+    // Reuse audio players
     func playLetterSound(letter: String) {
-        let soundName = letter.lowercased() // Assuming sound files are named as "a.mp3", "b.mp3", etc.
+        let soundName = letter.lowercased()
+        
+        if let existingPlayer = audioPlayers[soundName] {
+            existingPlayer.play()
+            return
+        }
+        
         guard let soundFile = NSDataAsset(name: soundName) else {
             print("Sound file for letter \(letter) not found")
             return
         }
+        
         do {
-            player1 = try AVAudioPlayer(data: soundFile.data)
-            player1?.play()
+            let player = try AVAudioPlayer(data: soundFile.data)
+            audioPlayers[soundName] = player
+            player.play()
         } catch {
             print("Failed to play the sound for letter \(letter): \(error)")
         }
+    }
+    
+    // Clean up audio players when done
+    func cleanup() {
+        audioPlayers.removeAll()
     }
 }
 
